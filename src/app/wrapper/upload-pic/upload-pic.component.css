@@ -1,0 +1,84 @@
+ :host {
+    height : 100%;
+    width : 100%
+}
+div {
+    margin : 0.2rem 0.2rem 0.2rem 0;
+    height : 100%;
+    width : 100%;
+}
+
+.container {
+    margin : 0 0.2rem 0.2rem 0;
+    max-width : 99.6%;
+    height : 100%;
+    /* border : 1px solid black; */
+}
+
+#uploadPicContainer {
+    /* border : 1px solid black; */
+    height : 40rem;
+    width :  20rem;
+    padding : 0;
+}
+
+#pic {
+    height : 12rem;
+    width : 12rem;
+    border : 1px solid black;
+    padding : 0;
+    background-color : white;
+}
+
+.button {
+    display :  inline-block;
+    height : 2rem;
+    width :  6rem;
+    min-width : 0;
+    background-color : white;
+    margin-left :  0.5rem;
+}
+
+.button > p {
+    border : 1px solid black;
+    color : black;
+    margin : 0;
+    height : 100%;
+    text-align :  center;
+
+}
+
+.button > p:hover {
+    height : 100%;
+    border :  1px solid white;
+    background-color : black;
+    color : white;
+    cursor : pointer;
+}
+
+input[type = file] {
+    /* border : 1px solid black; */
+    margin-top : 1.5rem;
+    font-size : 0.85rem;
+    width : 12rem;
+}
+
+input[type = file]:hover {
+    cursor : pointer;
+}
+
+img {
+    width : 100%;
+    height : 100%;
+}
+
+#buttonWrapper {
+    /* border : 1px solid black; */
+    height : 5rem;
+    width :  15rem;
+    margin-top : 6rem;
+    text-align :  center;
+
+}
+
+

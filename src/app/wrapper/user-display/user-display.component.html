@@ -1,0 +1,18 @@
+<div #user (click) = "selectUser()" class = "conversation rounded d-flex flex-row flex-nowrap" [style.margin-top.em] = "i === 0 ? '0' : '1'" [ngStyle] = "applyUserStyles()">
+  
+  <div class = "userpic rounded-circle">
+    <img [src] = "hasProfilePic ? profilePic : defaultPic" height = '62' width = '62' class = "rounded-circle">
+  </div>
+      
+  <div class = "user-content-wrapper d-inline-flex flex-column flex-nowrap">
+      <div style = 'font-size : 1.3rem' class = 'user-first-last rounded d-inline-flex flex-row flex-wrap'> 
+          <span style = 'margin : 0 0 0 0.3rem'>{{firstname}}</span> 
+          <span style = 'margin : 0 0 0 0.3rem'>{{lastname}}</span>
+      </div>
+      <div class = 'user-content-wrapper-2 d-inline-flex flex-row flex-nowrap rounded'>
+          <span style = 'margin : 0 0 0 0.3rem; font-size : 0.8rem'>{{username}}</span>
+          <span style = 'margin : 0 0 0 1.1rem; font-size : 0.8rem;'><span [style.color] = "isOnline ? '#2E8B57' : '#FF4500'">&#9679;</span> {{isOnline ? 'online' : 'offline'}}</span>
+      </div>
+  </div> 
+
+</div>

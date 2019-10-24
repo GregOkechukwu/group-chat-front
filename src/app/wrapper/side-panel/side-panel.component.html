@@ -1,0 +1,40 @@
+<div class = "d-inline-flex flex-column flex-nowrap">
+  <div id = "profile" class = "d-flex flex-column flex-nowrap align-items-center justify-content-center">
+    <div id = "profilepic" class = "rounded-circle justify-content-center align-items-center d-flex flex-row"
+      [style.border] = "hasProfilePic ? '1px solid black' : '0'">
+      <img height = '136' width = '136' [src] = "hasProfilePic ? profilePic : defaultPic" class = "rounded-circle">
+    </div>
+    <div id = "profilename">
+      <p>
+        {{userInfo.firstname}} {{userInfo.lastname}}
+      </p>
+    </div>
+
+    <div id = "username">
+      <p>
+        {{userInfo.username}}
+      </p>
+    </div>
+  </div>
+
+  <div id = "userProfile" class = "rounded" > 
+    <p class = "rounded" (click) = "show('showProfile')" [style.background-color] = "showProfile ? '#b4c7e4' : null">
+      <img [src] = "profileIcon">
+      <a>Profile</a>
+    </p>
+  </div>
+
+  <div id = "conversation" > 
+    <p class = "rounded" (click) = "show('showConversations')" [style.background-color] = "showConversations ? '#b4c7e4' : null">
+      <img [src] = "messageIcon">
+      <a>Conversations</a>
+    </p>
+  </div>
+
+  <div id = "friends"> 
+    <p class = "rounded" (click) = "show('showUsersInChat')" [style.background-color] = "showUsersInChat ? '#b4c7e4' : null"> 
+      <img [src] = 'friendsIcon'>
+      <a>Friends</a>
+    </p>
+  </div>
+</div>

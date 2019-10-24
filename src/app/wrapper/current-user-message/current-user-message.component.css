@@ -1,0 +1,64 @@
+ :host {
+    width : 100%
+}
+ :host .container {
+    margin : 0;
+    padding : 0;
+    max-width : 100%;
+}
+
+.row, #message-container, #pic-name-container {
+    min-height :  5rem;
+    width : 100%;
+    margin : 0;
+}
+
+.row {
+    background-color :  #fff;
+}
+.d-flex > div {
+    border :  1px solid gray;
+}
+
+#pic-name-container {
+    width : 5rem;
+}
+
+#pic {
+    background-color :  lightsalmon;
+    height : 2.8rem;
+    width :  2.8rem;
+    margin :  0 0 0.4rem 0
+}
+
+#name {
+    background-color :  lightsalmon;
+    height : 1rem;
+    width :  5rem;
+}
+
+#message-container {
+    width : 25rem;
+    margin-left :  0.5rem;
+}
+
+p {
+    text-align :  left;
+    font-size :  1rem;
+    color : black;
+    font-weight : 300;
+    font-family :  Arial, Helvetica, sans-serif;
+    margin : 0;
+    word-break :  break-all
+}
+
+#name>p {
+    font-size : 0.8rem;
+}
+
+#message-container >p {
+    color : black;
+}
+
+
+

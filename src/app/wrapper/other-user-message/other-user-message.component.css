@@ -1,0 +1,64 @@
+
+ :host .container {
+    margin : 0;
+    padding : 0;
+    max-width : 100%;
+}
+
+.container, .row, #message-container, #pic-name-container {
+    min-height :  5rem;   
+    width : 100%;
+    margin : 0;  
+    /*  min-height prevents contianer from being smaller than 5rem however if 
+        content is larger than 5rem then container will scale accordingly.
+    */
+}
+
+.row {
+    background-color :  lightgray;
+}
+
+.d-flex > div {
+    border :  1px solid gray;
+}
+
+#pic-name-container {
+    width : 5rem;
+}
+
+#pic {
+    background-color :  lightsalmon;
+    height : 2.8rem;
+    width :  2.8rem;
+    margin :  0 0 0.4rem 0
+}
+
+#name {
+    background-color :  lightsalmon;
+    height : 1rem;
+    width :  5rem;
+}
+
+#message-container {
+    width : 25rem;
+    margin-right :  0.5rem;
+}
+
+
+p {
+    text-align :  right;
+    font-size :  1rem;
+    color : black;
+    font-weight : 300;
+    font-family :  Arial, Helvetica, sans-serif;
+    height : 100%;
+    margin : 0;
+    word-break :  break-all
+}
+
+#name>p {
+    font-size : 0.8rem;
+}
+
+
+

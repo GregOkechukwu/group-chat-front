@@ -1,0 +1,41 @@
+/* refers to the host element of a component in this case <chat></chat>*/
+:host {
+    flex:1;
+    height:100%
+}
+.container{
+    display:inline-block;
+    vertical-align: top;
+    background-color: #646464;
+    margin:0.2rem;
+    height:100%;
+    max-width:100%;
+}
+
+
+.col-12{
+    background-color: gray;
+    margin: 1rem 0 0 0;
+}
+
+#chat-top{
+    height:6%;
+}
+
+#chat-mid{
+    overflow-y:auto;
+    height: 75%;
+}
+
+#chat-bottom{
+    height:12%;
+}
+
+p{
+    color:white;
+    font-weight:300;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+}
+
+

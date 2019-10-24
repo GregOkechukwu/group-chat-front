@@ -1,0 +1,23 @@
+<div class = "d-inline-flex container flex-column justify-content-center align-items-center">
+    <div id = "uploadPicContainer" class = " d-flex flex-column align-items-center justify-content-center ">
+      <h5 style = "margin-bottom : 1.5rem">UPLOAD PROFILE PIC</h5>
+      <div id = "pic" class = "rounded-circle">
+        <img #img [src] = "hasProfilePic ? profilePic : defaultPic" class = "rounded-circle">
+      </div>
+      <input #img type = "file" name = "avatar" accept = "image/png, image/jpeg" value = "UPLOAD" (change) = "onFileChange($event.target.files[0])">
+      <div id =  "buttonWrapper">
+          <div class = "button">
+              <p class = "rounded" (click) = "goBack()">BACK</p>
+          </div>
+
+          <div class = "button" *ngIf = "showDelete">
+            <p class = "rounded" (click) = "openModal('Delete', 'remove your pic')">REMOVE</p>
+          </div>
+
+          <div class = "button" *ngIf = "showUpload">
+            <p class = "rounded" (click) = "openModal('Update', 'update your pic')">UPLOAD</p>
+          </div>
+      </div>
+    </div>
+</div>
+  

@@ -1,0 +1,62 @@
+<ng-container [ngSwitch] = 'page'>
+
+    <ng-container *ngSwitchCase = '0'>
+        <ng-container *ngTemplateOutlet = "createJoinConversation"></ng-container>
+    </ng-container>
+
+    <ng-container *ngSwitchCase = '1'> 
+        <ng-container *ngTemplateOutlet = "conversationForm"></ng-container>
+    </ng-container>
+
+    <ng-container *ngSwitchCase = '2'>
+        <ng-container *ngTemplateOutlet = "userConversations"></ng-container>
+    </ng-container>
+
+</ng-container>
+
+<ng-template #createJoinConversation>
+    <div class = "defaultWrapper d-inline-flex flex-column justify-content-center align-items-center" style = 'width : 100%; height : 100%'> 
+        <p *ngIf = "successfulUpdate" [style.font-size.px] = "'12'" [style.color] = "'green'">{{successMssg}}</p>
+
+        <h5 [style.margin-bottom.rem] = "'1'">MY CONVERSATIONS</h5>
+        <div>
+            <div class = "button rounded adjustmargin" (click) = "toPage(1)">
+                <span>CREATE</span>
+            </div>
+            <div class = "button rounded adjustmargin" (click) = "toPage(2)">
+                <span>JOIN</span>
+            </div>
+        </div>
+        
+    </div>
+</ng-template>
+
+<ng-template #conversationForm>
+        <app-new-conversation (successfulCreation) = "displaySuccessMssg()"  (back) = 'toPage($event)' ></app-new-conversation>
+</ng-template>
+
+<ng-template #userConversations>
+    <div class = 'conversation-wrapper'>
+        <h5 style = 'margin-top : 2rem; margin-bottom : 2rem'>MY CONVERSATIONS</h5>
+        <div class = "d-flex flex-nowrap flex-column align-items-center">
+            <div class = "conversation rounded" style = "margin-top : 0"><p>Conversation</p></div>
+            <div class = "conversation rounded"><p>Conversation</p></div>
+            <div class = "conversation rounded"><p>Conversation</p></div>
+            <div class = "conversation rounded"><p>Conversation</p></div>
+            <div class = "conversation rounded"><p>Conversation</p></div>
+            <div class = "conversation rounded"><p>Conversation</p></div>
+            <div class = "conversation rounded"><p>Conversation</p></div>
+            <div class = "conversation rounded"><p>Conversation</p></div>
+            <div class = "conversation rounded"><p>Conversation</p></div>
+        </div>
+    </div>
+</ng-template>
+
+
+
+
+
+
+
+
+

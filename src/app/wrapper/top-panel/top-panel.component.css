@@ -1,0 +1,78 @@
+:host {
+    margin : 0;
+    padding : 0;
+    width : 100%;
+}
+
+.container-fluid {
+    background-color : black;
+    /* border : 2px solid black;  */
+    height : 3.07625rem;
+    padding : 0;
+    width : 100%;
+    min-width : 15.5rem;
+}
+
+p {
+    color : white;
+    text-align : center;
+    font-weight : 300;
+    font-variant : small-caps;
+    font-family : Arial, Helvetica, sans-serif;
+    margin : 0;
+    width : 100%;
+    height : 100%;
+}
+
+p > a {
+    padding : 0.5rem;
+}
+
+p > a:hover {
+    color : black;
+    background-color : white;
+}  
+.col-sm-2 {
+    text-align : center;
+    height : 97%;
+}
+.col-sm-3 {
+    height : 2.2rem;
+}
+
+.menu-bar-wrapper {
+    display : inline-flex;
+    flex-flow : column wrap;
+    justify-content : center;
+    align-items: center;
+
+    width : 2.6rem;
+    height : 63%;
+    margin-bottom : 0rem;
+    border-radius : 0.3rem;
+    /* border : 1px solid white;  */
+}
+
+.menu-bar-wrapper:active, .menu-bar-wrapper:active > div  {
+    cursor : pointer;
+}
+
+.menu-bar-wrapper:hover, .menu-bar-wrapper:hover > div, p > a:hover  {
+    cursor : pointer;
+}
+
+/* .menu-bar-wrapper:active {
+    background-color : white;
+}
+
+.menu-bar-wrapper:active  > div  {
+    background-color : black;
+} */
+
+.menu-bar {
+    display : block;
+    height : 0.25rem;
+    width : 2rem;
+    border-radius : 0.3rem;
+    background-color : white;
+}
