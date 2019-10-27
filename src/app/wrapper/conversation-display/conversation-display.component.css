@@ -14,12 +14,20 @@
     color : black;
     border : 1px solid black;
 }
-.userpic {  
-    display : inline-block;
+
+.userpic-container {
+    position : relative;
     height : 4rem;
     width : 4rem;
-    margin : 0.76rem 0 0.2rem 1rem;
-    /* border : 1px solid; */
+    margin : 0.6rem 0 0.2rem 1rem;
+    /* border : 1px solid;  */
+}
+
+.userpic {  
+    position : absolute;
+    height : 40px;
+    width : 40px;
+    border : 1px solid;
 }
 
 .user-content-wrapper {
@@ -29,7 +37,7 @@
     /* border : 1px solid black; */
 }
 
-.user-first-last {
+.conversation-name {
     border : 1px solid;
     width : 90%;
 }
@@ -38,12 +46,13 @@
     /* border : 0.5px solid black; */
     height : 1.3rem;
     width : 90%;    
-    margin : 3px 0 0 0 
+    margin : 3px 0 0 0; 
 }
 
 @media screen and (max-width : 53.125rem) {
     .conversation {
         width : 25rem;
-        height : 5.3rem
+        height : 5.3rem;
     }
 }
+

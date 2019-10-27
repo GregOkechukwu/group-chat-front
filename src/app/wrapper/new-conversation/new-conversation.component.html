@@ -101,6 +101,7 @@
             <ng-container *ngFor = 'let user of invites.user.searchResults; index as i'>
 
                 <app-user-display 
+                    [index] = "i"
                     [firstname] = "user.firstname" 
                     [lastname] = "user.lastname" 
                     [username] = "user.username" 
@@ -166,6 +167,7 @@
             <ng-container *ngFor = 'let friend of invites.friend.searchResults; index as i'>
 
                 <app-user-display 
+                    [index] = "i"
                     [firstname] = "friend.firstname" 
                     [lastname] = "friend.lastname" 
                     [username] = "friend.username" 
@@ -199,6 +201,7 @@
 
         <ng-container *ngFor = 'let invitedUser of allInvitedUsers; index as i'>
                 <app-user-display 
+                    [index] = "i"
                     [firstname] = "invitedUser.firstname" 
                     [lastname] = "invitedUser.lastname" 
                     [username] = "invitedUser.username" 

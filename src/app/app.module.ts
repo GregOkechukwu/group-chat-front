@@ -34,6 +34,7 @@ import { ImageService } from './services/image.service';
 import { MinSidePanelComponent } from './wrapper/min-side-panel/min-side-panel.component';
 import { UserDisplayComponent } from './wrapper/user-display/user-display.component';
 import { RouteService } from './services/route.service';
+import { ConversationDisplayComponent } from './wrapper/conversation-display/conversation-display.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { RouteService } from './services/route.service';
     UploadPicComponent,
     ModalContent,
     MinSidePanelComponent,
-    UserDisplayComponent
+    UserDisplayComponent,
+    ConversationDisplayComponent
   ],
   imports: [
     CommonModule,

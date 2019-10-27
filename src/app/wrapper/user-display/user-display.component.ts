@@ -10,9 +10,10 @@ import { CacheService } from 'src/app/services/cache.service';
 export class UserDisplayComponent implements OnInit {
   @ViewChild('user') user : ElementRef<HTMLDivElement>
 
-  @Input() firstname : string
-  @Input() lastname : string
-  @Input() username : string
+  @Input() index : number;
+  @Input() firstname : string;
+  @Input() lastname : string;
+  @Input() username : string;
   @Input() isOnline : boolean;
   @Input() hasProfilePic : boolean;
   @Input() img : any | null;

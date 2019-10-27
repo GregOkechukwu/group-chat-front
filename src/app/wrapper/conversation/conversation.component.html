@@ -1,14 +1,14 @@
 <ng-container [ngSwitch] = 'page'>
 
-    <ng-container *ngSwitchCase = '0'>
+    <ng-container *ngSwitchCase = 'createJoinConversationPage'>
         <ng-container *ngTemplateOutlet = "createJoinConversation"></ng-container>
     </ng-container>
 
-    <ng-container *ngSwitchCase = '1'> 
-        <ng-container *ngTemplateOutlet = "conversationForm"></ng-container>
+    <ng-container *ngSwitchCase = 'newConversationPage'> 
+        <ng-container *ngTemplateOutlet = "newConversation"></ng-container>
     </ng-container>
 
-    <ng-container *ngSwitchCase = '2'>
+    <ng-container *ngSwitchCase = 'userConversationPage'>
         <ng-container *ngTemplateOutlet = "userConversations"></ng-container>
     </ng-container>
 
@@ -20,10 +20,10 @@
 
         <h5 [style.margin-bottom.rem] = "'1'">MY CONVERSATIONS</h5>
         <div>
-            <div class = "button rounded adjustmargin" (click) = "toPage(1)">
+            <div class = "button rounded adjustmargin" (click) = "toPage(newConversationPage)">
                 <span>CREATE</span>
             </div>
-            <div class = "button rounded adjustmargin" (click) = "toPage(2)">
+            <div class = "button rounded adjustmargin" (click) = "toPage(userConversationPage)">
                 <span>JOIN</span>
             </div>
         </div>
@@ -31,24 +31,39 @@
     </div>
 </ng-template>
 
-<ng-template #conversationForm>
+<ng-template #newConversation>
         <app-new-conversation (successfulCreation) = "displaySuccessMssg()"  (back) = 'toPage($event)' ></app-new-conversation>
 </ng-template>
 
 <ng-template #userConversations>
     <div class = 'conversation-wrapper'>
-        <h5 style = 'margin-top : 2rem; margin-bottom : 2rem'>MY CONVERSATIONS</h5>
-        <div class = "d-flex flex-nowrap flex-column align-items-center">
-            <div class = "conversation rounded" style = "margin-top : 0"><p>Conversation</p></div>
-            <div class = "conversation rounded"><p>Conversation</p></div>
-            <div class = "conversation rounded"><p>Conversation</p></div>
-            <div class = "conversation rounded"><p>Conversation</p></div>
-            <div class = "conversation rounded"><p>Conversation</p></div>
-            <div class = "conversation rounded"><p>Conversation</p></div>
-            <div class = "conversation rounded"><p>Conversation</p></div>
-            <div class = "conversation rounded"><p>Conversation</p></div>
-            <div class = "conversation rounded"><p>Conversation</p></div>
+        <h5 style = 'margin-top : 2rem; margin-bottom : 1rem'>MY CONVERSATIONS</h5>
+
+        <div class = "button-wrapper">
+            <div class = "button rounded" style =  "margin : 0 0 0 1rem; width : 6rem">
+                <span>BACK</span>
+            </div> 
+    
+            <div class = "focus-div button rounded" style = "margin : 0 0 0 1rem; width : 6rem">
+                <span>NEXT</span>
+            </div> 
+        </div>  
+
+        <div class = "d-flex flex-nowrap flex-column align-items-center" [style.height.%] = "conversations.length === 0 ? '45' : '100' ">
+            <p *ngIf = "conversations.length === 0"> You have no converstions</p>
+
+            <div *ngIf = "conversations.length > 0" class = "d-flex flex-nowrap flex-column align-items-center" [style.height.%] = "'100'">
+                <ng-container *ngFor = "let conversation of conversations">
+                    <app-conversation-display 
+                        [conversationname] = "conversation.name"
+                        [hostusername] = "conversation.host.username"
+                        [usercount] = "conversation.users.length"
+                    ></app-conversation-display>
+                </ng-container>
+            </div>      
         </div>
+        
+
     </div>
 </ng-template>
 

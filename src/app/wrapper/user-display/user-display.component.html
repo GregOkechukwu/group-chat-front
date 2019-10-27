@@ -1,4 +1,4 @@
-<div #user (click) = "selectUser()" class = "conversation rounded d-flex flex-row flex-nowrap" [style.margin-top.em] = "i === 0 ? '0' : '1'" [ngStyle] = "applyUserStyles()">
+<div #user (click) = "selectUser()" class = "conversation rounded d-flex flex-row flex-nowrap" [style.margin-top.em] = "index === 0 ? '0' : '1'" [ngStyle] = "applyUserStyles()">
   
   <div class = "userpic rounded-circle">
     <img [src] = "hasProfilePic ? profilePic : defaultPic" height = '62' width = '62' class = "rounded-circle">

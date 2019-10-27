@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
 import { timer, Subscription, Observable } from 'rxjs'
+import { ConversationInfoService, Conversation } from 'src/app/services/conversation-info.service';
 @Component({
   selector :  'app-conversation',
   templateUrl :  './conversation.component.html',
@@ -11,13 +12,19 @@ export class ConversationComponent implements OnInit, OnDestroy {
 
   @ViewChild('createJoinConversation') createJoinConversation : TemplateRef<any>
   @ViewChild('userConversations') userConversations : TemplateRef<any>
-  @ViewChild('conversationForm') conversationForm : TemplateRef<any>
+  @ViewChild('newConversation') newConversation : TemplateRef<any>
 
+  createJoinConversationPage : number = 0;
+  newConversationPage : number = 1;
+  userConversationPage : number = 2;
   page : number = 0;
+
   successfulUpdate : boolean;
   successMssg : string;
 
-  constructor() { }
+  conversations : Conversation[]
+
+  constructor(private conversationInfoService : ConversationInfoService) { }
 
   ngOnInit() {
     this.timer = timer(3000);
@@ -26,7 +33,6 @@ export class ConversationComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.subscriptionOne instanceof Subscription) this.subscriptionOne.unsubscribe();
   }
-
   disableFlag(S : string) {
     this.subscriptionOne = this.timer.subscribe(num => {
       if (S === 'successfulUpdate') this.successfulUpdate = false;
@@ -34,7 +40,13 @@ export class ConversationComponent implements OnInit, OnDestroy {
   }
 
   toPage(page : number) {
-    this.page = page;
+    if (page === this.userConversationPage) {
+      this.getConversations(success => {
+        if (success) this.page = page;
+      });
+    } else {
+      this.page = page;
+    }
   }
 
   displaySuccessMssg() {
@@ -42,5 +54,12 @@ export class ConversationComponent implements OnInit, OnDestroy {
     this.successfulUpdate = true;
     this.successMssg = 'Your conversation has been created'
     this.disableFlag('successfulUpdate');
+  }
+
+  getConversations(callback) {
+    this.conversationInfoService.getConversations().subscribe(data => {
+      this.conversations = data;
+      callback(true)
+    }, err => callback(false));
   }
 }

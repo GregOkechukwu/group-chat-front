@@ -79,6 +79,7 @@ h6 {
     border :  1px solid white;
     background-color : black;
     color : white;
+    cursor : pointer;
 }
 
 .button-wrapper {
@@ -118,6 +119,10 @@ h6 {
 #search-criteria:hover {
     background-color : black;
     color : white;   
+}
+
+input {
+    padding : 10px;
 }
 
 

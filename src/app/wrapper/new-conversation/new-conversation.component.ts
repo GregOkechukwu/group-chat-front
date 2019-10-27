@@ -88,7 +88,7 @@ export class NewConversationComponent implements OnInit, AfterViewInit, OnDestro
     private cdRef : ChangeDetectorRef, 
     private formValidator : FormValidatorService, 
     private userInfoService : UserInfoService,
-    private conversastionInfoService : ConversationInfoService 
+    private conversationInfoService : ConversationInfoService 
   ) { }
 
   ngOnInit() {
@@ -178,9 +178,8 @@ export class NewConversationComponent implements OnInit, AfterViewInit, OnDestro
       let validLength = this.formValidator.strLengthIsValid(this.name);
       let fieldIsEmpty = res.emptyFields
       let errMssg = res.errStr;
-      let conversationNameIsAvailable = await this.conversastionInfoService.checkAvailability('name', this.name);
+      let conversationNameIsAvailable = await this.conversationInfoService.checkAvailability('name', this.name);
 
-      console.log(conversationNameIsAvailable);
       if (checkFields) {
 
         if (fieldIsEmpty) {
@@ -453,7 +452,7 @@ export class NewConversationComponent implements OnInit, AfterViewInit, OnDestro
         date_created : new Date()
       }
 
-      this.conversastionInfoService.createConversation(conversation).subscribe(data => {
+      this.conversationInfoService.createConversation(conversation).subscribe(data => {
         this.successfulCreation.emit()
       }, err => console.log(err))
       

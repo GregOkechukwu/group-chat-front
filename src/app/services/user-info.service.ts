@@ -6,8 +6,8 @@ import { throwError,  Subject } from 'rxjs'
 
 export interface UserInfo {
   username : string;
-  firstname : string;
-  lastname : string;
+  firstname? : string;
+  lastname? : string;
   online? : boolean;
   hasProfilePic? : boolean;
   pic? : any | null;

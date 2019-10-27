@@ -30,14 +30,6 @@
     color : black;
 }
 
-.conversation {
-    border : 1px solid black;
-    margin :  1rem 0 0 0;
-    width :  30rem;
-    height : 5rem;
-    min-height : 5rem;
-}
-
 .defaultWrapper >  div {
     display : inline-block;
     height : 20rem;
@@ -63,26 +55,10 @@
     text-align :  center;
 }
 
-@media screen and (max-width : 53.125rem) {
-    .conversation {
-        width : 25rem;
-    }
-}
-@media screen and (max-width : 32rem) {
-    .conversation {
-        width : 20rem;
-    }
-}
-
 @media screen and (max-width : 42.8125rem) {
     .adjustmargin { 
         margin :  0rem 1rem 1rem 1rem;
     }
-}
-
-.conversation:hover {
-    border :  3px solid #b4c7e4;
-    cursor : pointer;
 }
 
 .button:hover {
@@ -92,11 +68,29 @@
     cursor : pointer;
 }
 
+.button-wrapper {
+    display : flex;
+    flex-flow : row nowrap;
+    justify-content : center;
+    height : 3rem;
+    width : 100%;
+    margin: 1rem 0 0 0;
+    text-align :  center;
+    /* border : 1px solid black; */
+}
+.focus-div:focus {
+    outline-width: 0;
+}
+
 p {
     color : black;
     text-align :  center;
     font-weight : 300;
     font-family :  Arial, Helvetica, sans-serif;
+}
+
+input {
+    padding : 10px;
 }
 
 
