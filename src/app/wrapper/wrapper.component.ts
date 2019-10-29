@@ -8,9 +8,10 @@ import { UiService } from '../services/ui.service';
   providers : []
 })
 export class WrapperComponent implements OnInit {
-  showProfile : boolean = false;
-  showConversations : boolean = true;
-  showUsersInChat : boolean = false;
+  showProfile : boolean;
+  showConversations : boolean;
+  showUsersInChat : boolean;
+  showInvites : boolean;
 
   showFullPanel : boolean = true;
   innerWidth : number;
@@ -23,24 +24,17 @@ export class WrapperComponent implements OnInit {
   constructor(private uiService : UiService) {}
 
   ngOnInit() {
+    this.show('showConversations');
   }
 
-  showSection(section : string) {
-    if(section === 'showProfile') {
-      this.showProfile = true;
-      this.showConversations = false;
-      this.showUsersInChat = false;
-    }
-    else if (section === 'showConversations') {
-      this.showConversations = true;
-      this.showProfile = false;
-      this.showUsersInChat = false;
-    } else if (section === 'showUsersInChat') {
-      this.showConversations = false;
-      this.showProfile = false;
-      this.showUsersInChat = true;
-    }
+  show(section : string) {
+    let sectionStatus = this.uiService.showSectionAndGetStatus(section);
+    this.showProfile = sectionStatus.showProfile;
+    this.showConversations = sectionStatus.showConversation;
+    this.showUsersInChat = sectionStatus.showUsersInChat;
+    this.showInvites = sectionStatus.showInvites;
   }
+
   togglePanel(event : number) {
     if (this.innerWidth < 700 && event === this.switchPanel) {
       if (this.showFullPanel === undefined) {
@@ -70,5 +64,7 @@ export class WrapperComponent implements OnInit {
   updateWindowWidth(event : number) {
     this.innerWidth = event;
   }
+
+
 
 }

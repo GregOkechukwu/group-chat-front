@@ -4,10 +4,6 @@
     min-width : 20rem;
 }
 .conversation-wrapper {
-    display : flex;
-    align-items : center;
-    justify-content : center;
-    flex-flow : column nowrap;
     height : 100%;
     width : 99.6%;
     min-width : 100%;

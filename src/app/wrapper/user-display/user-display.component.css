@@ -9,7 +9,7 @@
 
 .conversation:hover {
     /* border :  1px solid #b4c7e4; */
-    box-shadow : 0 10px 6px -6px #777;
+    box-shadow : 0 10px 6px -6px #777; 
     cursor : pointer;
     color : black;
     border : 1px solid black;

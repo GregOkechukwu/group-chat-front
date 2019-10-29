@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ImageService } from 'src/app/services/image.service';
 import { Subscription } from 'rxjs';
 import { UserInfoService, UserInfo } from 'src/app/services/user-info.service';
+import { UiService } from 'src/app/services/ui.service';
 
 @Component({
   selector: 'app-min-side-panel',
@@ -11,10 +12,12 @@ import { UserInfoService, UserInfo } from 'src/app/services/user-info.service';
 })
 export class MinSidePanelComponent implements OnInit {
 
-  @Output() whatToShow  = new EventEmitter<string>()
+  @Output() whatToShow  = new EventEmitter<string>();
+
   @Input() showProfile : boolean;
   @Input() showConversations : boolean;
-  @Input() showUsersInChat;
+  @Input() showUsersInChat : boolean;
+  @Input() showInvites : boolean;
 
   subscriptionOne : Subscription;
   subscriptionTwo : Subscription;
@@ -30,17 +33,26 @@ export class MinSidePanelComponent implements OnInit {
   profileIcon : string;
   messageIcon : string;
   friendsIcon : string;
+  invitesIcon : string;
 
-  constructor(private activatedRoute : ActivatedRoute, private imageService : ImageService, private userInfoService : UserInfoService) { }
+  constructor(
+    private uiService : UiService, 
+    private activatedRoute : ActivatedRoute, 
+    private imageService : ImageService, 
+    private userInfoService : UserInfoService
+  ) { }
 
   ngOnInit() {
     const resolvedData = this.activatedRoute.data;
     const picNotifier$ = this.imageService.profilePicNotifier$;
 
     this.subscriptionOne = resolvedData.subscribe(data => {
-      let picSrc = <string>data.image[0], iconLookup = data.image[1];
+      let picSrc = <string>data.image[0]
+      let iconLookup = data.image[1];
+
       this.userInfo = data.user;
       this.userInitials = this.userInfoService.getInitials(this.userInfo.firstname, this.userInfo.lastname);
+      
       this.updatePicInfo(picSrc);
       this.updateIcons(iconLookup);
     });
@@ -62,9 +74,9 @@ export class MinSidePanelComponent implements OnInit {
     },  err => console.log(err));
   }
   ngOnDestroy() {
-    if (this.subscriptionOne  instanceof Subscription)this.subscriptionOne.unsubscribe()
-    if (this.subscriptionTwo  instanceof Subscription)this.subscriptionTwo.unsubscribe()
-    if (this.subscriptionThree  instanceof Subscription)this.subscriptionTwo.unsubscribe()
+    if (this.subscriptionOne instanceof Subscription)this.subscriptionOne.unsubscribe()
+    if (this.subscriptionTwo instanceof Subscription)this.subscriptionTwo.unsubscribe()
+    if (this.subscriptionThree instanceof Subscription)this.subscriptionTwo.unsubscribe()
   }
 
   updatePicInfo(src : string) {
@@ -77,22 +89,17 @@ export class MinSidePanelComponent implements OnInit {
     this.profileIcon = <string>this.imageService.sanitize(icons['profile-big']);
     this.messageIcon = <string>this.imageService.sanitize(icons['message-big']);
     this.friendsIcon = <string>this.imageService.sanitize(icons['friends-big']);
+    this.invitesIcon = <string>this.imageService.sanitize(icons['invitation-big']);
   }
-
+  
   show(section : string) {
-    if (section === 'showProfile') {
-      this.showProfile = true;
-      this.showConversations = false;
-      this.showUsersInChat = false;
-    } else if (section === 'showConversations') {
-      this.showConversations = true;
-      this.showProfile  = false;
-      this.showUsersInChat = false;
-    } else if (section === 'showUsersInChat'){
-      this.showConversations = false;
-      this.showProfile = false;
-      this.showUsersInChat = true;
-    }
+    let sectionStatus = this.uiService.showSectionAndGetStatus(section);
+    
+    this.showProfile = sectionStatus.showProfile;
+    this.showConversations = sectionStatus.showConversation;
+    this.showUsersInChat = sectionStatus.showUsersInChat;
+    this.showInvites = sectionStatus.showInvites;
+
     this.whatToShow.emit(section);
   }
 }

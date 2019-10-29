@@ -9,19 +9,29 @@
     </div>
   </div>
 
-  <div class = 'other-icons icon-wrapper d-flex flex-column flex-nowrap align-items-center justify-content-center' 
-    [style.background-color] = "showProfile ? '#b4c7e4' : null" (click) = "show('showProfile')">
+  <div class = 'section-icon icon-wrapper d-flex flex-column flex-nowrap align-items-center justify-content-center' 
+     (click) = "show('showProfile')" [style.background-color] = "showProfile ? '#b4c7e4' : null">
     <img [src] = 'profileIcon'>
   </div>
 
-  <div class = 'other-icons icon-wrapper d-flex flex-column flex-nowrap align-items-center justify-content-center' 
-    [style.background-color] = "showConversations ? '#b4c7e4' : null" (click) = "show('showConversations')">
+  <div class = 'section-icon icon-wrapper d-flex flex-column flex-nowrap align-items-center justify-content-center' 
+    (click) = "show('showConversations')" [style.background-color] = "showConversations ? '#b4c7e4' : null">
     <img [src] = 'messageIcon'>
   </div>
 
-  <div class = 'other-icons icon-wrapper d-flex flex-column flex-nowrap align-items-center justify-content-center'
+  <div class = 'section-icon icon-wrapper d-flex flex-column flex-nowrap align-items-center justify-content-center'
     (click) = "show('showUsersInChat')" [style.background-color] = "showUsersInChat ? '#b4c7e4' : null">
     <img [src] = 'friendsIcon'>
   </div>
 
+  <div class = 'section-icon icon-wrapper d-flex flex-column flex-nowrap align-items-center justify-content-center'
+    (click) = "show('showInvites')" [style.background-color] = "showInvites ? '#b4c7e4' : null">
+    <div>
+        <img [src] = 'invitesIcon'>
+    </div>
+  </div>
 </div>
+
+<style>
+
+</style>

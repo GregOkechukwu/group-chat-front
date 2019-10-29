@@ -40,13 +40,19 @@ p {
     margin : 0;
 }
 
-.other-icons {
+.section-icon {
     margin : 0 0 1rem 0;
     height : 4rem;
     /* border : 1px solid black */
 }
 
-.other-icons:hover {
+.section-icon:hover {
     cursor : pointer;
     /* background-color: #b4c7e4; */
+}
+
+.section-icon > div {
+    position : relative;
+    height : 24px;
+    width : 24px;
 }

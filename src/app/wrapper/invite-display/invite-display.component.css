@@ -6,47 +6,46 @@
     width : 99.6%;
     min-width : 100%;
 }
-
-.conversation-section-wrapper {
+.invite-section-wrapper {
     height : 100%;
     width : 99.6%;
     min-width : 100%;
     margin : 0rem 0.2rem 0.2rem 0.4%;
 }
 
-.conversation-wrapper {
-  height : 9.5rem;
+.invite-wrapper {
+  height : 11.75rem;
   width : 20rem;
   margin : 10px;
 }
 
 .pic-name-wrapper {
   width : 100%;
-  height : 4rem;
+  height : 6rem;
   padding : 10px 20px 0 20px 
 }
 
 .profile-pic {
-  height : 54px;
-  width : 54px;
+  height : 4.8rem;
+  width : 4.8rem;
 }
 
 .name-wrapper {
   height : 100%;
   width : 12rem;
   margin-left : 20px;
-  padding-left : 10px;
+  padding : 5px 0 0 10px;
 }
 
 .accept-decline-wrapper {
   text-align : center;
   height : 2rem;
   width : 100%;
-  margin-top : 12px;
+  margin-top : 1rem;;
   padding : 0 20px 0 20px;
 }
 
-.conversation-section-wrapper, .profile-pic, .conversation-wrapper, .name-wrapper {
+.invite-section-wrapper, .profile-pic, .invite-wrapper, .name-wrapper {
   border : 1px solid black;
 }
 

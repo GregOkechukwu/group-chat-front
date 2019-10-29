@@ -17,24 +17,32 @@
     </div>
   </div>
 
-  <div id = "userProfile" class = "rounded" > 
-    <p class = "rounded" (click) = "show('showProfile')" [style.background-color] = "showProfile ? '#b4c7e4' : null">
+  <div class = "section-icon rounded"> 
+    <p  (click) = "show('showProfile')" [style.background-color] = "showProfile ? '#b4c7e4' : null">
       <img [src] = "profileIcon">
       <a>Profile</a>
     </p>
   </div>
 
-  <div id = "conversation" > 
-    <p class = "rounded" (click) = "show('showConversations')" [style.background-color] = "showConversations ? '#b4c7e4' : null">
+  <div class = "section-icon rounded"> 
+    <p (click) = "show('showConversations')" [style.background-color] = "showConversations ? '#b4c7e4' : null">
       <img [src] = "messageIcon">
       <a>Conversations</a>
     </p>
   </div>
 
-  <div id = "friends"> 
-    <p class = "rounded" (click) = "show('showUsersInChat')" [style.background-color] = "showUsersInChat ? '#b4c7e4' : null"> 
+  <div class = "section-icon rounded"> 
+    <p (click) = "show('showUsersInChat')" [style.background-color] = "showUsersInChat ? '#b4c7e4' : null"> 
       <img [src] = 'friendsIcon'>
       <a>Friends</a>
     </p>
   </div>
+
+  <div class = "section-icon rounded">
+      <p (click) = "show('showInvites')" [style.background-color] = "showInvites ? '#b4c7e4' : null"> 
+          <img [src] = 'invitesIcon'>
+        <a>Invites</a>
+      </p>
+  </div>
+
 </div>
