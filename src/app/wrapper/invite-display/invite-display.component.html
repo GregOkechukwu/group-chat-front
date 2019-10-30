@@ -1,22 +1,25 @@
 <div class = "invite-wrapper rounded">
 
     <div class = 'pic-name-wrapper d-flex flex-row flex-nowrap'>
-        <div class = "profile-pic rounded-circle"></div>
+        <div class = "profile-pic rounded-circle">
+            <img [src] = "sender.hasProfilePic ? profilePic : defaultPic"  height = '76.8' width = '76.8' class = "rounded-circle">
+        </div>
 
         <div class = 'name-wrapper'>
-          <span>First Name</span><br>
-          <span>Last Name</span><br>
-          <span style = "font-size : 0.8rem">Username</span><br>
+          <span style = "font-size : 1.1rem">{{sender.firstname}}</span><br>
+          <span style = "font-size : 1.1rem">{{sender.lastname}}</span>
+          <div style = "font-size : 0.8rem">{{sender.username}}</div>
+          <div class = "time-elapsed" style = "font-size : 0.8rem;">{{elapsedTime}}</div>
         </div>
     </div>
     
     <div style = "text-align : center; margin-top : 1rem;">
-        <span>Invited to join name</span>
+        <span>Invited to join <b>{{conversationName}}</b></span>
     </div>
 
     <div class = "accept-decline-wrapper">
         <div class = "accept-decline-btn" style = "margin : 0 1rem 0 0 ">Accept</div>
-        <div class = "accept-decline-btn" style = "margin : 0 0 0 1rem ">Decline</div>
+        <div  class = "accept-decline-btn" style = "margin : 0 0 0 1rem ">Decline</div>
     </div>
     
   </div>

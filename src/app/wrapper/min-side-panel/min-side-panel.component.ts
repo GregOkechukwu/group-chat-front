@@ -35,6 +35,8 @@ export class MinSidePanelComponent implements OnInit {
   friendsIcon : string;
   invitesIcon : string;
 
+  hideMatBadge : boolean = true;
+
   constructor(
     private uiService : UiService, 
     private activatedRoute : ActivatedRoute, 
@@ -51,8 +53,8 @@ export class MinSidePanelComponent implements OnInit {
       let iconLookup = data.image[1];
 
       this.userInfo = data.user;
-      this.userInitials = this.userInfoService.getInitials(this.userInfo.firstname, this.userInfo.lastname);
       
+      this.updateUserInfo(this.userInfo);
       this.updatePicInfo(picSrc);
       this.updateIcons(iconLookup);
     });
@@ -68,8 +70,9 @@ export class MinSidePanelComponent implements OnInit {
         if (key === 'username')this.userInfo[key] = info[key]
         if (key === 'firstname')this.userInfo[key] = info[key]
         if (key === 'lastname')this.userInfo[key] = info[key]
+        if (key === 'invitecount') this.userInfo[key] = info[key];
       }
-      this.userInitials = this.userInfoService.getInitials(this.userInfo.firstname, this.userInfo.lastname);
+      this.updateUserInfo(this.userInfo);
 
     },  err => console.log(err));
   }
@@ -77,6 +80,11 @@ export class MinSidePanelComponent implements OnInit {
     if (this.subscriptionOne instanceof Subscription)this.subscriptionOne.unsubscribe()
     if (this.subscriptionTwo instanceof Subscription)this.subscriptionTwo.unsubscribe()
     if (this.subscriptionThree instanceof Subscription)this.subscriptionTwo.unsubscribe()
+  }
+
+  updateUserInfo(userInfo : any) {
+    this.userInitials = this.userInfoService.getInitials(userInfo.firstname, userInfo.lastname);
+    this.hideMatBadge = userInfo.invitecount == 0;
   }
 
   updatePicInfo(src : string) {

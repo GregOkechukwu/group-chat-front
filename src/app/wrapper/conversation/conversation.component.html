@@ -52,7 +52,7 @@
         <div class = "d-flex flex-nowrap flex-column align-items-center" [style.height.%] = "conversations.length === 0 ? '45' : '100' ">
             <p *ngIf = "conversations.length === 0"> You have no converstions</p>
 
-            <div *ngIf = "conversations.length > 0" class = "d-flex flex-nowrap flex-column align-items-center" [style.height.%] = "'100'">
+            <div *ngIf = "conversations.length > 0" class = "d-flex flex-wrap flex-row justify-content-center align-content-start" [style.height.%] = "'100'">
                 <ng-container *ngFor = "let conversation of conversations">
                     <app-conversation-display 
                         [conversationname] = "conversation.name"

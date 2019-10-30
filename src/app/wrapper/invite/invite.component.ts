@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { Invite } from 'aws-sdk/clients/chime';
 
 @Component({
   selector: 'app-invite',
@@ -6,6 +7,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./invite.component.css']
 })
 export class InviteComponent implements OnInit {
+  @Input() invites : Invite[];
 
   constructor() { }
 

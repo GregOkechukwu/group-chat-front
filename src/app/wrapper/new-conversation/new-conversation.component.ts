@@ -292,7 +292,7 @@ export class NewConversationComponent implements OnInit, AfterViewInit, OnDestro
   queryUsers(callback : Function, value? : string) {
     let criteria = this.parseSearchCriteria(this.getSearchCriteria());
 
-    this.userInfoService.getAllUsers(criteria, value ? value.toLowerCase() : null).subscribe((data : UserInfo[]) => {
+    this.userInfoService.getUsers(criteria, value ? value.toLowerCase() : null).subscribe((data : UserInfo[]) => {
       this.invites.user.searchResults = this.formatSearchResults(data);
       this.selectLookup = this.unSelectAllUsers(this.invites.user.searchResults, this.selectLookup);
       callback(true);
@@ -304,7 +304,7 @@ export class NewConversationComponent implements OnInit, AfterViewInit, OnDestro
   queryFriends(callback : Function, value? : string) {
     let criteria = this.parseSearchCriteria(this.getSearchCriteria());
 
-    this.userInfoService.getAllFriends(criteria, value ? value.toLowerCase() : null).subscribe((data : UserInfo[]) => {
+    this.userInfoService.getFriends(criteria, value ? value.toLowerCase() : null).subscribe((data : UserInfo[]) => {
       this.invites.friend.searchResults = this.formatSearchResults(data);
       this.selectLookup = this.unSelectAllUsers(this.invites.friend.searchResults, this.selectLookup);
       callback(true);
@@ -403,10 +403,10 @@ export class NewConversationComponent implements OnInit, AfterViewInit, OnDestro
     }
 
     data.forEach(user => {
-      let newFullName = this.userInfoService.formatFullName(user.firstname, user.lastname, user.username);
-      user.firstname = newFullName[0];
-      user.lastname = newFullName[1];
-      user.username = newFullName[2];
+      let fullname = this.userInfoService.formatFullname(user.firstname, user.lastname, user.username);
+      user.firstname = fullname[0];
+      user.lastname = fullname[1];
+      user.username = fullname[2];
     });
 
     return data;

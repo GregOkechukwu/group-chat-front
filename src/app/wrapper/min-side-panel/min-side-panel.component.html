@@ -26,8 +26,8 @@
 
   <div class = 'section-icon icon-wrapper d-flex flex-column flex-nowrap align-items-center justify-content-center'
     (click) = "show('showInvites')" [style.background-color] = "showInvites ? '#b4c7e4' : null">
-    <div>
-        <img [src] = 'invitesIcon'>
+    <div matBadge = "{{userInfo.invitecount}}" matBadgeHidden = "{{hideMatBadge}}" matBadgePosition = "above after" matBadgeColor = 'warn'>
+        <img [src] = 'invitesIcon' >
     </div>
   </div>
 </div>

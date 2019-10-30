@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { ImageService } from 'src/app/services/image.service';
-import { CacheService } from 'src/app/services/cache.service';
 
 @Component({
   selector: 'app-user-display',
@@ -25,16 +24,16 @@ export class UserDisplayComponent implements OnInit {
 
   @Output() select = new EventEmitter<string>();
 
-  constructor(private imageService : ImageService, private cache : CacheService) { }
+  constructor(private imageService : ImageService) { }
 
   ngOnInit() {
     if (!this.hasProfilePic) {
-      this.imageService.getDefaultPic(this.cache, (err, data) => {
+      this.imageService.getDefaultPic((err, src) => {
         if (err) {
           console.log(err);
           return;
         }
-        this.defaultPic = <string>this.imageService.sanitize(data);
+        this.defaultPic = <string>this.imageService.sanitize(src);
       });
     } else {
       this.profilePic = this.imageService.encodePic(this.img.Body.data, this.img.ContentType);

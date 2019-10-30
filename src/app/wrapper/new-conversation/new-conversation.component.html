@@ -161,7 +161,7 @@
 
     <div class = "d-flex flex-nowrap flex-column align-items-center" [style.height.%] = "!invites.friend.searchResults || invites.friend.searchResults.length === 0 ? '45' : '100' ">
 
-        <p *ngIf = '!invites.friend.searchResults || invites.friend.searchResults.length === 0' style = 'margin-top : 1rem;'>No friends were found</p>
+        <p *ngIf = '!invites.friend.searchResults || invites.friend.searchResults.length === 0' style = 'margin-top : 1rem;'>You have no friends</p>
 
         <ng-container *ngIf = 'invites.friend.searchResults.length > 0'>
             <ng-container *ngFor = 'let friend of invites.friend.searchResults; index as i'>

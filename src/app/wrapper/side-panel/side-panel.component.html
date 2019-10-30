@@ -5,44 +5,57 @@
       <img height = '136' width = '136' [src] = "hasProfilePic ? profilePic : defaultPic" class = "rounded-circle">
     </div>
     <div id = "profilename">
-      <p>
+      <div>
         {{userInfo.firstname}} {{userInfo.lastname}}
-      </p>
+      </div>
     </div>
 
     <div id = "username">
-      <p>
+      <div>
         {{userInfo.username}}
-      </p>
+      </div>
     </div>
   </div>
 
   <div class = "section-icon rounded"> 
-    <p  (click) = "show('showProfile')" [style.background-color] = "showProfile ? '#b4c7e4' : null">
+    <div  (click) = "show('showProfile')" [style.background-color] = "showProfile ? '#b4c7e4' : null">
       <img [src] = "profileIcon">
-      <a>Profile</a>
-    </p>
+      <span>Profile</span>
+    </div>
   </div>
 
   <div class = "section-icon rounded"> 
-    <p (click) = "show('showConversations')" [style.background-color] = "showConversations ? '#b4c7e4' : null">
+    <div (click) = "show('showConversations')" [style.background-color] = "showConversations ? '#b4c7e4' : null">
       <img [src] = "messageIcon">
-      <a>Conversations</a>
-    </p>
+      <span>Conversations</span>
+    </div>
   </div>
 
   <div class = "section-icon rounded"> 
-    <p (click) = "show('showUsersInChat')" [style.background-color] = "showUsersInChat ? '#b4c7e4' : null"> 
+    <div (click) = "show('showUsersInChat')" [style.background-color] = "showUsersInChat ? '#b4c7e4' : null"> 
       <img [src] = 'friendsIcon'>
-      <a>Friends</a>
-    </p>
+      <span>Friends</span>
+    </div>
   </div>
 
   <div class = "section-icon rounded">
-      <p (click) = "show('showInvites')" [style.background-color] = "showInvites ? '#b4c7e4' : null"> 
-          <img [src] = 'invitesIcon'>
-        <a>Invites</a>
-      </p>
+
+    <div (click) = "show('showInvites')" [style.background-color] = "showInvites ? '#b4c7e4' : null">   
+      
+      <div class = 'img-wrapper'
+        matBadge = '{{userInfo.invitecount}}'
+        matBadgeColor = 'warn'
+        matBadgeHidden = '{{hideMatBadge}}'
+        matBadgePosition = "above before"
+        matBadgeSize = "medium">
+        
+        <img [src] = 'invitesIcon'>
+      </div>
+
+      <span>Invites</span>
+
+    </div>
+
   </div>
 
 </div>

@@ -1,7 +1,6 @@
 .d-flex {
     overflow-y : auto;
     display : inline-block;
-    vertical-align :  top;
     height : 100%;
     width : 99.6%;
     min-width : 100%;
@@ -14,14 +13,15 @@
 }
 
 .invite-wrapper {
-  height : 11.75rem;
+  box-shadow : 0 10px 6px -6px #777; 
+  height : 12.5rem;
   width : 20rem;
   margin : 10px;
 }
 
 .pic-name-wrapper {
   width : 100%;
-  height : 6rem;
+  height : 6.8rem;
   padding : 10px 20px 0 20px 
 }
 
@@ -34,7 +34,7 @@
   height : 100%;
   width : 12rem;
   margin-left : 20px;
-  padding : 5px 0 0 10px;
+  padding : 5px 10px 0 10px;
 }
 
 .accept-decline-wrapper {
@@ -45,19 +45,30 @@
   padding : 0 20px 0 20px;
 }
 
-.invite-section-wrapper, .profile-pic, .invite-wrapper, .name-wrapper {
+.invite-section-wrapper, .invite-wrapper, .name-wrapper {
   border : 1px solid black;
 }
 
 .accept-decline-btn {
   height : 100%;
   width : 6rem;
-  border-bottom : 2px solid black;
+  border-bottom : 2px solid #b4c7e4;
+}
+
+.time-elapsed {
+  display : flex;
+  justify-content : flex-end;
+  height : 15px;
+  margin-bottom : 5px;
+  color : gray;
 }
 
 .accept-decline-btn:hover {
+  border-bottom : 3px solid #b4c7e4;
+  font-size : 1.1rem;
   cursor : pointer;
 }
+
 
 div {
   vertical-align : top;
@@ -66,3 +77,4 @@ div {
 .name-wrapper, .profile-pic, .accept-decline-btn {
   display : inline-block;
 }
+

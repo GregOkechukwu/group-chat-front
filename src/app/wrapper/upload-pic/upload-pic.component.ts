@@ -2,7 +2,6 @@ import { Component,  OnInit,  EventEmitter,  Output, ViewChild } from '@angular/
 import { ImageService } from 'src/app/services/image.service';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { CacheService } from 'src/app/services/cache.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalContent } from '../modal/modal-content.component';
 
@@ -27,7 +26,7 @@ export class UploadPicComponent implements OnInit {
   @Output() updatedPic : EventEmitter<void> = new EventEmitter<void>();
   @Output() goPrevious : EventEmitter<void> = new EventEmitter<void>();
 
-  constructor(private imageService : ImageService,  private activatedRoute : ActivatedRoute, private cache : CacheService, private modalService : NgbModal) { }
+  constructor(private imageService : ImageService,  private activatedRoute : ActivatedRoute, private modalService : NgbModal) { }
 
   ngOnInit() {
     const picNotifier = this.imageService.profilePicNotifier;
@@ -96,7 +95,7 @@ export class UploadPicComponent implements OnInit {
         this.imageService.hasProfilePic = false;
         this.imageService.pic = undefined;
 
-        this.imageService.getDefaultPic(this.cache, (err, data) => {
+        this.imageService.getDefaultPic((err, data) => {
           if (err) {
             console.log(err);
           }

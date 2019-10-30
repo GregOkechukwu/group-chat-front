@@ -31,7 +31,9 @@ export class SidePanelComponent implements OnInit, OnDestroy {
   profileIcon : string;
   messageIcon : string;
   friendsIcon : string;
-  invitesIcon : string
+  invitesIcon : string;
+
+  hideMatBadge : boolean = false;
 
   constructor(
     private uiService : UiService, 
@@ -64,37 +66,41 @@ export class SidePanelComponent implements OnInit, OnDestroy {
 
     this.subscriptionThree = this.userInfoService.profileInfoNotifier$.subscribe(info => {
       for (let key in info) {
-        if (key === 'username')this.userInfo[key] = this.userInfoService.formatUsername(info[key]);
-        if (key === 'firstname')this.userInfo[key] = this.userInfoService.formatFirstOrLast(info[key]);
-        if (key === 'lastname')this.userInfo[key] = this.userInfoService.formatFirstOrLast(info[key]);
+        if (key === 'username')this.userInfo[key] = info[key];
+        if (key === 'firstname')this.userInfo[key] = info[key];
+        if (key === 'lastname')this.userInfo[key] = info[key]
+        if (key === 'invitecount') this.userInfo[key] = info[key];
+
+        this.updateUserInfo(this.userInfo);
       }
     },  err => console.log(err));
   } 
 
   ngOnDestroy() {
-    if (this.subscriptionOne  instanceof Subscription)this.subscriptionOne.unsubscribe()
-    if (this.subscriptionTwo  instanceof Subscription)this.subscriptionTwo.unsubscribe()
-    if (this.subscriptionThree  instanceof Subscription)this.subscriptionTwo.unsubscribe()
+    if (this.subscriptionOne instanceof Subscription)this.subscriptionOne.unsubscribe()
+    if (this.subscriptionTwo instanceof Subscription)this.subscriptionTwo.unsubscribe()
+    if (this.subscriptionThree instanceof Subscription)this.subscriptionTwo.unsubscribe()
   }
 
-  updateUserInfo(userInfo : UserInfo) {
-    let fullname = this.userInfoService.formatFullName(userInfo.firstname, userInfo.lastname, userInfo.username);
+  updateUserInfo(userInfo : any) {
+    let fullname = this.userInfoService.formatFullname(userInfo.firstname, userInfo.lastname, userInfo.username);
     userInfo.firstname = fullname[0];
     userInfo.lastname = fullname[1];
     userInfo.username = fullname[2];
+    this.hideMatBadge = userInfo.invitecount == 0;
   }
 
   updatePicInfo(src : string) {
     this.hasProfilePic = this.imageService.hasProfilePic;
     this.profilePic = this.hasProfilePic ? src : undefined;
-    this.defaultPic = this.hasProfilePic ? undefined : src
+    this.defaultPic = this.hasProfilePic ? undefined : src;
   }
 
   updateIcons(iconLookup : Object) {
     this.profileIcon = <string>this.imageService.sanitize(iconLookup['profile']);
     this.messageIcon = <string>this.imageService.sanitize(iconLookup['message']);
     this.friendsIcon = <string>this.imageService.sanitize(iconLookup['friends']);
-    this.invitesIcon = <string>this.imageService.sanitize(iconLookup['invitation'])
+    this.invitesIcon = <string>this.imageService.sanitize(iconLookup['invitation']);
   }
 
   show(section : string) {

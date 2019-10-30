@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { UiService } from '../services/ui.service';
+import { UserInfoService, Invite } from '../services/user-info.service';
 
 @Component({
   selector: 'app-wrapper',
   templateUrl: './wrapper.component.html',
   styleUrls: ['./wrapper.component.css'],
-  providers : []
 })
 export class WrapperComponent implements OnInit {
   showProfile : boolean;
@@ -21,18 +21,26 @@ export class WrapperComponent implements OnInit {
   bigPanel = 2;
   switchPanel = 3;
 
-  constructor(private uiService : UiService) {}
+  invites : Invite[];
+
+  constructor(private uiService : UiService, private userInfoService : UserInfoService) {}
 
   ngOnInit() {
     this.show('showConversations');
   }
 
-  show(section : string) {
+  async show(section : string) {
     let sectionStatus = this.uiService.showSectionAndGetStatus(section);
+
+    if (sectionStatus.showInvites) {
+      this.invites = await this.getInvites();
+    }
+
     this.showProfile = sectionStatus.showProfile;
     this.showConversations = sectionStatus.showConversation;
     this.showUsersInChat = sectionStatus.showUsersInChat;
-    this.showInvites = sectionStatus.showInvites;
+    this.showInvites = sectionStatus.showInvites;;
+
   }
 
   togglePanel(event : number) {
@@ -58,11 +66,14 @@ export class WrapperComponent implements OnInit {
       this.showFullPanel = false;
       this.uiService.minSidePanelStatus.next(true);
     }
-
   }
 
   updateWindowWidth(event : number) {
     this.innerWidth = event;
+  }
+
+  getInvites() {
+    return this.userInfoService.getInvites().toPromise();
   }
 
 

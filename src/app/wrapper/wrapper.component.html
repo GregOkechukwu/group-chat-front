@@ -20,7 +20,7 @@
     <app-profile *ngIf = 'showProfile'></app-profile>
     <app-conversation *ngIf = 'showConversations'></app-conversation>
     <app-users-in-chat *ngIf = 'showUsersInChat'></app-users-in-chat>
-    <app-invite *ngIf = 'showInvites'></app-invite>
+    <app-invite *ngIf = 'showInvites' [invites] = "invites"></app-invite>
 
     <!-- <app-chat></app-chat> -->     
 </div>

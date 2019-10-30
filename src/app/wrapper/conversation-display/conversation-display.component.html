@@ -1,24 +1,18 @@
+<div class = "conversation-wrapper rounded">
 
-<div class = "d-flex flex-wrap flex-row justify-content-center align-content-start">
-    <div class = "conversation-wrapper">
+    <div class = 'pic-name-wrapper d-flex flex-row flex-nowrap'>
+        <div class = "profile-pic rounded-circle"></div>
 
-      <div class = 'pic-name-wrapper d-flex flex-row flex-nowrap'>
-          <div class = "profile-pic rounded-circle"></div>
-
-          <div class = 'name-wrapper'>
-            <span>{{conversationname}}</span><br>
-            <span style = "font-size : 0.8rem">host: {{hostusername}}</span><br>
-          </div>
-      </div>
-
-      <div style = "text-align : center; margin-top : 1rem;">
-          <span> {{usercount}} member</span>
-      </div>
-
-      <div class = "accept-decline-wrapper">
-          <div class = "accept-decline-btn" style = "margin : 0 1rem 0 0 ">Join</div>
-          <div class = "accept-decline-btn" style = "margin : 0 0 0 1rem ">Leave</div>
-      </div>
-
+        <div class = 'name-wrapper'>
+          <span style = "font-size : 1.1rem">{{conversationname}}</span><br>
+          <div style = "font-size : 0.8rem">host: {{hostusername}}</div>
+          <div class = "member-count" style = "font-size : 0.8rem;">{{usercount}} member</div>
+        </div>
     </div>
+
+    <div class = "accept-decline-wrapper">
+        <div class = "accept-decline-btn" style = "margin : 0 1rem 0 0 ">Join</div>
+        <div class = "accept-decline-btn" style = "margin : 0 0 0 1rem ">Leave</div>
+    </div>
+
   </div>
