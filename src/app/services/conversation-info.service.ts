@@ -6,20 +6,23 @@ import { UserInfoService, Availability, UserInfo } from './user-info.service';
 
 export interface Conversation {
   name : string
-  host : UserInfo
-  users : UserInfo[]
+  host? : UserInfo
+  users? : UserInfo[]
+}
+
+interface Response {
+  cacheable : boolean;
+  result : Conversation[]
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConversationInfoService {
-
-
   constructor(private http : HttpClient, private userInfoService : UserInfoService) { }
 
   getConversations() {
-    return this.http.get<Conversation[]>(`${root}conversations`).pipe(catchError(this.userInfoService.handleError));
+    return this.http.get<Response>(`${root}conversations`).pipe(catchError(this.userInfoService.handleError), map(res => <Conversation[]>res.result));
   }
 
   createConversation(payload : Object) {

@@ -6,7 +6,6 @@ import { Ng2ImgMaxModule } from 'ng2-img-max';
 import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalContent } from './wrapper/modal/modal-content.component';
 
-
 import { AppRoutes } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthentificationModule } from './authentification/authentification.module';
@@ -35,6 +34,11 @@ import { MinSidePanelComponent } from './wrapper/min-side-panel/min-side-panel.c
 import { UserDisplayComponent } from './wrapper/user-display/user-display.component';
 import { RouteService } from './services/route.service';
 import { ConversationDisplayComponent } from './wrapper/conversation-display/conversation-display.component';
+import { InviteComponent } from './wrapper/invite/invite.component';
+import { UiService } from './services/ui.service';
+import { InviteDisplayComponent } from './wrapper/invite-display/invite-display.component';
+import { MatBadgeModule } from '@angular/material/badge';
+
 
 @NgModule({
   declarations: [
@@ -53,7 +57,9 @@ import { ConversationDisplayComponent } from './wrapper/conversation-display/con
     ModalContent,
     MinSidePanelComponent,
     UserDisplayComponent,
-    ConversationDisplayComponent
+    ConversationDisplayComponent,
+    InviteComponent,
+    InviteDisplayComponent
   ],
   imports: [
     CommonModule,
@@ -63,7 +69,8 @@ import { ConversationDisplayComponent } from './wrapper/conversation-display/con
     AuthentificationModule, // routes here are registered first before the main one
     AppRoutes,
     Ng2ImgMaxModule,
-    NgbModule
+    NgbModule,
+    MatBadgeModule
   ],
   exports : [],
 
@@ -78,6 +85,7 @@ import { ConversationDisplayComponent } from './wrapper/conversation-display/con
     AuthService, 
     CacheService,
     ImageService,
+    UiService,
     NgbActiveModal
   ],
 

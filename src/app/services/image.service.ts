@@ -51,12 +51,12 @@ export class ImageService {
           this.pic = undefined;
           this.hasProfilePic = data.hasProfilePic;
 
-          this.getUserPic(data.username, this.hasProfilePic, this.cache, (err, data) => {
+          this.getUserPic(data.username, this.hasProfilePic, (err, data) => {
             if (!err && data) {
               this.pic = this.sanitize(data);
               observer.next(this.pic);
             }
-            this.getDefaultPic(this.cache, (err, data) => {
+            this.getDefaultPic((err, data) => {
               if (err) observer.error(err);
               else {
                 data = this.sanitize(data);
@@ -78,7 +78,9 @@ export class ImageService {
     return new Observable<SafeUrl | AWSError>(subscribe);
   }
 
-  getDefaultPic(cache : CacheService, callback : Function) {
+  getDefaultPic(callback : Function) {
+    let cache = this.cache;
+
     if (cache.hasImage('defaultpic')) {
       callback(null, cache.getImage('defaultpic'));
       return;
@@ -99,7 +101,9 @@ export class ImageService {
     });
   }
 
-  getUserPic(username : string, hasPic : boolean, cache : CacheService, callback : Function) {
+  getUserPic(username : string, hasPic : boolean, callback : Function) {
+    let cache = this.cache;
+    
     if (!hasPic) {
       callback(null, null);
       return;
@@ -118,7 +122,6 @@ export class ImageService {
         callback(err, null);
       }
       else {
-        console.log(img);
         const src = this.encodePic(img.Body, img.ContentType)
         cache.putImage('profilepic', src);
         callback(null, src)
@@ -139,11 +142,11 @@ export class ImageService {
       let iconLookup = {}
 
       for (let i = 0; i < n; i++) { 
-        const param = {
+        const params = {
           Bucket : this.bucketName,
           Key : `${this.pathIconPrefix}/${iconNames[i]}`
         }
-        this.s3.getObject(param, (err, img) => {
+        this.s3.getObject(params, (err, img) => {
           if (err) {
             observer.error(err);
             observer.complete();
@@ -184,11 +187,11 @@ export class ImageService {
 
   encodePic(data, mimeType : string) {
     mimeType = this.formatMime(mimeType);
-    var S = data.reduce(function(a, b) { 
+    var newString = data.reduce(function(a, b) { 
       return a + String.fromCharCode(b) 
     }
       , '');
-    return `data:image/${mimeType};base64,` + btoa(S).replace(/.{76}(?=.)/g,'$&\n');
+    return `data:image/${mimeType};base64,` + btoa(newString).replace(/.{76}(?=.)/g,'$&\n');
   }
 
   sanitize(src : string) : SafeUrl {

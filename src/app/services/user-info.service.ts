@@ -3,6 +3,7 @@ import { HttpClient,  HttpErrorResponse } from '@angular/common/http';
 import { root, RouteService } from './route.service';
 import { catchError, map } from 'rxjs/operators';
 import { throwError,  Subject } from 'rxjs'
+import { Conversation } from './conversation-info.service';
 
 export interface UserInfo {
   username : string;
@@ -13,14 +14,24 @@ export interface UserInfo {
   pic? : any | null;
 }
 
-interface UserInfoResponse {
-  cacheable : boolean;
-  result : UserInfo | UserInfo[];
+export interface Availability {
+  isAvailable : boolean;
 }
 
-export interface Availability {
+export interface Invite {
+  date_sent : string;
+  conversation : Conversation
+  sender : UserInfo
+}
+
+interface RawEntityPayload {
+  raw : any | any[];
+  entities : UserInfo | UserInfo[]
+}
+
+interface Response {
   cacheable : boolean;
-  isAvailable : boolean;
+  result : UserInfo[] | Availability | RawEntityPayload | Invite[] 
 }
 
 @Injectable({
@@ -41,38 +52,50 @@ export class UserInfoService {
     const url = `${root}user/check?${criteria}=${value}`;
     this.routeService.blackListTrie.addWord(url);
 
-    return this.http.post<Availability>(url, {permitWithoutAuthHeader : true}).pipe(catchError(this.handleError), map(res => res.isAvailable));
+    return this.http.post<Response>(url, {permitWithoutAuthHeader : true}).pipe(catchError(this.handleError), map(res => (<Availability>res.result).isAvailable));
   }
 
-  getAllUsers(criteria? : string, value? : string) {
+  getUsers(criteria? : string, value? : string) {
     if (!criteria || !value) {
-      return this.http.get<UserInfoResponse>(`${root}users`).pipe(catchError(this.handleError), map(data => data.result));
+      return this.http.get<Response>(`${root}users`).pipe(catchError(this.handleError), map(data => <UserInfo[]>data.result));
     }
 
-    return this.http.get<UserInfoResponse>(`${root}users?${criteria}=${value}`).pipe(catchError(this.handleError), map(data => data.result));
+    return this.http.get<Response>(`${root}users?${criteria}=${value}`).pipe(catchError(this.handleError), map(data => <UserInfo[]>data.result));
+  }
+
+  getFriends(criteria? : string, value? : string) {
+    if (!criteria || !value) {
+      return this.http.get<Response>(`${root}friends`).pipe(catchError(this.handleError), map(data => <UserInfo[]>data.result));
+    }
+    return this.http.get<Response>(`${root}friends?${criteria}=${value}`).pipe(catchError(this.handleError), map(data => <UserInfo[]>data.result));
   }
 
   getUserInfo() { 
-    return this.http.get<UserInfoResponse>(`${root}user`).pipe(catchError(this.handleError), map(data => data.result));
-  }
+    return this.http.get<Response>(`${root}user`).pipe(catchError(this.handleError), map(data => {
+      data.result = <RawEntityPayload>data.result;
 
-  getAllFriends(criteria? : string, value? : string) {
-    if (!criteria || !value) {
-      return this.http.get<UserInfoResponse>(`${root}friends`).pipe(catchError(this.handleError), map(data => data.result));
-    }
-    return this.http.get<UserInfoResponse>(`${root}friends?${criteria}=${value}`).pipe(catchError(this.handleError), map(data => data.result));
+      let result = {
+        ...data.result.entities[0], 
+        invitecount : data.result.raw[0].invite_count
+      }
+
+      return result;
+    }));
   }
 
   updateUserInfo(payload) {
     return this.http.post(`${root}updateuser`, payload).pipe(catchError(this.handleError));
   }
 
+  getInvites() {
+    return this.http.get<Response>(`${root}invites`).pipe(catchError(this.handleError), map(data => <Invite[]>data.result));
+  }
 
-  formatFullName(first : string, last : string, username : string) {    
+  formatFullname(first : string, last : string, username : string) {    
     let newFirst = this.formatFirstOrLast(first);
     let newLast = this.formatFirstOrLast(last);
-    let newDisplay = this.formatUsername(username);
-    return [newFirst, newLast, newDisplay];
+    let newUsername = this.formatUsername(username);
+    return [newFirst, newLast, newUsername];
   }
 
   formatFirstOrLast(name : string) {
