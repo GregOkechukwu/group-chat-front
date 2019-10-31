@@ -13,12 +13,11 @@ export class ConversationDisplayComponent implements OnInit {
 
   constructor() { }
 
-  renderUserCount() {
-    return this.usercount === 1 ? `${this.usercount} member` : `${this.usercount} members`;
+  ngOnInit() {
   }
 
-  
-  ngOnInit() {
+  renderMemberCount() {
+    return this.usercount === 1 ? `${this.usercount} member` : `${this.usercount} members`;
   }
 
 }
