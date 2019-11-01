@@ -1,6 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { UserInfo, UserInfoService } from 'src/app/services/user-info.service';
 import { ImageService } from 'src/app/services/image.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalContent } from '../modal/modal-content.component';
+import { Observable } from 'rxjs/internal/Observable';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 @Component({
   selector: 'app-invite-display',
@@ -8,15 +12,22 @@ import { ImageService } from 'src/app/services/image.service';
   styleUrls: ['./invite-display.component.css']
 })
 export class InviteDisplayComponent implements OnInit {
+  private SubscriptionOne : Subscription;
+
+  @Output() acceptOrDecline : EventEmitter<any> = new EventEmitter<{index : number, acceptedInvite : boolean}>();
+
+  @Input() index : number;
+  @Input() inviteId : string;
   @Input() dateSent : string;
+  @Input() conversationId : string;
   @Input() conversationName : string;
   @Input() sender : UserInfo;
 
   elapsedTime : string;
   profilePic : string;
-  defaultPic : string
+  defaultPic : string;
 
-  constructor(private userInfoService : UserInfoService, private imageService : ImageService) { }
+  constructor(private userInfoService : UserInfoService, private imageService : ImageService, private modalService : NgbModal) { }
 
   ngOnInit() {
     this.formatName(this.sender);
@@ -39,6 +50,50 @@ export class InviteDisplayComponent implements OnInit {
         this.profilePic = <string>this.imageService.sanitize(src);
       })
     }
+  }
+
+  ngOnDestroy() {
+    if (this.SubscriptionOne instanceof Subscription) this.SubscriptionOne.unsubscribe();
+  }
+
+  acceptInvite(event : KeyboardEvent | MouseEvent) {
+    this.openModal(event, "Confirm Invite", "accept the invite");
+  }
+
+  declineInvite(event : KeyboardEvent | MouseEvent) {
+    this.openModal(event, "Decline Invite", "decline the invite");
+  }
+
+  openModal(event : KeyboardEvent | MouseEvent, header : string, mssg : string) {
+    const modalRef = this.modalService.open(ModalContent, {centered : true});
+    modalRef.componentInstance.header = header;
+    modalRef.componentInstance.mssg = mssg;
+
+    const payload = {
+      invite_id : this.inviteId,
+      conversation_id : this.conversationId
+    }
+
+    modalRef.result.then(header => {
+      let result : Observable<any>;
+      let acceptedInvite = true;
+
+      if (header === 'Confirm Invite') {
+        result = this.userInfoService.acceptInvite(payload);
+      } else {
+        result = this.userInfoService.declineInvite(payload);
+        acceptedInvite = false;
+      }
+
+      this.SubscriptionOne = result.subscribe(done => {
+        this.deleteInvite(this.index, acceptedInvite);
+      }, err => console.log(err));
+    }, dismiss => {})
+
+  }
+
+  deleteInvite(index : number, acceptedInvite : boolean) {
+    this.acceptOrDecline.emit({index, acceptedInvite});
   }
 
   formatName(sender : UserInfo) {

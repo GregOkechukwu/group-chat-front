@@ -12,12 +12,12 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
     constructor(public activeModal : NgbActiveModal) { }
 
-    close(type? : string) {
-      this.activeModal.close(type);
+    close(header? : string) {
+      this.activeModal.close(header);
     }
 
     dismiss(type? : string) {
-      this.activeModal.dismiss(type);
+      this.activeModal.dismiss(type); 
     }
 
   }

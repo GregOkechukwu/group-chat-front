@@ -18,8 +18,8 @@
     </div>
 
     <div class = "accept-decline-wrapper">
-        <div class = "accept-decline-btn" style = "margin : 0 1rem 0 0 ">Accept</div>
-        <div  class = "accept-decline-btn" style = "margin : 0 0 0 1rem ">Decline</div>
+        <div (click) = "acceptInvite($event)" class = "accept-decline-btn" style = "margin : 0 1rem 0 0 ">Accept</div>
+        <div (click) = "declineInvite($event)" class = "accept-decline-btn" style = "margin : 0 0 0 1rem ">Decline</div>
     </div>
     
   </div>

@@ -33,6 +33,7 @@ export class NewConversationComponent implements OnInit, AfterViewInit, OnDestro
   private subscriptionFour : Subscription;
   private subscriptionFive : Subscription;
   private subscriptionSix : Subscription;
+  private subscriptionSeven : Subscription;
 
 
   @Output() back = new EventEmitter<number>();
@@ -133,6 +134,7 @@ export class NewConversationComponent implements OnInit, AfterViewInit, OnDestro
     if (this.subscriptionFour instanceof Subscription) this.subscriptionFour.unsubscribe();
     if (this.subscriptionFive instanceof Subscription) this.subscriptionFive.unsubscribe();
     if (this.subscriptionSix instanceof Subscription) this.subscriptionSix.unsubscribe();
+    if (this.subscriptionSeven instanceof Subscription) this.subscriptionSeven.unsubscribe();
   }
 
   disableFlag(S : string, callback? : Function) {
@@ -434,7 +436,7 @@ export class NewConversationComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   confirmInvites(event : KeyboardEvent | MouseEvent) {
-    this.openModal(event, "Invites", "invite these users");
+    this.openModal(event, "Confirm Invites", "invite these users");
   }
 
   openModal(event : KeyboardEvent | MouseEvent, header : string, mssg : string) {
@@ -452,9 +454,9 @@ export class NewConversationComponent implements OnInit, AfterViewInit, OnDestro
         date_created : new Date()
       }
 
-      this.conversationInfoService.createConversation(conversation).subscribe(data => {
-        this.successfulCreation.emit()
-      }, err => console.log(err))
+      this.subscriptionSeven = this.conversationInfoService.createConversation(conversation).subscribe(data => {
+        this.successfulCreation.emit();
+      }, err => console.log(err));
       
     }, dismiss => {});
   }

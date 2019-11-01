@@ -1,7 +1,7 @@
 import { Component,  OnInit,  ViewChild,  TemplateRef,  ViewChildren,  QueryList,  OnDestroy, ElementRef, OnChanges, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { FormValidatorService } from 'src/app/services/form-validator.service';
 import { Observable,  Subscription,  timer } from 'rxjs';
-import { UserInfoService } from 'src/app/services/user-info.service';
+import { UserInfoService, UserInfo } from 'src/app/services/user-info.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalContent } from '../modal/modal-content.component';
 import { UiService } from 'src/app/services/ui.service';
@@ -31,7 +31,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChildren('inputForms') inputForms : QueryList<ElementRef<any>>
 
-  userInfoPayload : Object;
+  userInfoPayload : UserInfo;
   forms : UserForm;
   formSwitch : number;
   fieldCount : number = 0;
@@ -83,9 +83,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.subscriptionOne instanceof Subscription) this.subscriptionOne.unsubscribe();
-    if (this.subscriptionTwo instanceof Subscription) this.subscriptionTwo.unsubscribe();
-    if (this.subscriptionThree instanceof Subscription) this.subscriptionThree.unsubscribe();
+    let subscriptions = [this.subscriptionOne, this.subscriptionTwo, this.subscriptionThree]
+
+    for (let subscription of subscriptions) {
+      if (subscription instanceof Subscription) subscription.unsubscribe()
+    }
   }
 
   disableFlag(S : string, callback? : Function) {
@@ -223,7 +225,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   updateUserInfo(event : KeyboardEvent | MouseEvent) {
     this.validateInputs(valid => {
       if (valid) {
-        this.openModal(event, 'Update', 'update your profile info');
+        this.openModal(event, 'Confirm Update', 'update your profile info');
       } 
     });
   }

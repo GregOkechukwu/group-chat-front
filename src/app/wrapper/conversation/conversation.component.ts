@@ -52,7 +52,7 @@ export class ConversationComponent implements OnInit, OnDestroy {
   displaySuccessMssg() {
     this.toPage(0);
     this.successfulUpdate = true;
-    this.successMssg = 'Your conversation has been created'
+    this.successMssg = 'Your conversation has been created';
     this.disableFlag('successfulUpdate');
   }
 

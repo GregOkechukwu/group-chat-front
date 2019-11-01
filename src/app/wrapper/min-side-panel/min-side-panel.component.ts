@@ -22,6 +22,7 @@ export class MinSidePanelComponent implements OnInit {
   subscriptionOne : Subscription;
   subscriptionTwo : Subscription;
   subscriptionThree : Subscription;
+  subscriptionFour : Subscription;
   
   userInfo : UserInfo;
   userInitials : string;
@@ -74,17 +75,27 @@ export class MinSidePanelComponent implements OnInit {
       }
       this.updateUserInfo(this.userInfo);
 
-    },  err => console.log(err));
+    });
+
+    this.subscriptionFour = this.userInfoService.inviteCountNotifier$.subscribe(count => {
+      let invitecount = parseInt(this.userInfo.invitecount)
+      this.userInfo.invitecount = (invitecount + count).toString();
+      this.hideMatBadge = this.userInfo.invitecount === '0' 
+
+    });
   }
   ngOnDestroy() {
-    if (this.subscriptionOne instanceof Subscription)this.subscriptionOne.unsubscribe()
-    if (this.subscriptionTwo instanceof Subscription)this.subscriptionTwo.unsubscribe()
-    if (this.subscriptionThree instanceof Subscription)this.subscriptionTwo.unsubscribe()
+    let subscriptions = [this.subscriptionOne, this.subscriptionTwo, this.subscriptionThree, this.subscriptionFour]
+
+    for (let subscription of subscriptions) {
+      if (subscription instanceof Subscription) subscription.unsubscribe()
+    }
+
   }
 
   updateUserInfo(userInfo : any) {
     this.userInitials = this.userInfoService.getInitials(userInfo.firstname, userInfo.lastname);
-    this.hideMatBadge = userInfo.invitecount == 0;
+    this.hideMatBadge = userInfo.invitecount === '0';
   }
 
   updatePicInfo(src : string) {

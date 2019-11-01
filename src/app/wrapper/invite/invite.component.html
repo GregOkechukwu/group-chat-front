@@ -8,14 +8,19 @@
   
   <div class = "d-flex flex-wrap flex-row justify-content-center align-content-start" [style.height.%] = "invites.length === 0 ? '45' : '100'">
     
-    <p *ngIf = "invites.length === 0" style = 'margin-top : 1rem;'>You have no Invites</p>
+    <p *ngIf = "invitesCount === 0" style = 'margin-top : 1rem;'>You have no Invites</p>
 
     <ng-container *ngIf = "invites.length > 0">
-        <ng-container *ngFor = "let invite of invites; index as i">
+        <ng-container *ngFor = "let invite of invites; index as i; trackBy : trackByFn">
             <app-invite-display
+              *ngIf = "!touched[i]"
+              [index] = "i"
+              [inviteId] = "invite.invite_id"
               [dateSent] = "invite.date_sent"
+              [conversationId] = "invite.conversation.conversation_id"
               [conversationName] = "invite.conversation.name"
-              [sender] = "invite.sender">
+              [sender] = "invite.sender"
+              (acceptOrDecline) = "onAcceptOrDecline($event)">
             </app-invite-display>
         </ng-container>
     </ng-container>

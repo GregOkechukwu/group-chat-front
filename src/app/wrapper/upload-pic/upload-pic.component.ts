@@ -115,8 +115,8 @@ export class UploadPicComponent implements OnInit {
     modalRef.componentInstance.header = header;
     modalRef.componentInstance.mssg = mssg;
 
-    modalRef.result.then(confirm => {
-      if (confirm === 'Update') {
+    modalRef.result.then(header => {
+      if (header === 'Confirm Update') { 
         this.uploadPic();
       } else {
         this.removePic();
