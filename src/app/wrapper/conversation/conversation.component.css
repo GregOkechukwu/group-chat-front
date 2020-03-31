@@ -3,12 +3,14 @@
     height : 100%;
     min-width : 20rem;
 }
+
 .conversation-wrapper {
     height : 100%;
     width : 99.6%;
     min-width : 100%;
     margin : 0rem 0.2rem 0.2rem 0.4%;
 }
+
 .d-flex {
     overflow-y : auto;
     display : inline-block;
@@ -18,43 +20,14 @@
     min-width : 100%;
     /* border : 1px solid black; */
 }
-#title {
-    margin :  1rem 0 0 0;
-    height : 2.5rem;
-}
-#title p {
-    color : black;
-}
-
-.defaultWrapper >  div {
-    display : inline-block;
-    height : 20rem;
-    width : 100%;
-    text-align: center;
-    /* border : 1px solid black; */
-}
 
 .button {
     display : inline-block;
-    margin : 0 0 0 1.5rem;
-
+    margin-left : 1.5rem;
     height : 2rem;
     width : 10rem;
-
     background-color : white;
     border : 1px solid black;
-}
-
-.button > span {
-    margin : 0;
-    height : 100%;
-    text-align :  center;
-}
-
-@media screen and (max-width : 42.8125rem) {
-    .adjustmargin { 
-        margin :  0rem 1rem 1rem 1rem;
-    }
 }
 
 .button:hover {
@@ -74,9 +47,6 @@
     text-align :  center;
     /* border : 1px solid black; */
 }
-.focus-div:focus {
-    outline-width: 0;
-}
 
 p {
     color : black;
@@ -84,9 +54,3 @@ p {
     font-weight : 300;
     font-family :  Arial, Helvetica, sans-serif;
 }
-
-input {
-    padding : 10px;
-}
-
-

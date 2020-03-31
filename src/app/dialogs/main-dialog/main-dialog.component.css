@@ -1,0 +1,12 @@
+div {
+    text-align : center;
+}
+
+.dialog-content {
+    margin-top : 3rem;
+}
+
+.mat-dialog-actions {
+    justify-content : center;
+    align-items : center;
+}

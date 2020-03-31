@@ -1,0 +1,9 @@
+div {
+    display : inline-block;
+    width : 16rem;
+    text-align : center;
+    color : white;
+}
+button {
+    font-size : 1.2rem;
+} 

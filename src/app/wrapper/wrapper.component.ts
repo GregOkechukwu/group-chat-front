@@ -1,70 +1,65 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { UiService } from '../services/ui.service';
-import { UserInfoService, Invite } from '../services/user-info.service';
+import { Subscription } from 'rxjs/internal/Subscription';
+import { SectionStatus } from '../interfaces';
 
 @Component({
   selector: 'app-wrapper',
   templateUrl: './wrapper.component.html',
   styleUrls: ['./wrapper.component.css'],
 })
-export class WrapperComponent implements OnInit {
-  showProfile : boolean;
-  showConversations : boolean;
-  showUsersInChat : boolean;
-  showInvites : boolean;
+export class WrapperComponent implements OnInit, AfterViewInit, OnDestroy  {
 
-  showFullPanel : boolean = true;
+  @ViewChild('rootDiv') rootDiv : ElementRef<HTMLDivElement>;
+
+  subscriptions : Subscription[] = [];
+  section : SectionStatus;
+
+  bigPanelState : boolean = true;
+  smallPanelState : boolean = false;
+  noPanelState : boolean = undefined;
+
+  panelState : boolean = this.bigPanelState;
   innerWidth : number;
   
-  offPanel = 0;
-  smallPanel = 1;
-  bigPanel = 2;
-  switchPanel = 3;
+  noPanel : number = 0;
+  smallPanel : number = 1;
+  bigPanel : number = 2;
+  switchPanel : number = 3;
 
-  invites : Invite[];
-
-  constructor(private uiService : UiService, private userInfoService : UserInfoService) {}
+  constructor(private uiService : UiService) { }
 
   ngOnInit() {
-    this.show('showConversations');
+    this.uiService.stopLoadingScreen();
+    this.section = this.uiService.section;
+
+    const subscription = this.uiService.whatToShow$.subscribe((section : SectionStatus) => {
+      this.section = section;
+    });
+    
+    this.subscriptions.push(subscription);
   }
 
-  async show(section : string) {
-    let sectionStatus = this.uiService.showSectionAndGetStatus(section);
+  ngAfterViewInit() {
+    const subscription = this.uiService.disableElementsNotifier$.subscribe(disableDOMTree => {
+      if (disableDOMTree) this.uiService.disableAllElements(this.rootDiv.nativeElement);
+      else this.uiService.enableAllElements(this.rootDiv.nativeElement);
+    });
 
-    if (sectionStatus.showInvites) {
-      this.invites = await this.getInvites();
+    this.subscriptions.push(subscription);
+  }
+
+  ngOnDestroy() {
+    for (const subscription of this.subscriptions) {
+      if (subscription instanceof Subscription) subscription.unsubscribe();
     }
-
-    this.showProfile = sectionStatus.showProfile;
-    this.showConversations = sectionStatus.showConversation;
-    this.showUsersInChat = sectionStatus.showUsersInChat;
-    this.showInvites = sectionStatus.showInvites;;
-
   }
 
   togglePanel(event : number) {
     if (this.innerWidth < 700 && event === this.switchPanel) {
-      if (this.showFullPanel === undefined) {
-        this.showFullPanel = false;
-        this.uiService.minSidePanelStatus.next(true);
-      }
-      else if (this.showFullPanel === false) {
-        this.showFullPanel = undefined;
-        this.uiService.minSidePanelStatus.next(false);
-      }
-      return;
-    }
-
-    if (event !== this.smallPanel) {
-      this.uiService.minSidePanelStatus.next(false);
-      if (event === this.offPanel) this.showFullPanel = undefined;
-      if (event === this.bigPanel) this.showFullPanel = true;
-      if (event === this.switchPanel) this.showFullPanel = !this.showFullPanel;
-    }
-    else if (event === 1) {
-      this.showFullPanel = false;
-      this.uiService.minSidePanelStatus.next(true);
+      this.panelState = this.panelState === this.noPanelState ? this.smallPanelState : this.noPanelState;
+    } else {
+      this.panelState = event === this.noPanel ? this.noPanelState : event === this.bigPanel ? this.bigPanelState : event === this.smallPanel ? this.smallPanelState : !this.panelState;
     }
   }
 
@@ -72,10 +67,12 @@ export class WrapperComponent implements OnInit {
     this.innerWidth = event;
   }
 
-  getInvites() {
-    return this.userInfoService.getInvites().toPromise();
+  getGrayOutCSSClass() {
+    const showingProgressBar = this.uiService.showProgressBar;
+
+    return {
+      'gray-out' : showingProgressBar ? true : false
+    }
   }
-
-
 
 }

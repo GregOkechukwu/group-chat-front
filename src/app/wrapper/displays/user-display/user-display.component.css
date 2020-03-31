@@ -1,0 +1,55 @@
+.conversation {
+    border : 1px solid black;
+    margin-top :  1rem;
+    width :  30rem;
+    height : 5.3rem;;
+    min-height : 5rem;
+    transition : margin-left 0.10s;
+}
+
+.conversation:hover {
+    cursor : pointer;
+    margin-left : 1.2rem;
+}
+
+.user-pic {  
+    display : inline-block;
+    height : 4rem;
+    width : 4rem;
+    margin : 0.76rem 0 0.2rem 1rem;
+    /* border : 1px solid; */
+}
+
+.user-content-wrapper {
+    height : 4rem;
+    width : 75%;
+    margin : 0.76rem 0 0.2rem 1rem;
+    /* border : 1px solid black; */
+}
+
+.user-first-last {
+    border : 1px solid;
+    width : 90%;
+}
+
+.user-content-wrapper-2 {
+    /* border : 0.5px solid black; */
+    height : 1.3rem;
+    width : 90%;    
+    margin-top : 3px;
+}
+
+.select-marker {
+    height : 100%;
+    width : 10px;
+    margin-left : 15px;
+    background-color : #b4c7e4;
+    border-left : 1px solid black;
+}
+
+@media screen and (max-width : 53.125rem) {
+    .conversation {
+        width : 25rem;
+        height : 5.3rem;
+    }
+}

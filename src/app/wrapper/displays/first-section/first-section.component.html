@@ -1,0 +1,15 @@
+<div class = "default-wrapper d-inline-flex flex-column justify-content-center align-items-center" style = "width : 100%" [style.height] = "height === undefined ? '100%' : height">
+    
+  <h5 style = "margin-bottom : 1rem;">{{ title }}</h5>
+
+  <div>
+    <button class = "button rounded adjustmargin" (click) = "onClick(true)">
+      {{ buttonAText }}
+    </button>
+
+    <button class = "button rounded adjustmargin" (click) = "onClick(false)">
+      {{ buttonBText }}
+    </button>
+  </div>
+
+</div>

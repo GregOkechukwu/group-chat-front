@@ -1,124 +1,119 @@
-<ng-container [ngSwitch] = "formSwitch">
+<ng-container [ngSwitch] = "section">
   <ng-container *ngSwitchDefault>
     <ng-container *ngTemplateOutlet = "updateDefault"></ng-container>
   </ng-container>
 
-  <ng-container *ngSwitchCase = "0">
-    <ng-container *ngTemplateOutlet = "chooseUpdate"></ng-container>
+  <ng-container *ngSwitchCase = "updateProfileSection">
+    <button (click) = "goBack()" class = "button rounded" style = "width : 5rem; margin-top : 10px; font-size: 13px" >BACK</button>
+    <ng-container *ngTemplateOutlet = "updateProfileForm"></ng-container>
   </ng-container>
 
-  <ng-container *ngSwitchCase = "1">
-      <ng-container *ngTemplateOutlet = "updateProfile"></ng-container>
-  </ng-container>
-
-  <ng-container *ngSwitchCase = "2">
-      <ng-container *ngTemplateOutlet = "updatePic"></ng-container>
+  <ng-container *ngSwitchCase = "updatePicSection">
+    <button (click) = "goBack()" class = "button rounded" style = "width : 5rem; margin-top : 10px; font-size: 13px" >BACK</button>
+    <ng-container *ngTemplateOutlet = "updatePicForm"></ng-container>
   </ng-container>
 </ng-container>
 
 <ng-template #updateDefault>
-  <div class = "defaultWrapper d-inline-flex container flex-column align-items-center justify-content-center">
-      <p *ngIf = "successfulUpdate" [style.font-size.px] = "'12'" [style.color] = "'green'">{{successMssg}}</p>
-      <h5 [style.margin-bottom.rem] = "'1'">UPDATE PROFILE</h5>
-      <div>
-          <div class = "button adjustmargin rounded" (click) = "toSection(0)">
-            <a>PROFILE INFO</a>
-          </div>
-          <div class = "button adjustmargin rounded" (click) = "toSection(2)">
-            <a>PROFILE PIC</a>
-          </div>
-      </div>
-  </div>
+  <app-first-section
+    [title] = "'MY PROFILE'"
+    [buttonAText] = "'UPDATE INFO'"
+    [buttonBText] = "'UPDATE PIC'"
+    (clickA) = "toSection(updateProfileSection)"
+    (clickB) = "toSection(updatePicSection)">
+  </app-first-section>
 </ng-template>
- 
-<ng-template #chooseUpdate>
-  <div class = "d-inline-flex container flex-column align-items-center justify-content-center">
-    <div id = 'focus-div' class = " defaultWrapper row d-flex flex-column align-items-center justify-content-center" tabIndex = '0' (keydown.enter) = 'toSection(1)'>
-      <h5 [style.margin-bottom.rem] = "'1'">CHOOSE WHAT TO UPDATE</h5>
-      <div>
-        
-        <div id = "groupWrapper" class =  "d-flex justify-content-center flex-row flex-wrap" [ngStyle] = "adjustHeight()">
-            <div class = "button rounded" (click) = "addForm('username')" [ngStyle] = "invertColors('username')">
-                <span>USERNAME</span>
-              </div>
-
-            <div class = "button rounded" (click) = "addForm('firstname')" [ngStyle] = "invertColors('firstname')">
-              <span>FIRST NAME</span>
-            </div>
-  
-            <div class = "button rounded" (click) = "addForm('lastname')" [ngStyle] = "invertColors('lastname')">
-                <span>LAST NAME</span>
-            </div>
-  
-            <div class = "button rounded" (click) = "addForm('email')" [ngStyle] = "invertColors('email')">
-                <span>EMAIL</span>
-            </div>
-        </div>
-        <div class = "button-wrapper">
-            <div class = "button rounded" style =  "margin : 0 0 0 1rem; width : 6rem" (click) = 'goBack(null)'>
-                <span>BACK</span>
-            </div> 
-
-            <div *ngIf = "showNext()" class = "button rounded" style = "margin : 0 0 0 1rem; width : 6rem" (click) = 'toSection(1)'>
-                <span>NEXT</span>
-            </div> 
-        </div>
-
-      </div>
-    </div>
-  </div>
-</ng-template>
-
 
 <ng-template #updateProfileForm>
   <div class = "d-inline-flex container flex-column align-items-center justify-content-center">
-    <div id = 'focus-div' class = " defaultWrapper row d-flex flex-column align-items-center justify-content-center">
+    <h5 style = "margin : 0 0 2rem 0">CHOOSE WHAT TO UPDATE</h5>
+    <div id = 'focus-div' class = "profile-update-wrapper">      
+      <form [formGroup] = "form.profileForm" (ngSubmit) = "onSubmit()">
+        <mat-accordion (click) = "resetBorder()">
+        
+          <mat-expansion-panel #usernamePanel class = "expansion-panel">
 
-      <div [style.height.rem] = "fieldCount > 2 ? '30' :'25'">
+            <mat-expansion-panel-header>
+              <mat-panel-title>Username</mat-panel-title>
+              <mat-panel-description >{{ showDescription('username') }}</mat-panel-description>
+            </mat-expansion-panel-header>
 
-        <h5 [style.margin-bottom.rem] = "'2'">UPDATE PROFILE INFO</h5>
+            <mat-form-field>  
+              <input
+                matInput
+                formControlName = "username"
+                placeholder = "New Username"
+                type = "text">
+                <mat-error align = "end">{{ getErrorMessage(usernameControl) }}</mat-error>
+            </mat-form-field>
 
-        <p *ngIf = "emptyFields || !validEmail || !validUsername" style = "margin-bottom : 1rem" [style.font-size.px] = "'12'" [style.color] = "'red'"> {{errMssg}}</p>
+          </mat-expansion-panel>   
+    
+          <mat-expansion-panel #firstNamePanel class = "expansion-panel">
+            <mat-expansion-panel-header>
+              <mat-panel-title>First Name</mat-panel-title>
+              <mat-panel-description>{{ showDescription('firstName') }}</mat-panel-description>
+            </mat-expansion-panel-header>
+  
+            <mat-form-field>
+              <input
+                matInput
+                formControlName = "firstName"
+                placeholder = "New First Name"
+                type = "text">
+                <mat-error align = "end">{{ getErrorMessage(firstNameControl) }}</mat-error>
+            </mat-form-field>
+          </mat-expansion-panel> 
+    
+          <mat-expansion-panel #lastNamePanel class = "expansion-panel">
+            <mat-expansion-panel-header>
+              <mat-panel-title>Last Name</mat-panel-title>
+              <mat-panel-description>{{ showDescription('lastName') }}</mat-panel-description>
+            </mat-expansion-panel-header>
+  
+            <mat-form-field>
+              <input
+                matInput
+                formControlName = "lastName"
+                placeholder = "New Last Name"
+                type = "text">
+                <mat-error align = "end">{{ getErrorMessage(lastNameControl) }}</mat-error>
+            </mat-form-field>
+          </mat-expansion-panel> 
+    
+          <mat-expansion-panel #emailPanel class = "expansion-panel">
+            <mat-expansion-panel-header>
+              <mat-panel-title>Email</mat-panel-title>
+              <mat-panel-description>{{ showDescription('email') }}</mat-panel-description>
+            </mat-expansion-panel-header>
+  
+            <mat-form-field>
+              <input
+                matInput
+                formControlName = "email"
+                placeholder = "New Email"
+                type = "text">
+                <mat-error align = "end">{{ getErrorMessage(emailControl) }}</mat-error>
+            </mat-form-field>
+          </mat-expansion-panel> 
+  
+        </mat-accordion><br>
 
-        <ng-container *ngIf = "forms.username">
-            <h6>Username</h6>
-            <input #inputForms type = "text" [(ngModel)] = "username" (keydown.enter) = "updateUserInfo($event)">
-        </ng-container>
-
-        <ng-container *ngIf = "forms.firstname">
-            <h6>First Name</h6>
-            <input #inputForms type = "text" [(ngModel)] = "firstname" (keydown.enter) = "updateUserInfo($event)">
-        </ng-container>
-
-        <ng-container *ngIf = "forms.lastname">
-            <h6>Last Name</h6>
-            <input #inputForms type = "text" [(ngModel)] = "lastname" (keydown.enter) = "updateUserInfo($event)">
-        </ng-container>
-
-        <ng-container *ngIf = "forms.email">
-            <h6>Email</h6>
-            <input #inputForms type = "text" [(ngModel)] = "email" (keydown.enter) = "updateUserInfo($event)">
-        </ng-container>
-
-        <div class = 'button-wrapper'>
-            <div class = "button rounded" style = "margin : 0 0 0 1rem; width : 6rem" (click) = 'goBack(0)'>
-                <a>BACK</a>
-            </div> 
-      
-            <div class = "button rounded" style = 'margin : 0 0 0 1rem; width : 6rem' (click) = "updateUserInfo($event)">
-                <a>UPDATE</a>
-            </div>  
+        <div class = "button-wrapper">
+          <button class = "button rounded"  style = "width : 7rem; margin-left : 0rem;">
+            UPDATE
+          </button>
         </div>
+        
+      </form>
 
-      </div>
-      
     </div> 
   </div> 
 </ng-template>
 
 
 <ng-template #updatePicForm>
-    <app-upload-pic (updatedPic) = "displaySuccessMssg()" (goPrevious) = 'goBack(null)'></app-upload-pic>
+  <app-upload-pic (goToUpdateDefault) = "goBack()"></app-upload-pic>
 </ng-template>
 
 

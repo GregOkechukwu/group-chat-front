@@ -1,0 +1,62 @@
+<h5 style = 'margin: 2rem 0 1rem 0;'>{{ title }}</h5>
+
+<div class = "button-wrapper">
+
+  <ng-container *ngIf = "!isAConfirmedList()">
+    <button *ngIf = 'searchedUsers.length > 0' (click) = "goNext()"  [disabled] = "chosenCount === 0 ? true : false" class = "focus-div button rounded">
+        NEXT
+    </button> 
+  </ng-container>
+
+  <ng-container *ngIf = "isAConfirmedList()">
+    <button (click) = "goNext()" class = "focus-div button rounded">
+      CONFIRM
+    </button>
+  </ng-container>
+
+</div>   
+
+<div class = "d-flex flex-nowrap flex-column align-items-center">
+
+  <ng-container *ngIf = "!isAConfirmedList()">
+    <p *ngIf = '!searchedUsers || searchedUsers.length === 0' style = 'margin-top : 10rem;'>{{ notFoundText }}</p>
+
+    <ng-container *ngIf = 'searchedUsers.length > 0'>
+      <app-user-display 
+        *ngFor = 'let user of searchedUsers; index as i'
+        [index] = "i"
+        [userId] = "user.userId"
+        [username] = "user.username" 
+        [firstName] = "user.firstName" 
+        [lastName] = "user.lastName" 
+        [isOnline] = "user.isOnline" 
+        [base64] = "user.byteArrBase64" 
+        [mimeType] = "user.mimeType"
+        [canToggle] = "true"
+        (select) = "chooseUser($event)">
+      </app-user-display>
+    </ng-container>
+
+  </ng-container>
+
+  <ng-container *ngIf = "isAConfirmedList()">
+
+    <ng-container *ngFor = 'let user of searchedUsers; index as i'>
+      <app-user-display 
+          *ngIf = "chosenUsers[i]"
+          [index] = "i"
+          [userId] = "user.userId"
+          [username] = "user.username" 
+          [firstName] = "user.firstName" 
+          [lastName] = "user.lastName" 
+          [isOnline] = "user.isOnline" 
+          [base64] = "user.byteArrBase64" 
+          [mimeType] = "user.mimeType"
+          [canToggle] = "false"
+          (select) = "chooseUser($event)">
+      </app-user-display>
+    </ng-container>
+
+  </ng-container>
+
+</div> 

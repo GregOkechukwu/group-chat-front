@@ -1,30 +1,26 @@
-import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ImageService } from 'src/app/services/image.service';
-import { Subscription } from 'rxjs';
-import { UserInfoService, UserInfo } from 'src/app/services/user-info.service';
+import { UserInfoService } from 'src/app/services/user-info.service';
 import { UiService } from 'src/app/services/ui.service';
+import { CurrentUser, SectionStatus } from 'src/app/interfaces';
+import { InviteInfoService } from 'src/app/services/invite-info.service';
+import { Subscription } from 'rxjs/internal/Subscription';
+import { DataManipulationService } from 'src/app/services/data-manipulation.service';
 
 @Component({
   selector: 'app-min-side-panel',
   templateUrl: './min-side-panel.component.html',
   styleUrls: ['./min-side-panel.component.css']
 })
-export class MinSidePanelComponent implements OnInit {
+export class MinSidePanelComponent implements OnInit, OnDestroy {
 
-  @Output() whatToShow  = new EventEmitter<string>();
-
-  @Input() showProfile : boolean;
-  @Input() showConversations : boolean;
-  @Input() showUsersInChat : boolean;
-  @Input() showInvites : boolean;
-
-  subscriptionOne : Subscription;
-  subscriptionTwo : Subscription;
-  subscriptionThree : Subscription;
-  subscriptionFour : Subscription;
+  @ViewChild('rootDiv') rootDiv : ElementRef<HTMLDivElement>;
   
-  userInfo : UserInfo;
+  section : SectionStatus;
+  subscriptions : Subscription[] = [];
+  
+  userInfo : CurrentUser;
   userInitials : string;
 
   profilePic : string;
@@ -39,69 +35,80 @@ export class MinSidePanelComponent implements OnInit {
   hideMatBadge : boolean = true;
 
   constructor(
+    private dataManipulationService : DataManipulationService,
     private uiService : UiService, 
     private activatedRoute : ActivatedRoute, 
     private imageService : ImageService, 
-    private userInfoService : UserInfoService
+    private userInfoService : UserInfoService,
+    private inviteInfoService : InviteInfoService
   ) { }
 
-  ngOnInit() {
+  ngOnInit() {  
+    this.section = this.uiService.section;
+
     const resolvedData = this.activatedRoute.data;
-    const picNotifier$ = this.imageService.profilePicNotifier$;
+    const profilePicNotifier = this.imageService.profilePicNotifier, profilePicNotifier$ = this.imageService.profilePicNotifier$;
+    const profileUpdateNotifier = this.userInfoService.profileUpdateNotifier, profileUpdateNotifier$ = this.userInfoService.profileUpdateNotifier$;
+    const inviteCountNotifier = this.inviteInfoService.inviteCountNotfier, inviteCountNotifier$ = this.inviteInfoService.inviteCountNotfier$;
+    const whatToShow$ = this.uiService.whatToShow$;
 
-    this.subscriptionOne = resolvedData.subscribe(data => {
-      let picSrc = <string>data.image[0]
-      let iconLookup = data.image[1];
+    const subscriptionOne = resolvedData.subscribe((data : {user : CurrentUser, inviteCount : number, images : any[]}) => {
+      const {user, inviteCount, images} = data;
 
-      this.userInfo = data.user;
+      const picSrc = <string>images[0];
+      const iconLookup = images[1];
       
-      this.updateUserInfo(this.userInfo);
-      this.updatePicInfo(picSrc);
       this.updateIcons(iconLookup);
-    });
 
-    this.subscriptionTwo = picNotifier$.subscribe(src => {
-      if (src) {
-        this.updatePicInfo(src);
+      if (!this.uiService.hasUsedResolver) {
+        profileUpdateNotifier.next(user);
+        inviteCountNotifier.next(inviteCount);
+        profilePicNotifier.next(picSrc);
+        
+        this.uiService.hasUsedResolver = true;
       }
-    },  err => console.log(err));
-
-    this.subscriptionThree = this.userInfoService.profileInfoNotifier$.subscribe(info => {
-      for (let key in info) {
-        if (key === 'username')this.userInfo[key] = info[key]
-        if (key === 'firstname')this.userInfo[key] = info[key]
-        if (key === 'lastname')this.userInfo[key] = info[key]
-        if (key === 'invitecount') this.userInfo[key] = info[key];
-      }
-      this.updateUserInfo(this.userInfo);
-
+    
     });
 
-    this.subscriptionFour = this.userInfoService.inviteCountNotifier$.subscribe(count => {
-      let invitecount = parseInt(this.userInfo.invitecount)
-      this.userInfo.invitecount = (invitecount + count).toString();
-      this.hideMatBadge = this.userInfo.invitecount === '0' 
-
+    const subscriptionTwo = profilePicNotifier$.subscribe((src : string) => {
+      if (src) this.updatePicInfo(src);
     });
+
+    /* IMPLEMENT A CACHE TO IMPROVE PERFORMANCE */
+    const subscriptionThree = profileUpdateNotifier$.subscribe((user : CurrentUser) => {
+      if (user) this.updateUserInfo(user);
+    });
+
+    /* IMPLEMENT A CACHE TO IMPROVE PERFORMANCE */
+    const subscriptionFour = inviteCountNotifier$.subscribe((inviteCount : number) => {
+      if (inviteCount > -1) this.updateInviteCount(inviteCount);
+    });
+
+    const subscriptionFive = whatToShow$.subscribe((section : SectionStatus) => {
+      this.section = section;
+    });
+
+    this.subscriptions.push(subscriptionOne, subscriptionTwo, subscriptionThree, subscriptionFour, subscriptionFive);
   }
+  
   ngOnDestroy() {
-    let subscriptions = [this.subscriptionOne, this.subscriptionTwo, this.subscriptionThree, this.subscriptionFour]
-
-    for (let subscription of subscriptions) {
-      if (subscription instanceof Subscription) subscription.unsubscribe()
-    }
-
+    this.uiService.unsubscribeFromSubscriptions(this.subscriptions);
   }
 
-  updateUserInfo(userInfo : any) {
-    this.userInitials = this.userInfoService.getInitials(userInfo.firstname, userInfo.lastname);
-    this.hideMatBadge = userInfo.invitecount === '0';
+  updateUserInfo(userInfo : CurrentUser) {
+    this.userInitials = this.dataManipulationService.getInitials(userInfo.firstName, userInfo.lastName);
+    this.userInfo = userInfo;
+  }
+
+  updateInviteCount(inviteCount : number) {
+    this.userInfo.inviteCount = inviteCount;
+    this.hideMatBadge = inviteCount === 0;
   }
 
   updatePicInfo(src : string) {
     this.hasProfilePic = this.imageService.hasProfilePic;
     this.profilePic = this.hasProfilePic ? src : undefined;
-    this.defaultPic = this.hasProfilePic ? undefined : src
+    this.defaultPic = this.hasProfilePic ? undefined : src;
   }
 
   updateIcons(icons : Object) {
@@ -111,14 +118,13 @@ export class MinSidePanelComponent implements OnInit {
     this.invitesIcon = <string>this.imageService.sanitize(icons['invitation-big']);
   }
   
-  show(section : string) {
-    let sectionStatus = this.uiService.showSectionAndGetStatus(section);
-    
-    this.showProfile = sectionStatus.showProfile;
-    this.showConversations = sectionStatus.showConversation;
-    this.showUsersInChat = sectionStatus.showUsersInChat;
-    this.showInvites = sectionStatus.showInvites;
+  show(sectionName : string) {
+    const section = this.uiService.section;
 
-    this.whatToShow.emit(section);
+    for (const key in section) {
+      section[key] = key === sectionName ? true : false;
+    }
+
+    this.uiService.whatToShow.next(section);
   }
 }

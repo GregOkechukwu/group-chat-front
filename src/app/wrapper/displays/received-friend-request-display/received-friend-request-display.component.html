@@ -1,0 +1,28 @@
+<div class = "friend-request-wrapper rounded">
+
+  <div class = 'pic-name-wrapper d-flex'>
+      <div class = "d-inline-flex flex-column flex-nowrap">
+          <div class = "profile-pic rounded-circle">
+              <img [src] = "pic" height = '76.8' width = '76.8' class = "rounded-circle" [ngStyle] = "uiService.styleBorder(hasProfilePic)">
+          </div>
+          <span style = 'margin : 6px 0 0 11px; font-size : 0.8rem;'>
+              <span [style.color] = "isOnline ? '#2E8B57' : '#FF4500'">&#9679;</span>
+              {{ isOnline ? 'online' : 'offline' }}
+          </span>
+      </div>
+
+      <div class = "name-wrapper">
+        <span style = "font-size : 1.1rem">{{ senderFirstName }}</span><br>
+        <span style = "font-size : 1.1rem">{{ senderLastName }}</span>
+        <div style = "font-size : 0.8rem;">{{ senderUsername }}</div>
+        <div class = "time-elapsed" style = "font-size : 0.8rem;">{{ elapsedTime }}</div>
+      </div>
+  </div>
+  
+  <div class = "accept-decline-wrapper">
+      <div (click) = "acceptFriendRequest()" class = "accept-decline-btn" style = "margin-right : 1rem ">Accept</div>
+      <div (click) = "declineFriendRequest()" class = "accept-decline-btn" style = "margin-left : 1rem ">Decline</div>
+  </div>
+  
+</div>
+

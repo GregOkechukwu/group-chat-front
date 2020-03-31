@@ -1,0 +1,148 @@
+<div class = "container" >
+  <div class = "row d-flex flex-row align-items-center justify-content-center">
+    <div class = "login-wrapper"> 
+      <div class = "progess-bar-wrapper">
+        <mat-progress-bar *ngIf = "uiService.showProgressBar" [appProgressBarColor] = "'black'" mode = "indeterminate"></mat-progress-bar>
+      </div>  
+
+      <div #rootDiv [ngClass] = "getGrayOutCSSClass()">
+        <div class = "title-wrapper"> 
+          <h4>{{getSectionName()}}</h4>
+        </div>
+  
+        <div class = "content-wrapper d-flex flex-column justify-content-center align-items-center" >
+  
+          <ng-container [ngSwitch] = "section">
+            <ng-container *ngSwitchCase = "loginSection">
+              <ng-container *ngTemplateOutlet = "loginForm"></ng-container>
+            </ng-container>
+  
+            <ng-container *ngSwitchCase = "verifySection">
+              <ng-container *ngTemplateOutlet = "verifyForm"></ng-container>
+            </ng-container>
+        
+            <ng-container *ngSwitchCase = "recoverSection">
+              <ng-container *ngTemplateOutlet = "recoverForm"></ng-container>
+            </ng-container>
+          </ng-container>
+  
+        </div>
+  
+        <div class = "login-footer-wrapper" [style.width.rem] = "section > loginSection ? '10' : '14.5'">
+          <ng-container *ngTemplateOutlet = "loginFooter"></ng-container>
+        </div>
+      </div>
+
+
+    </div> 
+  </div>
+</div>
+
+<ng-template #loginFooter>
+  <span>&#8729; <a [routerLink] (click) = "goToRegister()" >Register</a></span>
+
+  <ng-container *ngIf = "section === loginSection"> 
+      <span style = "margin-left: 8px">&#8729; <a [routerLink] (click) = "goToForgotPassword()">Forgot Password </a></span>
+  </ng-container>
+
+  <ng-container *ngIf = "section > loginSection"> 
+      <span style = "margin-left: 8px">&#8729; <a [routerLink] (click) = "goToLogin()"> Login</a></span>
+  </ng-container>
+</ng-template>
+
+<ng-template #loginForm>
+  <div *ngIf = "showInvalidCredentialsMssg" class = "small-font-size mssg-bottom-margin" [style.color] = "'red'">
+    <span>Invalid Credentials</span>
+  </div>
+
+  <form [formGroup] = "form.loginForm" (ngSubmit) = "onSubmit('loginForm')" class = "flex-center-column">
+    <mat-form-field>
+      <input
+        (keypress) = "onKeyPress()" 
+        matInput
+        formControlName = "usernameOrEmail"
+        placeholder = "Username or Email"
+        type = "text">
+        <mat-error align = "end"></mat-error>
+    </mat-form-field>
+    
+    <mat-form-field> 
+      <input
+        (keypress) = "onKeyPress()"  
+        matInput
+        formControlName = "password"
+        placeholder = "Password" 
+        type = "password">
+        <mat-error align = "end"></mat-error>
+    </mat-form-field>
+    
+    <div class = "field-wrapper">
+      <button mat-button>Submit</button>
+    </div>
+  </form>
+
+</ng-template>
+
+<ng-template #verifyForm>
+
+  <form [formGroup] = "form.verifyForm" (ngSubmit) = "onSubmit('verifyForm')" class = "flex-center-column">
+    <mat-form-field> 
+      <input 
+        matInput
+        formControlName = "username" 
+        placeholder = "Username" 
+        type = "text">
+        <mat-error align = "end">{{ getErrorMessage(usernameControl) }}</mat-error>  
+    </mat-form-field>
+
+    <div class = "field-wrapper">
+      <button mat-button>Submit</button>
+    </div>
+  </form>
+
+</ng-template>
+
+<ng-template #recoverForm>
+
+  <div *ngIf = "section === recoverSection" class = "small-font-size mssg-bottom-margin">
+    <span>Verification Code has been sent to </span><b>{{ emailDestination }}</b>
+  </div>
+
+  <form [formGroup] = "form.recoverForm" (ngSubmit) = "onSubmit('recoverForm')" class = "flex-center-column">
+    <mat-form-field>
+      <input 
+        matInput
+        formControlName = "verificationCode" 
+        placeholder = "Verification Code" 
+        type = "password">
+        <mat-error align = "end">{{ getErrorMessage(verificationCodeControl) }}</mat-error>   
+    </mat-form-field>
+  
+    <mat-form-field>
+      <input 
+        matInput
+        formControlName = "newPassword"  
+        placeholder = "New Password"
+        type = "password">
+        <mat-error align = "end">{{ getErrorMessage(newPasswordControl) }}</mat-error>   
+    </mat-form-field>
+  
+    <mat-form-field>
+      <input 
+        matInput
+        formControlName = "rePassword"  
+        placeholder = "Re-enter Password"
+        type = "password">
+        <mat-error align = "end">{{ getErrorMessage(rePasswordControl) }}</mat-error>   
+    </mat-form-field>
+      
+      <div class = "field-wrapper">
+        <button mat-button>Submit</button>
+      </div>
+  </form>
+
+</ng-template>
+
+
+
+

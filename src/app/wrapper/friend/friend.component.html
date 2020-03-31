@@ -1,0 +1,159 @@
+<button *ngIf = "section > addManageFriendsSection" (click) = "goBack()" class = "button rounded" style = "width : 5rem; margin-top : 10px; font-size: 13px" >BACK</button>
+
+<ng-container [ngSwitch] = 'section'>
+
+  <ng-container *ngSwitchCase = 'addManageFriendsSection'>
+    <ng-container *ngTemplateOutlet = "addManageFriends"></ng-container>
+  </ng-container>
+
+  <ng-container *ngSwitchCase = 'addFriendsSection'> 
+    <ng-container *ngTemplateOutlet = "addFriends"></ng-container>
+  </ng-container>
+
+  <ng-container *ngSwitchCase = 'manageFriendsSection'>
+    <ng-container *ngTemplateOutlet = "manageFriends"></ng-container>
+  </ng-container>
+
+  <ng-container *ngSwitchCase = 'currentFriendsSection'>
+    <ng-container *ngTemplateOutlet = "currentFriends"></ng-container>
+  </ng-container>
+
+  <ng-container *ngSwitchCase = 'manageFriendRequestsSection'>
+    <ng-container *ngTemplateOutlet = "manageFriendRequests"></ng-container>
+  </ng-container>
+
+  <ng-container *ngSwitchCase = 'friendRequestsReceivedSection'>
+    <ng-container *ngTemplateOutlet = "friendRequestsReceived"></ng-container>
+  </ng-container>
+
+  <ng-container *ngSwitchCase = 'friendRequestsSentSection'>
+    <ng-container *ngTemplateOutlet = "friendRequestsSent"></ng-container>
+  </ng-container>
+
+</ng-container> 
+
+<ng-template #addManageFriends>
+  <app-first-section
+    [title] = "'MY FRIENDS'"
+    [buttonAText] = "'ADD'"
+    [buttonBText] = "'MANAGE'"
+    (clickA) = "toSection(addFriendsSection)"
+    (clickB) = "toSection(manageFriendsSection)">
+  </app-first-section>
+</ng-template>
+
+<ng-template #addFriends>
+  <app-add-friend (goBackToFriends) = "goBack()"></app-add-friend>
+</ng-template>
+
+<ng-template #manageFriends>
+  <app-first-section
+    [title] = "'MANAGE FRIENDS'"
+    [buttonAText] = "'REQUESTS'"
+    [buttonBText] = "'CURRENT'"
+    [height] = "'89.5%'"
+    (clickA) = "toSection(manageFriendRequestsSection)"
+    (clickB) = "getCurrentFriends()">
+  </app-first-section>
+</ng-template>
+
+<ng-template #manageFriendRequests>
+  <app-first-section
+    [title] = "'MY FRIENDS REQUESTS'"
+    [buttonAText] = "'RECEIVED'"
+    [buttonBText] = "'SENT'"
+    [height] = "'89.5%'"
+    (clickA) = "getRecievedFriendRequests()"
+    (clickB) = "getSentFriendRequests()">
+  </app-first-section>
+</ng-template>
+
+<ng-template #friendRequestsReceived>
+  <div class = 'd-flex flex-nowrap flex-column align-items-center justify-content-center'>
+    <h5 style = 'margin-top : 2rem; margin-bottom : 1rem'>MY RECEIVED FRIEND REQUESTS</h5>
+    
+    <div class = "d-flex flex-wrap flex-row justify-content-center align-content-start">
+      
+      <p *ngIf = "!friendRequests || friendRequests.length === 0" style = 'margin-top : 10rem;'>YOU HAVE NO RECEIVED FRIEND REQUESTS</p>
+  
+      <ng-container *ngIf = "friendRequests.length > 0">
+          <ng-container *ngFor = "let friendRequest of friendRequests; index as i;">
+              <app-received-friend-request-display
+                [index] = "i"
+                [friendRequestId] = "friendRequest.friendRequestId"
+                [senderUsername] = "friendRequest.username"
+                [senderFirstName] = "friendRequest.firstName"
+                [senderLastName] = "friendRequest.lastName"
+                [isOnline] = "friendRequest.isOnline"
+                [hasProfilePic] = "friendRequest.hasProfilePic"
+                [dateSent] = "friendRequest.dateSent"
+                [base64] = "friendRequest.byteArrBase64"
+                [mimeType] = "friendRequest.mimeType"
+                (acceptOrDecline) = "onAcceptOrDeclineFriendRequest($event)">
+              </app-received-friend-request-display>
+          </ng-container>
+      </ng-container>
+  
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #friendRequestsSent>
+  <div class = 'd-flex flex-nowrap flex-column align-items-center justify-content-center'>
+    <h5 style = 'margin-top : 2rem; margin-bottom : 1rem'>MY SENT FRIEND REQUESTS</h5>
+    
+    <div class = "d-flex flex-wrap flex-row justify-content-center align-content-start">
+      
+      <p *ngIf = "!friendRequests || friendRequests.length === 0" style = 'margin-top : 10rem;'>YOU HAVE NO SENT FRIEND REQUESTS</p>
+  
+      <ng-container *ngIf = "friendRequests.length > 0">
+          <ng-container *ngFor = "let friendRequest of friendRequests; index as i;">
+              <app-sent-friend-request-display
+                [index] = "i"
+                [friendRequestId] = "friendRequest.friendRequestId"
+                [recipientUsername] = "friendRequest.username"
+                [recipientFirstName] = "friendRequest.firstName"
+                [recipientLastName] = "friendRequest.lastName"
+                [isOnline] = "friendRequest.isOnline"
+                [hasProfilePic] = "friendRequest.hasProfilePic"
+                [dateSent] = "friendRequest.dateSent"
+                [base64] = "friendRequest.byteArrBase64"
+                [mimeType] = "friendRequest.mimeType"
+                (cancel) = "onCancelFriendRequest($event)">
+              </app-sent-friend-request-display>
+          </ng-container>
+      </ng-container>
+      
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #currentFriends>
+  <div class = 'd-flex flex-nowrap flex-column align-items-center justify-content-center'>
+    <h5 style = 'margin-top : 2rem; margin-bottom : 1rem'>MY CURRENT FRIENDS</h5>
+    
+    <div class = "d-flex flex-wrap flex-row justify-content-center align-content-start">
+      
+      <p *ngIf = "!friends || friends.length === 0" style = 'margin-top : 10rem;'>YOU HAVE NO CURRENT FRIENDS</p>
+  
+      <ng-container *ngIf = "friends.length > 0">
+          <ng-container *ngFor = "let friend of friends; index as i;">
+              <app-current-friend-display
+                [index] = "i"
+                [friendId] = "friend.userId"
+                [friendUsername] = "friend.username"
+                [friendFirstName] = "friend.firstName"
+                [friendLastName] = "friend.lastName"
+                [isOnline] = "friend.isOnline"
+                [hasProfilePic] = "friend.hasProfilePic"
+                [dateAdded] = "friend.dateAdded"
+                [base64] = "friend.byteArrBase64"
+                [mimeType] = "friend.mimeType"
+                (remove) = "onRemoveFriend($event)">
+              </app-current-friend-display>
+          </ng-container>
+      </ng-container>
+      
+    </div>
+  </div>
+</ng-template>

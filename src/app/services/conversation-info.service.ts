@@ -1,19 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { root } from './route.service';
+import { env } from '../../environments/environment';
 import { catchError, map } from 'rxjs/operators';
-import { UserInfoService, Availability, UserInfo } from './user-info.service';
+import { UserInfoService } from './user-info.service';
+import { Availability, Conversation } from '../interfaces';
 
-export interface Conversation {
-  name : string
-  host? : UserInfo
-  users? : UserInfo[]
-}
-
-interface Response {
-  cacheable : boolean;
-  result : Conversation[]
-}
+const conversationPath = 'conversation';
 
 @Injectable({
   providedIn: 'root'
@@ -21,16 +13,17 @@ interface Response {
 export class ConversationInfoService {
   constructor(private http : HttpClient, private userInfoService : UserInfoService) { }
 
+  checkConversationNameNotTaken(conversationName : string) {
+    return this.http.get<Availability>(`${env.ROOT}${conversationPath}/check?name=${conversationName}`).pipe(catchError(this.userInfoService.handleError), map(data => data.conversationNameTaken));
+  }
+
+  saveConversationAndSendInvites(conversationName : string, invitedUsers : string[], dateCreated : string) {
+    const payload = { conversationName, invitedUsers, dateCreated };
+    return this.http.post(`${env.ROOT}${conversationPath}`, payload).pipe(catchError(this.userInfoService.handleError));
+  }
+
   getConversations() {
-    return this.http.get<Response>(`${root}conversations`).pipe(catchError(this.userInfoService.handleError), map(res => <Conversation[]>res.result));
+    return this.http.get<{conversations : Conversation[]}>(`${env.ROOT}${conversationPath}`).pipe(catchError(this.userInfoService.handleError), map(data => data.conversations));
   }
 
-  createConversation(payload : Object) {
-    return this.http.post(`${root}conversation`, payload).pipe(catchError(this.userInfoService.handleError));
-  }
-
-  checkAvailability(criteria : string, value : string) {
-    const url = `${root}conversation/check?${criteria}=${value}`;
-    return this.http.get<Availability>(url).pipe(catchError(this.userInfoService.handleError), map(res => res.isAvailable));
-  }
 }

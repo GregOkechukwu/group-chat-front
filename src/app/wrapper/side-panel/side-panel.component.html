@@ -2,50 +2,43 @@
   <div id = "profile" class = "d-flex flex-column flex-nowrap align-items-center justify-content-center">
     <div id = "profilepic" class = "rounded-circle justify-content-center align-items-center d-flex flex-row"
       [style.border] = "hasProfilePic ? '1px solid black' : '0'">
-      <img height = '136' width = '136' [src] = "hasProfilePic ? profilePic : defaultPic" class = "rounded-circle">
+      <img style = "background-color : white;" height = '136' width = '136' [src] = "hasProfilePic ? profilePic : defaultPic" class = "rounded-circle">
     </div>
-    <div id = "profilename">
+    <div id = "profile-name">
       <div>
-        {{userInfo.firstname}} {{userInfo.lastname}}
+        {{ userInfo.firstName }} {{ userInfo.lastName }}
       </div>
     </div>
 
     <div id = "username">
       <div>
-        {{userInfo.username}}
+        {{ userInfo.username }}
       </div>
     </div>
   </div>
 
   <div class = "section-icon rounded"> 
-    <div  (click) = "show('showProfile')" [style.background-color] = "showProfile ? '#b4c7e4' : null">
+    <div (click) = "show('showProfile')" [style.background-color] = "section.showProfile ? '#b4c7e4' : null">
       <img [src] = "profileIcon">
       <span>Profile</span>
     </div>
   </div>
 
   <div class = "section-icon rounded"> 
-    <div (click) = "show('showConversations')" [style.background-color] = "showConversations ? '#b4c7e4' : null">
+    <div (click) = "show('showConversations')" [style.background-color] = "section.showConversations ? '#b4c7e4' : null">
       <img [src] = "messageIcon">
       <span>Conversations</span>
     </div>
   </div>
 
-  <div class = "section-icon rounded"> 
-    <div (click) = "show('showUsersInChat')" [style.background-color] = "showUsersInChat ? '#b4c7e4' : null"> 
-      <img [src] = 'friendsIcon'>
-      <span>Friends</span>
-    </div>
-  </div>
-
   <div class = "section-icon rounded">
 
-    <div (click) = "show('showInvites')" [style.background-color] = "showInvites ? '#b4c7e4' : null">   
+    <div (click) = "show('showInvites')" [style.background-color] = "section.showInvites ? '#b4c7e4' : null">   
       
       <div class = 'img-wrapper'
-        matBadge = '{{userInfo.invitecount}}'
+        matBadge = '{{ userInfo.inviteCount }}'
         matBadgeColor = 'warn'
-        matBadgeHidden = '{{hideMatBadge}}'
+        matBadgeHidden = '{{ hideMatBadge }}'
         matBadgePosition = "above before"
         matBadgeSize = "medium">
         
@@ -57,5 +50,13 @@
     </div>
 
   </div>
+
+  <div class = "section-icon rounded"> 
+    <div (click) = "show('showFriends')" [style.background-color] = "section.showFriends ? '#b4c7e4' : null"> 
+      <img [src] = 'friendsIcon'>
+      <span>Friends</span>
+    </div>
+  </div>
+
 
 </div>

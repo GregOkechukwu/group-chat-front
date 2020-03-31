@@ -8,8 +8,6 @@
     height : 100%;
     width :  19.8rem;
     margin : 0 0 0.2rem 0;
-    /* border : 0.1px solid black; */
-
 }
 
 #profile {
@@ -19,15 +17,14 @@
     margin : 1.5rem;
 }
 
-#profilepic {
+#profile-pic {
     height : 8.5rem;
     width : 8.5rem;
     margin :  0.7rem 0 0 0;
     border :  1px solid black;
 }
 
-#profilename { 
-    /* border :  1px solid black; */
+#profile-name { 
     height : 1.5rem;
     width :  99.5%;   
     margin :  1rem 0 0 0;
@@ -38,8 +35,6 @@
 #username {
     margin : 0.5rem 0 0 0;
     font-size : 0.9rem;
-    font-style : italic;
-    /* border :  1px solid black; */
     width :  99.5%;  
     height : 1.5rem; 
 }
@@ -47,7 +42,6 @@
 #username > div {
     color : #808080
 }
-
 
 .section-icon {
     height :  2rem;
@@ -69,18 +63,17 @@ span {
     font-size : 0.9rem;
 }
 
-img {
-    margin-right :  0.4rem
+.img-wrapper, .section-icon > div > img {
+    margin-right : 0.4rem;
 }
 
 .img-wrapper {
     display : inline-block;
     height : 16px;
     width : 16px;
-    margin-right :  0.4rem
 }
 
-.section-icon, #profilepic {
+.section-icon, #profile-pic {
     background-color :  white;
     text-align :  center;
 }
@@ -90,7 +83,7 @@ img {
     cursor : pointer;
 }
 
-#profilepic > img {
+#profile-pic > img {
     width : 100%;
     height : 100%;
     margin-right : 0;

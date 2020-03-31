@@ -1,0 +1,64 @@
+.current-friend-wrapper  {
+    box-shadow : 0 10px 6px -6px #777; 
+    height : 161px;
+    width : 20rem;
+    margin : 10px;
+  }
+  
+  .pic-name-wrapper {
+    width : 100%;
+    height : 6.8rem;
+    padding : 10px 20px 0 20px;
+  }
+  
+  .profile-pic {
+    height : 4.8rem;
+    width : 4.8rem;
+  }
+  
+  .name-wrapper {
+    height : 100%;
+    width : 12rem;
+    margin-left : 20px;
+    padding : 5px 10px 0 10px;
+  }
+  
+  .remove-wrapper {
+    text-align : center;
+    height : 2rem;
+    width : 100%;
+    margin-top : 1rem;;
+    padding : 0 20px;
+  }
+  
+  .current-friend-wrapper, .name-wrapper {
+    border : 1px solid black;
+  }
+  
+  .remove-btn {
+    height : 100%;
+    width : 6rem;
+    border-bottom : 2px solid #b4c7e4;
+  }
+  
+  .time-elapsed {
+    display : flex;
+    justify-content : flex-end;
+    height : 15px;
+    margin-bottom : 5px;
+    color : gray;
+  }
+  
+  .remove-btn:hover {
+    border-bottom : 3px solid #b4c7e4;
+    font-size : 1.1rem;
+    cursor : pointer;
+  }
+  
+  div {
+    vertical-align : top;
+  } 
+  
+  .name-wrapper, .profile-pic, .remove-btn {
+    display : inline-block;
+  } 

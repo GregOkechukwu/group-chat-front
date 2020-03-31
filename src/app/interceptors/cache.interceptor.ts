@@ -9,8 +9,10 @@ export class CacheInterceptor implements HttpInterceptor {
     constructor(private cache : CacheService) {}
 
     intercept(req : HttpRequest<any>, next : HttpHandler) {
-        let res = this.cache.getResponse(req);
-        let result =  res ? of(res) : this.sendRequest(req, next)
+        const response = this.cache.getResponse(req);
+        req.clone({ setParams: { observe: 'response' }});
+
+        const result =  response ? of(response) : this.sendRequest(req, next);
         return result;
     }   
 

@@ -5,76 +5,53 @@
 .container {
     vertical-align :  top;
     margin : 0 0 0.2rem 0.4%;
-    height : 100%;
+    height : 90%;
     width : 99.6%;
     max-width :  100%;
     min-width :  18.875rem;
     padding : 0;
 }
-.row {
-    /* border :  0.1rem solid #D0D0D0;  */
-    height :  80%;
-    width :  100%
-}
 
-.defaultWrapper >  div {
-    display : inline-block;
+.profile-update-wrapper {
+    text-align : center;
     height : 20rem;
-    width :  100%;
-    text-align :  center;
-    /* border :  1px solid black;  */
 }
 
-#groupWrapper {  
-    height : 7rem;
-    text-align :  center;
-}
-
-.button {
+.expansion-panel {
     display : inline-block;
-    margin : 0 0 0 1.5rem;
-
-    height : 2rem;
-    width :  10rem;
-
+    width : 30rem;
+    margin: 1.5px 3px; 
     border : 1px solid black;
-    background-color :  white;
+    transition: transform 250ms ease-in-out;
 }
 
 /* Once the viewport gets this size or less then dynammically apply these styles on these elements  */
+
+@media screen and (max-width : 720px) { 
+    .expansion-panel {
+        width : 25rem;
+    }
+}
+
+@media screen and (max-width : 550px) { 
+    .expansion-panel {
+        width : 20rem;
+    }
+}
 
 @media screen and (max-width : 23.0625rem) {
     .button-wrapper {
         margin-top : 7rem;
     }
-
-    #groupWrapper {
-        height : 12rem;
-    }
 }
 
-@media screen and (max-width : 42.8125rem) {
-    .adjustmargin { 
-        margin :  0rem 1rem 1rem 1rem;
-    }
-}
-
-span {
-    height : 1rem;
-    margin :  0 0 0.5rem 0
-}
-input {
+.button {
+    display : inline-block;
+    margin-left : 1.5rem;
     height : 2rem;
-    width :  15rem;
-    flex-basis : auto;
-    margin-bottom : 2rem;
-}
-input[type = text]:hover {
+    width :  10rem;
+    background-color :  white;
     border : 1px solid black;
-}
-
-.submit {
-    width : 6rem;
 }
 
 .button:hover {
@@ -84,26 +61,23 @@ input[type = text]:hover {
     cursor : pointer;
 }
 
-h6 {
-    font-size : 0.85rem;
-    margin-bottom : 0.5rem;
-}
-
 #focus-div:focus {
     outline-width: 0;
 }
 
-.button-wrapper {
-    display : flex;
-    flex-flow : row nowrap;
-    justify-content : center;
-    height : 3rem;
-    width : 100%;
-    margin: 1rem 0 0 0;
-    text-align :  center;
-    /* border : 1px solid black; */
+input {
+    font-size : 0.9rem;
 }
 
-input {
-    padding : 10px;
+.mat-form-field {
+    width : 230px;
 }
+
+.button-wrapper {
+    display : inline-block;
+    margin-top : 4.5rem;
+    height : 3rem;
+    width : 20rem;
+    text-align : center;
+}
+

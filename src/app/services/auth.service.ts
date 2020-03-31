@@ -1,185 +1,81 @@
 import { Injectable } from '@angular/core';
 import * as  AmazonCognitoIdentity from "amazon-cognito-identity-js";
-import { config,  CognitoIdentityCredentials } from 'aws-sdk'
-import { CacheService } from './cache.service';
 import { HttpClient } from '@angular/common/http';
-import { root } from './route.service';
 import { UserInfoService } from './user-info.service';
-import { environment } from '../../environments/environment'
+import { Router } from '@angular/router';
+import { env } from '../../environments/environment';
+import { catchError, map, tap } from 'rxjs/operators';
+import { ImageService } from './image.service';
+import { CacheService } from './cache.service';
+import { UiService } from './ui.service';
 
 export { AmazonCognitoIdentity };
 
-@Injectable({
-  providedIn :  'root'
+const adminLoginPath = 'admin/login';
+const adminUserPath = 'admin/user';
+const userPath = "user";
+
+@Injectable({ 
+  providedIn : 'root'
 })
 export class AuthService {
-  region = environment.REGION;
-  appClientId = environment.APP_CLIENT_ID;
-  userPoolId = this.region + environment.USER_POOL_ID_SUFFIX;
-  identityPoolId  = this.region + environment.IDENTIY_POOL_ID_SUFFIX
-  idpLoginUrl  = `cognito-idp.${this.region}.amazonaws.com/${this.userPoolId}`;
+  private _hasLoggedIn : boolean = false;
 
-  temporaryCred : CognitoIdentityCredentials;
-  currentUser : AmazonCognitoIdentity.CognitoUser;
-  userPool = new AmazonCognitoIdentity.CognitoUserPool({UserPoolId : this.userPoolId , ClientId : this.appClientId});
+  constructor(
+    private router : Router, 
+    private http : HttpClient, 
+    private userInfo : UserInfoService, 
+    private cache : CacheService,
+    private uiService : UiService
+  ) { }
 
-  constructor(private http : HttpClient, private cache : CacheService, private userInfo : UserInfoService) { }
-
-  forgotPassword(username,  callback) {
-    const cognitoUser = this.getCognitoUser(username, this.userPool);
-    cognitoUser.forgotPassword({
-      onSuccess : result => callback(null, result), 
-      onFailure : err => callback(err, null)
-    });
+  get hasLoggedIn() {
+    return this._hasLoggedIn;
   }
 
-  confirmPassword(username, code, newPassword, callback) {
-    const cognitoUser = this.getCognitoUser(username, this.userPool);
-    cognitoUser.confirmPassword(code,  newPassword, {
-      onSuccess : () => callback(null, "Success"), 
-      onFailure : err => callback(err, null)
-    });
-  }
-  getCognitoUser(usernameOrEmail, userPool) { // global helper
-    const userData = {
-      Username : usernameOrEmail, 
-      Pool : userPool
-    }
-    this.currentUser = new AmazonCognitoIdentity.CognitoUser(userData);
-    return this.currentUser;
+  set hasLoggedIn(loginStatus : boolean) {
+    this._hasLoggedIn = loginStatus;
   }
 
-  getCurrentUser() {
-    return this.userPool.getCurrentUser();
+  firstLogin(username : string, newPassword : string, tempPassword : string) {
+    const payload = {usernameOrEmail : username, newPassword, tempPassword};
+    return this.http.post(`${env.ROOT}${adminLoginPath}/firstlogin`, payload).pipe(catchError(this.userInfo.handleError));
   }
 
-  async signOut(reload : boolean) {
-    if (this.getCurrentUser()) {
-      this.userInfo.updateUserInfo({online : false}).subscribe(data => {
-        if (this.getCurrentUser()) {
-          this.getCurrentUser().signOut();
-        }
-        this.kickout(reload);
-      }, err => console.log(err))
-    } else {
-      this.kickout(reload);
-    }
+  login(usernameOrEmail : string, password : string) {
+    const payload = {usernameOrEmail, password};
+    return this.http.post(`${env.ROOT}${adminLoginPath}`, payload).pipe(catchError(this.userInfo.handleError));
   }
 
-  async firstLogin(username, password, payload, callback) {
-    await this.signOut(false);
-
-    const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails({Username : username,  Password : password});
-    const cognitorUser = this.getCognitoUser(username, this.userPool);
-
-    cognitorUser.authenticateUser(authenticationDetails, {
-      onSuccess : result => {
-        this.http.post(`${root}user`, payload).subscribe(data => {
-          localStorage.clear();
-          cognitorUser.authenticateUser(authenticationDetails, {
-            onSuccess : result => {
-              this.getTemporaryCred(err => {
-                if (err) callback(err);
-                else callback(null) // go /home only after getting rid of the old credentials and storing the new one with an IAM role
-              });
-            },
-            onFailure : err => {
-              callback(err);
-              localStorage.clear();
-            }
-          });
-        }, err => callback(err));
-      },
-
-      onFailure : err => {
-        callback(err);
-        localStorage.clear();
-      }
-    });
+  signOut() {
+    return this.http.get(`${env.ROOT}${userPath}/logout`).pipe(catchError(this.userInfo.handleError), tap(() => {
+      this.hasLoggedIn = false;
+      this.cache.clearCache();
+    }));
   }
 
-  async loginUser(usernameOrEmail, password, callback) { 
-    await this.signOut(false)
-
-    const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails({Username : usernameOrEmail,  Password : password});
-    const cognitorUser = this.getCognitoUser(usernameOrEmail, this.userPool);
-
-    cognitorUser.authenticateUser(authenticationDetails, { // store tokens in local storage
-      onSuccess :  result => {
-        this.refreshTemporaryCred(err => {
-          if (err) {
-            console.log(err)
-            localStorage.clear();
-          }
-          else {
-            this.userInfo.updateUserInfo({online : true}).subscribe(data => callback(null, result), err => console.log(err));
-          }
-        })
-      }, 
-      onFailure : err => {
-        callback(err, null);
-        localStorage.clear();
-      }
-    });
+  sendVerificationCode(username : string) {
+    return this.http.get<{emailDestination : string}>(`${env.ROOT}${adminLoginPath}/send?username=${username}`).pipe(catchError(this.userInfo.handleError), map(data => data.emailDestination));
   }
 
-  refreshTemporaryCred(callback) { // user must be logged in.
-    const credentials = (<CognitoIdentityCredentials>config.credentials);
-    if (!credentials) {
-      this.getTemporaryCred(err => err ? callback(err) : callback(null));
-      return;
-    }
-
-    const needsRefresh = (<CognitoIdentityCredentials>config.credentials).needsRefresh();
-
-    if (needsRefresh) {
-      this.setNewCredentials(err => err ? callback(err) : callback(null));
-      return;
-    }
-    callback(null);
-  }
- 
-  getTemporaryCred(callback) {
-    if (!this.currentUser) {
-      this.currentUser = this.getCurrentUser();
-    }
-    if (this.currentUser) {
-      this.currentUser.getSession((err, session) => {
-        if (session) {
-          const options = {
-            IdentityPoolId : this.identityPoolId, 
-            Logins : {
-                [this.idpLoginUrl] : session.idToken.jwtToken
-            }
-          }
-          config.credentials = new CognitoIdentityCredentials(options);
-          config.region = this.region;
-          this.setNewCredentials(callback);
-
-        } else if (err) {
-          callback(err)
-        }
-      });
-    } else console.log("unable to get current user")
+  validateCodeAndUpdatePassword(username : string, code : string, newPassword : string) {
+    const payload = {username, code, newPassword};
+    return this.http.put(`${env.ROOT}${adminLoginPath}/forgot`, payload).pipe(catchError(this.userInfo.handleError));  
   }
 
-  setNewCredentials(callback?) {
-    const credentials = (<CognitoIdentityCredentials>config.credentials);
-
-    credentials.get(err => {
-      if (err) {
-        callback(err);
-        return;
-      }
-      callback(null); 
-    });
+  getAuthenticationStatus() {
+    return this.http.get<{isAuthenticated : boolean}>(`${env.ROOT}${adminUserPath}/authstatus`).pipe(catchError(this.userInfo.handleError), map(data => data.isAuthenticated));
   }
 
-  kickout(reload : boolean) {
-    this.cache.clearCache();
-    localStorage.clear();
-    if (reload) location.reload();   
+  kickout() {
+    this.uiService.hasUsedResolver = false;
+    this.router.navigate(['/login']);
   }
+
+  goBackHome() {
+    this.router.navigate(['/home']);
+  }
+  
 } 
 
 

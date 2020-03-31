@@ -1,18 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse, HttpRequest } from '@angular/common/http';
-
-interface ResponseCacheEntry {
-  lastRead : number;
-  response : HttpResponse<any>;
-}
+import { ResponseCacheEntry } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CacheService  {
-  responseMap = new Map<string, ResponseCacheEntry>();
-  imageMap = new Map<string, string | Object>();
-  TTL = this.toSeconds(30000);
+  private responseMap : Map<string, ResponseCacheEntry> = new Map<string, ResponseCacheEntry>();
+  private imageMap : Map<string, string | Object> = new Map<string, string | Object>();
+  private TTL : number = this.toSeconds(30000);
 
   constructor() { }
 
@@ -22,18 +18,22 @@ export class CacheService  {
     if (!this.responseMap.has(url)) {
       return undefined;
     }
-    let entry = this.responseMap.get(url);
-    let now = this.toSeconds(Date.now());
+
+    const entry = this.responseMap.get(url);
+    const now = this.toSeconds(Date.now());
 
     if (this.isExpired(now, entry.lastRead)) {
       entry.lastRead = now;
     }
+
+    console.log(entry);
     return entry.response;
   }
 
   putResponse(req : HttpRequest<any>, res : HttpResponse<any>) {
-    const url = req.urlWithParams, now = this.toSeconds(Date.now());
-    const entry : ResponseCacheEntry = {lastRead : now, response : res}
+    const url = req.urlWithParams
+    const now = this.toSeconds(Date.now());
+    const entry : ResponseCacheEntry = {lastRead : now, response : res};
 
     this.responseMap.forEach((entry, url) => {
       if (this.isExpired(now, entry.lastRead)) this.responseMap.delete(url);
@@ -47,7 +47,7 @@ export class CacheService  {
   }
 
   getImage(key : string) {
-    return this.hasImage(key) ? this.imageMap.get(key) : undefined
+    return this.hasImage(key) ? this.imageMap.get(key) : undefined;
   }
 
   putImage(key : string, value : string | Object) {
@@ -70,6 +70,7 @@ export class CacheService  {
   clearResponseCache() {
     this.responseMap.clear();
   }
+  
   clearImageCache() {
     this.imageMap.clear();
   }
@@ -78,8 +79,9 @@ export class CacheService  {
     return (now - lastRead) > this.TTL;
   }
 
+  /* Will update this. No Requests are cachable at the moment */
   private isCacheable(req : HttpRequest<any>, res : HttpResponse<any>) {
-    return req.method === 'GET' && res.body.cacheable === true;
+    return req.method === 'GET' && res.body && res.body.cacheable === true;
   }
 
   private toSeconds(ms : number) {

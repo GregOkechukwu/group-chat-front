@@ -1,55 +1,98 @@
-import { Injectable, QueryList, ElementRef } from '@angular/core';
-import { HttpClient } from  '@angular/common/http';
-import { UserInfoService } from './user-info.service';
+import { Injectable} from '@angular/core';
+import { Validators, AbstractControl } from '@angular/forms';
 
 @Injectable({
   providedIn :  'root'
 })
 export class FormValidatorService {
 
-  constructor(private http : HttpClient, private userInfoService : UserInfoService) { }
+  constructor() { }
 
-  checkEmailStr(str) : boolean {
-    return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(str))
+  private getUsernameRegex() {
+    return /^[a-zA-Z0-9äöüÄÖÜ]*$/;
+  }
+  
+  private getNameRegex() {
+    return /^[A-Za-z]+$/;
   }
 
-  checkForPasswordMatch(pass1, pass2) : boolean {
-    return pass1 === pass2;
+  private getEmailRegex() {
+    return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   }
 
-  trim(str) {
-    return str.replace(/^\s+|\s+$/g,"");
+  private getPasswordRegex() {
+    return /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/;
   }
 
-  strLengthIsValid(str) {
-    const trimmedStr = this.trim(str);
-    return trimmedStr.length > 2;
-  }
+  getNameValidators(isRequired : boolean = true, withLengthRequirements : boolean = true) {
+    const nameRegex = this.getNameRegex();
+    const validations = [Validators.pattern(nameRegex)];
 
-  checkForEmptyInputs(queryList : QueryList<ElementRef>, elem? : ElementRef<any> | string) {
-    let emptyFields = false, errStr, str
-
-    if (queryList) {
-      queryList.forEach(input => { 
-        str = input.nativeElement.value;
-        if (!str || this.trim(str) === "") {
-          emptyFields = true;
-          errStr = "Empty Fields";
-        }
-      });
-    } else if (elem || elem === '') {
-      if (elem instanceof ElementRef) {
-        str = elem.nativeElement.value;
-      } else if ((typeof elem) === 'string') {
-        str = elem;
-      }
-      if (!str || this.trim(str) === "") {
-        emptyFields = true;
-        errStr = "Empty Field";
-      }
+    if (isRequired) {
+      validations.push(Validators.required);
     }
-    return {emptyFields, errStr}
+
+    if (withLengthRequirements) {
+      validations.push(Validators.minLength(1), Validators.maxLength(30));
+    }
+
+    return Validators.compose(validations);
   }
+
+  getEmailValidators(isRequired : boolean = true) {
+    const emailRegex = this.getEmailRegex();
+    const validations = [Validators.pattern(emailRegex)];
+
+    if (isRequired) {
+      validations.push(Validators.required);
+    }
+    
+    return Validators.compose(validations);
+  }
+
+  getUsernameValidators(isRequired : boolean = true, withLengthRequirements : boolean = true) {
+    const usernameRegex = this.getUsernameRegex();
+    const validations = [Validators.pattern(usernameRegex)];
+
+    if (isRequired) {
+      validations.push(Validators.required);
+    }
+
+    if (withLengthRequirements) {
+      validations.push(Validators.minLength(3), Validators.maxLength(20));
+    }
+
+    return Validators.compose(validations);
+  }
+
+  getPasswordValidators(isRequired : boolean = true, withLengthRequirements : boolean = true) {
+    const passwordRegex = this.getPasswordRegex();
+    const validations = [Validators.pattern(passwordRegex)];
+   
+    if (isRequired) {
+      validations.push(Validators.required);
+    }
+
+    if (withLengthRequirements) {
+      validations.push(Validators.minLength(8), Validators.maxLength(20));
+    }
+
+    return Validators.compose(validations);
+  }
+  
+  passwordMatchValidator(control : AbstractControl) {
+    const newPasswordControl = control.get('newPassword');
+    const rePasswordControl = control.get('rePassword');
+
+    const newPassword = newPasswordControl.value;
+    const rePassword = rePasswordControl.value;
+
+    if (newPassword !== undefined && newPassword !== rePassword) {
+      rePasswordControl.setErrors({mismatch : true});
+    }
+  }
+
+
 }
 
 

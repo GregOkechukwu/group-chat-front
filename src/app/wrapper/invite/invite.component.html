@@ -1,29 +1,94 @@
-<div class = '.invite-section-wrapper d-flex flex-nowrap flex-column align-items-center justify-content-center'>
-  <h5 style = 'margin-top : 2rem; margin-bottom : 1rem'>MY INVITES</h5>
-  <div class = "button-wrapper">
-    <div class = "button rounded" style =  "margin : 0 0 0 1rem; width : 6rem">
-        <span>BACK</span>
-    </div> 
-  </div>
-  
-  <div class = "d-flex flex-wrap flex-row justify-content-center align-content-start" [style.height.%] = "invites.length === 0 ? '45' : '100'">
+<button *ngIf = "section > inviteDefaultSection" (click) = "toSection(inviteDefaultSection)" class = "button rounded" style = "width : 5rem; margin-top : 10px; font-size: 13px" >BACK</button>
+
+<ng-container [ngSwitch] = 'section'>
+
+  <ng-container *ngSwitchCase = 'inviteDefaultSection'>
+    <ng-container *ngTemplateOutlet = "inviteDefault"></ng-container>
+  </ng-container>
+
+  <ng-container *ngSwitchCase = 'inviteReceivedSection'>
+    <ng-container *ngTemplateOutlet = "inviteReceived"></ng-container>
+  </ng-container>
+
+  <ng-container *ngSwitchCase = 'inviteSentSection'>
+    <ng-container *ngTemplateOutlet = "inviteSent"></ng-container>
+  </ng-container>
+
+</ng-container> 
+
+<ng-template #inviteDefault>
+  <app-first-section
+    [title] = "'MY INVITES'"
+    [buttonAText] = "'RECIEVED'"
+    [buttonBText] = "'SENT'"
+    (clickA) = "getReceivedInvites()"
+    (clickB) = "getSentInvites()">
+  </app-first-section>
+</ng-template>
+
+<ng-template #inviteReceived>
+  <div class = 'd-flex flex-nowrap flex-column align-items-center justify-content-center'>
+    <h5 style = 'margin-top : 2rem; margin-bottom : 1rem'>MY RECEIVED INVITES</h5>
     
-    <p *ngIf = "invitesCount === 0" style = 'margin-top : 1rem;'>You have no Invites</p>
+    <div class = "d-flex flex-wrap flex-row justify-content-center align-content-start">
 
-    <ng-container *ngIf = "invites.length > 0">
-        <ng-container *ngFor = "let invite of invites; index as i; trackBy : trackByFn">
-            <app-invite-display
-              *ngIf = "!touched[i]"
-              [index] = "i"
-              [inviteId] = "invite.invite_id"
-              [dateSent] = "invite.date_sent"
-              [conversationId] = "invite.conversation.conversation_id"
-              [conversationName] = "invite.conversation.name"
-              [sender] = "invite.sender"
-              (acceptOrDecline) = "onAcceptOrDecline($event)">
-            </app-invite-display>
-        </ng-container>
-    </ng-container>
+      <p *ngIf = "!invites || invites.length === 0" style = 'margin-top : 10rem;'>YOU HAVE NO RECEIVED INVITES</p>
+  
+      <ng-container *ngIf = "invites.length > 0">
+          <ng-container *ngFor = "let invite of invites; index as i;">
+              <app-received-invite-display
+                [index] = "i"
+                [inviteId] = "invite.inviteId"
+                [conversationId] = "invite.conversationId"
+                [conversationName] = "invite.conversationName"
+                [senderUsername] = "invite.username"
+                [senderFirstName] = "invite.firstName"
+                [senderLastName] = "invite.lastName"
+                [isOnline] = "invite.isOnline"
+                [hasProfilePic] = "invite.hasProfilePic"
+                [dateSent] = "invite.dateSent"
+                [base64] = "invite.byteArrBase64"
+                [mimeType] = "invite.mimeType"
+                (acceptOrDecline) = "onAcceptOrDeclineInvite($event)">
+              </app-received-invite-display>
+          </ng-container>
+      </ng-container>
+  
+    </div>
   </div>
+</ng-template>
 
-</div>
+<ng-template #inviteSent>
+  <div class = 'd-flex flex-nowrap flex-column align-items-center justify-content-center'>
+    <h5 style = 'margin-top : 2rem; margin-bottom : 1rem'>MY SENT INVITES</h5>
+    
+    <div class = "d-flex flex-wrap flex-row justify-content-center align-content-start">
+      
+      <p *ngIf = "!invites || invites.length === 0" style = 'margin-top : 10rem;'>YOU HAVE NO SENT INVITES</p>
+  
+      <ng-container *ngIf = "invites.length > 0">
+          <ng-container *ngFor = "let invite of invites; index as i;">
+              <app-sent-invite-display
+                [index] = "i"
+                [inviteId] = "invite.inviteId"
+                [conversationId] = "invite.conversationId"
+                [conversationName] = "invite.conversationName"
+                [recipientUsername] = "invite.username"
+                [recipientFirstName] = "invite.firstName"
+                [recipientLastName] = "invite.lastName"
+                [isOnline] = "invite.isOnline"
+                [hasProfilePic] = "invite.hasProfiliePic"
+                [dateSent] = "invite.dateSent"
+                [base64] = "invite.byteArrBase64"
+                [mimeType] = "invite.mimeType"
+                (cancel) = "onCancelInvite($event)">
+              </app-sent-invite-display>
+          </ng-container>
+      </ng-container>
+  
+    </div>
+  </div>
+</ng-template>
+
+
+

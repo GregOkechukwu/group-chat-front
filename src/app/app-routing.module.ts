@@ -1,18 +1,19 @@
 import { Routes, RouterModule } from '@angular/router';
-import { AuthGuardService as AuthGuard } from './guards/auth-guard.service';
-import { RoleGuardService as RoleGuard } from './guards/role-guard.service';
 import { WrapperComponent } from './wrapper/wrapper.component';
 import { UserResolver } from './resolvers/user.resolver';
 import { ImageResolver } from './resolvers/image.resolver';
+import { AuthGuardForHome } from './guards/auth.guard';
+import { InviteResolver } from './resolvers/invite.resolver';
  
 const routes : Routes = [
   {
     path : 'home', 
     component : WrapperComponent, 
-    canActivate : [AuthGuard],
+    canActivate : [AuthGuardForHome],
     resolve : {
       user : UserResolver,
-      image : ImageResolver
+      inviteCount : InviteResolver,
+      images : ImageResolver 
     },
     runGuardsAndResolvers : 'pathParamsChange'
   },

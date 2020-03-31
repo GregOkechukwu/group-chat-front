@@ -1,217 +1,89 @@
+<button (click) = "goBack()" class = "button rounded" style = "width : 5rem; margin-top : 10px; font-size: 13px" >BACK</button>
+
 <div class = "d-inline-flex container flex-column justify-content-center align-items-center">
-  <ng-container *ngTemplateOutlet = "currTemplate"> </ng-container>
+    <ng-container *ngTemplateOutlet = "sectionLookup.get(section)"></ng-container>
 </div>
 
-<ng-template #conversationName>
-    <div  class = "focus-div defaultWrapper row d-flex flex-column align-items-center justify-content-center" tabIndex = '0'>
+<ng-template #conversationNameForm>
+    <div class = "focus-div default-wrapper row d-flex flex-column align-items-center justify-content-center" tabIndex = '0'>
         
-        <h5 [style.margin-bottom.rem] = "'2'">NAME YOUR CONVERSATION</h5>
+        <h5 style = "margin-bottom : 2rem">NAME YOUR CONVERSATION</h5>
 
-        <div [style.height.rem] = "'25'">
-            
-            <p *ngIf = "!validName" style = "margin-bottom : 1rem; font-size : 12px; color : red;">{{errMssg}}</p>
-            <h6>Name</h6>
-            <input #convNameInput [(ngModel)] = 'name' type = "text" (keydown.enter) = "chooseNextForm(conversationName)">
-            
-            <div class = 'button-wrapper'>
-                <div style = 'width : 6rem' class = "button rounded" (click) = 'goBack(conversationName, 0)'> 
-                    <span>BACK</span>
+        <div style = "height : 20rem">
+            <form [formGroup] = "form.conversationNameForm" (ngSubmit) = "onSubmit('conversationNameForm')">
+                <mat-form-field>
+                    <input 
+                        matInput
+                        formControlName = "conversationName"
+                        placeholder = "Conversation Name"
+                        type = "text">
+                        <mat-error align = "end">{{ getErrorMessage(conversationNameControl) }}</mat-error>
+                </mat-form-field><br>
+
+                <div class = 'button-wrapper'>       
+                    <button style = 'width : 6rem' class = "button rounded"> 
+                        NEXT
+                    </button>
                 </div>
-    
-                <div style = 'width : 6rem' class = "button rounded" (click) = "chooseNextForm(conversationName)"> 
-                    <span>NEXT</span>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
-
 </ng-template>
 
 <ng-template #conversationUsersToInvite> 
-    <div class = "focus-div defaultWrapper row d-flex flex-column align-items-center justify-content-center" tabIndex = '0' (keydown.enter) = 'chooseNextForm(conversationUsersToInvite)'>
+    <div class = "focus-div default-wrapper row d-flex flex-column align-items-center justify-content-center" tabIndex = '0' (keydown.enter) = 'chooseNextForm(conversationUsersToInvite)'>
       
-        <h5 [style.margin-bottom.rem] = "'1'">CHOOSE WHO TO INVITE </h5>
+        <h5 style = "margin-bottom : 1rem;">CHOOSE WHO TO INVITE</h5>
         <div>
-            <div id = groupWrapper class = "d-flex justify-content-center flex-row flex-wrap"> 
-                <div class = "button rounded adjustmargin" (click) = "inviteMember('user')"  [ngStyle] = "invertColors('user')">
-                    <span>USERS</span>
-                </div>
-                <div class = "button rounded adjustmargin" (click) = "inviteMember('friend')" [ngStyle] = "invertColors('friend')">
-                    <span>FRIENDS</span>
-                </div>
-            </div> 
-
-            <div class = "button-wrapper">
-                <div class = "button rounded" style =  "margin : 0 0 0 1rem; width : 6rem" (click) = 'goBack(conversationUsersToInvite, conversationName)'>
-                    <span>BACK</span>
-                </div> 
-
-                <div *ngIf = "showNext()" class = "button rounded" style = "margin : 0 0 0 1rem; width : 6rem"  (click) = 'chooseNextForm(conversationUsersToInvite)'>
-                    <span>NEXT</span>
-                </div>
-            </div>   
+            <div class = group-wrapper> 
+                <button class = "button rounded adjustmargin" (click) = "toSection(searchUsersFormSection)">
+                    USERS
+                </button>
+                <button class = "button rounded adjustmargin" (click) = "toSection(searchFriendsFormSection)">
+                    FRIENDS
+                </button>
+            </div>
         </div>
 
      </div>
 </ng-template>
 
-<ng-template #searchUsers>
-    <div class = "focus-div defaultWrapper row d-flex flex-column align-items-center justify-content-center" tabIndex = '0'>
-      
-        <h5 [style.margin-bottom.rem] = "'0.5'">FIND USERS</h5>
-        <h6 id = 'search-criteria' (click) = 'toggleSearchCriteria(conversationUserSearchInput)'>{{searchCriteriaToShow()}}</h6><br>
-
-        <div [style.height.rem] = "'25'">   
-            <p *ngIf = "!validName" style = "font-size : 12px; color : red;"> {{errMssg}}</p><br>
-            <h6>Search</h6>
-            <input #convUserSearchInput placeholder = "{{searchCriteriaPlaceHolder()}}" [(ngModel)] = 'searchUserValue' type = "search" 
-                (keydown.enter) = "chooseNextForm(searchUsers)" style = 'width : 18rem'>
-
-            <div class = "button-wrapper">
-                <div class = "button rounded" style =  "margin : 0 0 0 1rem; width : 6rem" (click) = 'goBack(searchUsers, conversationUsersToInvite)'>
-                    <span>BACK</span>
-                </div> 
-
-                <div #searchBtn class = "button rounded" style = "margin : 0 0 0 1rem; width : 6rem" (click) = "chooseNextForm(searchUsers)" (keydown.enter) = "chooseNextForm(searchUsers)" tabIndex = '0'>
-                    <span>SEARCH</span>
-                </div>
-            </div>   
-        </div>
-
-    </div>
+<ng-template #searchUsersForm>
+    <app-filter-search-display
+        [title] = "'FIND USERS TO INVITE'"
+        [placeholder] = "'Search Users'"
+        [lastFilter] = "'Search All Users'"
+        [resetFilterNotifier$] = "resetFilterNotifier.asObservable()"
+        (searchUsers) = "onSearchUsers($event.username, $event.firstName, $event.lastName)">
+    </app-filter-search-display>
 </ng-template>
 
-<ng-template #userSearchResult>
-    <h5 style = 'margin-top : 2rem; margin-bottom : 1rem'>SELECT USERS </h5>
-    <div class = "button-wrapper">
-        <div (click) = 'goBack(userSearchResult, searchUsers)' class = "button rounded" style =  "margin : 0 0 0 1rem;">
-            <span >NEW SEARCH</span>
-        </div> 
-
-        <div *ngIf = 'invites.user.selectedCount > 0' (click) = 'chooseNextForm(userSearchResult)' class = "focus-div button rounded" style = "margin : 0 0 0 1rem; width : 6rem">
-            <span>NEXT</span>
-        </div> 
-    </div>   
-
-    <div class = "d-flex flex-nowrap flex-column align-items-center" [style.height.%] = "!invites.user.searchResults || invites.user.searchResults.length === 0 ? '45' : '100' ">
-
-        <p *ngIf = '!invites.user.searchResults || invites.user.searchResults.length === 0' style = 'margin-top : 1rem;'>No users were found</p>
-
-        <ng-container *ngIf = 'invites.user.searchResults.length > 0'>
-            <ng-container *ngFor = 'let user of invites.user.searchResults; index as i'>
-
-                <app-user-display 
-                    [index] = "i"
-                    [firstname] = "user.firstname" 
-                    [lastname] = "user.lastname" 
-                    [username] = "user.username" 
-                    [isOnline] = "user.online" 
-                    [hasProfilePic] = "user.hasProfilePic" 
-                    [img] = "user.pic" 
-                    [isSelected] = "selectLookup[user.username]"
-                    [canToggle] = "true"
-                    (select) = "selectUser('user', $event)">
-                </app-user-display>
-
-            </ng-container>
-        </ng-container>
-
-    </div> 
+<ng-template #searchFriendsForm>
+    <app-filter-search-display
+        [title] = "'FIND FRIENDS TO INVITE'"
+        [placeholder] = "'Search Friends'"
+        [lastFilter] = "'Search All Friends'"
+        [resetFilterNotifier$] = "resetFilterNotifier.asObservable()"
+        (searchUsers) = "onSearchFriends($event.username, $event.firstName, $event.lastName)">
+    </app-filter-search-display>
 </ng-template>
 
-<ng-template #searchFriends>
-    <div class = "focus-div defaultWrapper row d-flex flex-column align-items-center justify-content-center" tabIndex = '0'>
-    
-        <h5 [style.margin-bottom.rem] = "'0.5'">FIND FRIENDS</h5>
-        <h6 id = 'search-criteria' (click) = 'toggleSearchCriteria(conversationFriendSearchInput)'>{{searchCriteriaToShow()}}</h6><br>
-
-        <div [style.height.rem] = "'25'">   
-            <p *ngIf = "!validName" style = "font-size : 12px; color : red;"> {{errMssg}}</p><br>
-            <h6>Search</h6>
-            <input #convFriendSearchInput placeholder = "{{searchCriteriaPlaceHolder()}}" [(ngModel)] = 'searchFriendValue' type = "search" 
-                (keydown.enter) = "chooseNextForm(searchFriends)" style = 'width : 18rem'>
-
-            <div class = "button-wrapper">
-                <div class = "button rounded" style =  "margin : 0 0 0 1rem; width : 6rem" (click) = 'goBack(searchFriends, invites.user.isInvited ? userSearchResult : conversationUsersToInvite)'>
-                    <span>BACK</span>
-                </div> 
-
-                <div #searchBtn class = "button rounded" style = "margin : 0 0 0 1rem; width : 6rem" (click) = "chooseNextForm(searchFriends)" (keydown.enter) = "chooseNextForm(searchFriends)" tabIndex = '0'>
-                    <span>SEARCH</span>
-                </div>
-            </div>   
-        </div>
-    
-    </div>
-
+<ng-template #searchResults>
+    <app-user-list-display
+        [title] = "userIsSearched ? 'SELECT USERS TO INVITE' : 'SELECT FRIENDS TO INVITE'"
+        [notFoundText] = "userIsSearched ? 'NO USERS WERE FOUND' : 'NO FRIENDS WERE FOUND'"
+        [searchedUsers] = "searchedUsers"
+        [chosenUsers] = "chosenUsers"
+        (next) = "toSection(confirmResultsSection)">
+    </app-user-list-display>
 </ng-template>
 
-
-<ng-template #friendSearchResult> 
-    <h5 style = 'margin-top : 2rem; margin-bottom : 1rem'>SELECT FRIENDS </h5>
-    <div class = "button-wrapper">
-        <div (click) = 'goBack(friendSearchResult, searchFriends)' class = "button rounded" style =  "margin : 0 0 0 1rem;">
-            <span >NEW SEARCH</span>
-        </div> 
-
-        <div *ngIf = 'invites.friend.selectedCount > 0' (click) = 'chooseNextForm(friendSearchResult)' class = "focus-div button rounded" style = "margin : 0 0 0 1rem; width : 6rem">
-            <span>NEXT</span>
-        </div> 
-    </div>   
-
-    <div class = "d-flex flex-nowrap flex-column align-items-center" [style.height.%] = "!invites.friend.searchResults || invites.friend.searchResults.length === 0 ? '45' : '100' ">
-
-        <p *ngIf = '!invites.friend.searchResults || invites.friend.searchResults.length === 0' style = 'margin-top : 1rem;'>You have no friends</p>
-
-        <ng-container *ngIf = 'invites.friend.searchResults.length > 0'>
-            <ng-container *ngFor = 'let friend of invites.friend.searchResults; index as i'>
-
-                <app-user-display 
-                    [index] = "i"
-                    [firstname] = "friend.firstname" 
-                    [lastname] = "friend.lastname" 
-                    [username] = "friend.username" 
-                    [isOnline] = "friend.online" 
-                    [hasProfilePic] = "friend.hasProfilePic" 
-                    [img] = "friend.pic" 
-                    [isSelected] = "selectLookup[friend.username]"
-                    [canToggle] = "true"
-                    (select) = "selectUser('friend', $event)">
-                </app-user-display>
-
-            </ng-container>
-        </ng-container>
-
-    </div> 
-</ng-template>
-
-<ng-template #confirmCreation>
-    <h5 style = 'margin-top : 2rem; margin-bottom : 1rem'>CONFIRM INVITES </h5>
-    <div class = "button-wrapper">
-        <div (click) = "goBack(confirmCreation, this.invites.friend.isInvited ? friendSearchResult : userSearchResult)" class = "button rounded" style =  "margin : 0 0 0 1rem; width : 6rem">
-            <span>BACK</span>
-        </div> 
-
-        <div (click) = 'confirmInvites($event)' class = "focus-div button rounded" style = "margin : 0 0 0 1rem; width : 6rem">
-            <span>CONFIRM</span>
-        </div> 
-    </div>   
-
-    <div class = "d-flex flex-nowrap flex-column align-items-center" [style.height.%] = "'100'">
-
-        <ng-container *ngFor = 'let invitedUser of allInvitedUsers; index as i'>
-                <app-user-display 
-                    [index] = "i"
-                    [firstname] = "invitedUser.firstname" 
-                    [lastname] = "invitedUser.lastname" 
-                    [username] = "invitedUser.username" 
-                    [isOnline] = "invitedUser.online" 
-                    [hasProfilePic] = "invitedUser.hasProfilePic" 
-                    [img] = "invitedUser.pic" 
-                    [isSelected] = "true"
-                    [canToggle] = "false">
-                </app-user-display>
-        </ng-container>
-
-    </div>
+<ng-template #confirmResults>
+    <app-user-list-display
+        [title] = "'CONFIRM INVITES'"
+        [notFoundText] = "null"
+        [searchedUsers] = "searchedUsers"
+        [chosenUsers] = "chosenUsers"
+        (next) = "createConversationAndSendInvites($event)">
+    </app-user-list-display>
 </ng-template>

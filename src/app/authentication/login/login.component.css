@@ -1,0 +1,82 @@
+.container {
+    min-width : 25rem; /* we don't want container getting too small*/
+    height : 100vh; 
+}
+.row {
+    height : 100%;
+}
+
+.login-wrapper {
+    text-align : center;
+    height : 700px;
+    width :  600px;
+    border-radius : 20px;
+    overflow : hidden;
+}
+
+.title-wrapper {
+    margin-top : 5rem; 
+    text-align : center;
+}
+
+.content-wrapper {
+    margin-top : 3.5rem;
+    height : 380px;
+    width :  100%
+}
+
+.field-wrapper {
+    margin-top : 1.5rem;
+    height : 3rem;
+    width : 20rem;
+    text-align : center;
+}
+
+.login-footer-wrapper {
+    display : inline-block; 
+    text-align : center;
+    height : 2rem;
+    border-radius : 10px;
+}
+
+.login-wrapper {
+    box-shadow : 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.login-wrapper, .login-footer-wrapper {
+    border : 0.5px solid black;
+}
+
+p, a, .small-font-size {
+    font-size : 0.8rem;
+}
+
+input {
+    font-size : 0.9rem;
+}
+
+.mat-form-field {
+    width : 230px;
+}
+
+.flex-center-column {
+    display : flex;
+    flex-flow : column nowrap;
+    justify-content : center;
+    align-items : center;
+}
+
+.mssg-bottom-margin {
+    margin-bottom : 1.6rem;
+}
+
+.progess-bar-wrapper {
+    width : 100%;
+    height : 5px;
+}
+
+.mat-progress-bar {
+    width : 100%;
+    height : 100%; 
+}
+

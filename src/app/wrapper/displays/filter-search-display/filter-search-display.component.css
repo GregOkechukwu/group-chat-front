@@ -1,0 +1,57 @@
+.default-wrapper >  div {
+    display : inline-block;
+    height : 20rem;
+    width : 100%;
+    text-align: center;
+}
+
+.focus-div:focus {
+    outline-width: 0;
+}
+
+.button {
+    display : inline-block;
+    height : 2rem;
+    width : 6rem;
+    border : 1px solid black;
+    background-color : white;
+}
+
+.button:enabled:hover {
+    border :  1px solid white;
+    background-color : black;
+    color : white;
+    cursor : pointer;
+}
+
+.button-wrapper {
+    display : inline-block;
+    margin-top : 4.5rem;
+    margin-bottom : 0.5rem;
+    height : 3rem;
+    width : 20rem;
+    text-align : center;
+}
+
+.search-criteria {
+    border-radius : 5%;
+    border : 1px solid black;
+    width : 12rem;
+    height : 1.3rem; 
+    text-align : center;
+    margin : 0;
+    font-size : 12px
+}
+
+.search-criteria:hover {
+    background-color : black;
+    color : white;   
+}
+
+.mat-form-field {
+    width : 230px;
+}
+
+input {
+    font-size : 0.9rem;
+}

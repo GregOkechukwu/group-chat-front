@@ -1,113 +1,87 @@
 import { Injectable } from '@angular/core';
 import { HttpClient,  HttpErrorResponse } from '@angular/common/http';
-import { root, RouteService } from './route.service';
+import { env } from '../../environments/environment';
 import { catchError, map } from 'rxjs/operators';
-import { throwError,  Subject } from 'rxjs'
-import { Conversation } from './conversation-info.service';
+import { throwError, BehaviorSubject } from 'rxjs'
+import { CurrentUser, SearchedUser, Availability } from '../interfaces';
 
-export interface UserInfo {
-  username : string;
-  firstname? : string;
-  lastname? : string;
-  online? : boolean;
-  hasProfilePic? : boolean;
-  pic? : any | null;
-}
-
-export interface Availability {
-  isAvailable : boolean;
-}
-
-export interface Invite {
-  date_sent : string;
-  conversation : Conversation
-  sender : UserInfo
-}
-
-interface RawEntityPayload {
-  raw : any | any[];
-  entities : UserInfo | UserInfo[]
-}
-
-interface Response {
-  cacheable : boolean;
-  result : UserInfo[] | Availability | RawEntityPayload | Invite[] 
-}
+const adminUserPath = 'admin/user';
+const userPath = 'user';
 
 @Injectable({
   providedIn :  'root'
 })
 export class UserInfoService {
-  profileInfoNotifier = new Subject<any>();
-  profileInfoNotifier$ = this.profileInfoNotifier.asObservable();
+  profileUpdateNotifier = new BehaviorSubject<CurrentUser>(undefined);
+  profileUpdateNotifier$ = this.profileUpdateNotifier.asObservable();
 
-  constructor(private http : HttpClient, private routeService : RouteService) { }
+  constructor(private http : HttpClient) { }
 
   handleError(err : HttpErrorResponse) {
     console.log(err);
     return throwError(err);
   }
 
-  checkAvailability(criteria, value) {
-    const url = `${root}user/check?${criteria}=${value}`;
-    this.routeService.blackListTrie.addWord(url);
-
-    return this.http.post<Response>(url, {permitWithoutAuthHeader : true}).pipe(catchError(this.handleError), map(res => (<Availability>res.result).isAvailable));
+  checkPassword(password : string) {
+    const payload = { password };
+    return this.http.post(`${env.ROOT}${userPath}/password`, payload).pipe(catchError(this.handleError));
   }
 
-  getUsers(criteria? : string, value? : string) {
-    if (!criteria || !value) {
-      return this.http.get<Response>(`${root}users`).pipe(catchError(this.handleError), map(data => <UserInfo[]>data.result));
-    }
-
-    return this.http.get<Response>(`${root}users?${criteria}=${value}`).pipe(catchError(this.handleError), map(data => <UserInfo[]>data.result));
+  deleteUser(userId : string) {
+    return this.http.delete(`${env.ROOT}${adminUserPath}/delete?userId=${userId}`).pipe(catchError(this.handleError));
   }
 
-  getFriends(criteria? : string, value? : string) {
-    if (!criteria || !value) {
-      return this.http.get<Response>(`${root}friends`).pipe(catchError(this.handleError), map(data => <UserInfo[]>data.result));
-    }
-    return this.http.get<Response>(`${root}friends?${criteria}=${value}`).pipe(catchError(this.handleError), map(data => <UserInfo[]>data.result));
+  saveUser(username : string, firstName : string, lastName : string, email : string, dateCreated : string) {
+    const payload = {username, firstName, lastName, email, dateCreated};
+    return this.http.post(`${env.ROOT}${userPath}`, payload).pipe(catchError(this.handleError));
   }
 
-  getUserInfo() { 
-    return this.http.get<Response>(`${root}user`).pipe(catchError(this.handleError), map(data => {
-      data.result = <RawEntityPayload>data.result;
-
-      let result = {
-        ...data.result.entities[0], 
-        invitecount : data.result.raw[0].invite_count
-      }
-
-      return result;
-    }));
+  getUser() { 
+    return this.http.get<CurrentUser>(`${env.ROOT}${userPath}`).pipe(catchError(this.handleError), map(user => user));
   }
 
-  updateUserInfo(payload) {
-    return this.http.post(`${root}updateuser`, payload).pipe(catchError(this.handleError));
+  getUsers(username : string, firstName : string, lastName : string, includeFriends : boolean = true) {
+    const includeFriendsQuery = includeFriends ? '?includefriends=true' : '?includefriends=false';
+    const userAttributeQuery = username != "" ? `&username=${username}` : firstName != "" ? `&firstname=${firstName}` : lastName != "" ? `&lastname=${lastName}` : "";
+    return this.http.get<{users : SearchedUser[]}>(`${env.ROOT}${userPath}/users${includeFriendsQuery}${userAttributeQuery}`).pipe(catchError(this.handleError), map(data => data.users));
   }
 
-  getInvites() {
-    return this.http.get<Response>(`${root}invites`).pipe(catchError(this.handleError), map(data => <Invite[]>data.result));
+  getFriends(username : string, firstName : string, lastName : string) {
+    const userAttributeQuery = username != "" ? `?username=${username}` : firstName != "" ? `?firstname=${firstName}` : lastName != "" ? `?lastname=${lastName}` : "";
+    return this.http.get<{friends : SearchedUser[]}>(`${env.ROOT}${userPath}/friends${userAttributeQuery}`).pipe(catchError(this.handleError), map(data => data.friends));
   }
 
-  formatFullname(first : string, last : string, username : string) {    
-    let newFirst = this.formatFirstOrLast(first);
-    let newLast = this.formatFirstOrLast(last);
-    let newUsername = this.formatUsername(username);
-    return [newFirst, newLast, newUsername];
+  removeFriend(friendId : string) {
+    return this.http.delete(`${env.ROOT}${userPath}/friend?friendId=${friendId}`).pipe(catchError(this.handleError));
   }
 
-  formatFirstOrLast(name : string) {
-    return name[0].toUpperCase() + name.slice(1).toLowerCase();
+  updateUser(username : string, firstName : string, lastName : string, email : string, password : string) {
+    const isEmpty = str => str === undefined || str === null || str === "";
+    const payload : {username? : string, firstName? : string, lastName? : string, email? : string, password : string} = { password };
+
+    if (!isEmpty(username)) payload.username = username;
+    if (!isEmpty(firstName)) payload.firstName = firstName;
+    if (!isEmpty(lastName)) payload.lastName = lastName;
+    if (!isEmpty(email)) payload.email = email;
+
+    return this.http.put(`${env.ROOT}${userPath}`, payload).pipe(catchError(this.handleError));
   }
 
-  formatUsername(username : string) {
-    return username.toLowerCase();
+  updateOnlineStatus(isOnline : boolean) {
+    const payload = {isOnline};
+    return this.http.put(`${env.ROOT}${userPath}/onlinestatus`, payload).pipe(catchError(this.handleError));
   }
 
-  getInitials(first : string, last : string) {
-    return first[0].toUpperCase() + last[0].toUpperCase();
+  checkUsernameNotTaken(username : string) {
+    return this.http.get<{usernameTaken : boolean}>(`${env.ROOT}${adminUserPath}/check?username=${username}`).pipe(catchError(this.handleError), map(data => data.usernameTaken));
+  }
+
+  checkEmailNotTaken(email : string) {
+    return this.http.get<Availability>(`${env.ROOT}${adminUserPath}/check?email=${email}`).pipe(catchError(this.handleError), map(data => data.emailTaken));
+  }
+
+  checkUsernameAndEmailNotTaken(username : string, email : string) {
+    return this.http.get<Availability>(`${env.ROOT}${adminUserPath}/check?username=${username}&email=${email}`).pipe(catchError(this.handleError), map(data => data));
   }
 
 }

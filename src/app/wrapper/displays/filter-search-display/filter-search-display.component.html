@@ -1,0 +1,24 @@
+<div class = "focus-div default-wrapper row d-flex flex-column align-items-center justify-content-center" tabIndex = '0'>
+  <h5 style = "margin-bottom : 0.5rem">{{ title }}</h5>
+  <button class = "search-criteria" (click) = "updateFilter(userAttributeControl)">{{ currentFilter }}</button><br>
+
+  <div style = "height : 25rem">  
+    <form [formGroup] = "form.searchUserForm" (ngSubmit) = "onSearch()">
+        <mat-form-field>
+            <input 
+              matInput
+              formControlName = "userAttribute"
+              placeholder = "{{ placeholder }}"
+              type = "search" 
+              style = 'width : 18rem'>
+              <mat-error align = "end">{{ getErrorMessage(userAttributeControl) }}</mat-error>
+        </mat-form-field><br>
+
+        <div class = "button-wrapper">
+            <button class = "button rounded">
+              SEARCH
+            </button>
+        </div>  
+    </form> 
+  </div>
+</div>

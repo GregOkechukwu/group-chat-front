@@ -1,0 +1,49 @@
+<div class = "conversation-wrapper rounded">
+
+  <div class = 'pic-name-wrapper d-flex flex-row flex-nowrap'>
+    <div class = "pic-wrapper">
+      <ng-container *ngIf = "userCount === 1">
+        <div class = "profile-pic rounded-circle" style = "height : 70px; width : 70px;">
+          <img [src] = "hostPic" height = '70' width = '70' class = "rounded-circle" [ngStyle] = "styleBorder(0)">
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf = "userCount === 2">
+        <div class = "profile-pic rounded-cicle" style =  "top : 0px; left : 0px;">
+          <img [src] = "userAPic" height = '54' width = '54' class = "rounded-circle" [ngStyle] = "styleBorder(0)">
+        </div>
+
+        <div class = "profile-pic rounded-circle" style = "top : 16px; left : 16px;">
+          <img [src] = "hostPic" height = '54' width = '54' class = "rounded-circle" [ngStyle] = "styleBorder(1)">
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf = "userCount === 3">
+        <div class = "profile-pic rounded-circle" style =  "top : 0px; left : 0px;">
+          <img [src] = "userBPic" height = '54' width = '54' class = "rounded-circle" [ngStyle] = "styleBorder(0)">
+        </div>
+
+        <div class = "profile-pic rounded-circle" style =  "top : 10px; left : 13px;">
+          <img [src] = "userAPic" height = '54' width = '54' class = "rounded-circle" [ngStyle] = "styleBorder(1)">
+        </div>
+
+        <div class = "profile-pic rounded-circle" style = "top : 20px; left : 28px;">
+          <img [src] = "hostPic" height = '54' width = '54' class = "rounded-circle" [ngStyle] = "styleBorder(2)">
+        </div>
+      </ng-container>
+    </div>
+      
+    <div class = 'name-wrapper'>
+      <span style = "font-size : 1.1rem"><b>{{ conversationName }}</b></span><br>
+      <div style = "font-size : 0.8rem">{{ conversationHost }}</div>
+      <div class = "member-count" style = "font-size : 0.8rem;">{{ getMemberCount() }}</div>
+    </div>
+
+  </div>
+
+  <div class = "accept-decline-wrapper">
+    <div class = "accept-decline-btn" style = "margin-right : 1rem; ">Join</div>
+    <div class = "accept-decline-btn" style = "margin-left : 1rem; ">Leave</div>
+  </div>
+
+</div>

@@ -1,0 +1,38 @@
+<div class = "d-inline-flex container flex-column justify-content-center align-items-center">
+  <ng-container *ngTemplateOutlet = "sectionLookup.get(section)"></ng-container>
+</div>
+
+<ng-template #searchUserForm>
+  <app-filter-search-display
+    [title] = "'FIND USERS TO ADD'" 
+    [placeholder] = "'Search Users'"
+    [lastFilter] = "'Search All Users'"
+    [resetFilterNotifier$] = "resetFilterNotifier.asObservable()"
+    (back) = "goBack()"
+    (searchUsers) = "onSearchUsers($event.username, $event.firstName, $event.lastName)">
+  </app-filter-search-display>
+</ng-template>
+
+<ng-template #searchResults>
+  <app-user-list-display
+      [title] = "'SELECT USERS TO ADD'"
+      [notFoundText] = "'NO USERS WERE FOUND'"
+      [searchedUsers] = "searchedUsers"
+      [chosenUsers] = "chosenUsers"
+      (back) = "goBack()"
+      (next) = "toSection(confirmResultsSection)">
+  </app-user-list-display>
+</ng-template>
+
+<ng-template #confirmResults>
+  <app-user-list-display
+      [title] = "'CONFIRM FRIEND REQUESTS'"
+      [notFoundText] = "null"
+      [searchedUsers] = "searchedUsers"
+      [chosenUsers] = "chosenUsers"
+      (back) = "goBack()"
+      (next) = "sendFriendRequests($event)">
+  </app-user-list-display>
+</ng-template>
+
+

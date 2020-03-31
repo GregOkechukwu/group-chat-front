@@ -1,193 +1,162 @@
-import { Injectable } from '@angular/core';
-import { HttpClient} from '@angular/common/http';
+import { Injectable, OnDestroy } from '@angular/core';
+import { HttpClient, HttpErrorResponse} from '@angular/common/http';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { root } from './route.service';
+import { Observable, BehaviorSubject, Subscription } from 'rxjs';
+import { env } from '../../environments/environment';
 import { catchError, tap, map } from 'rxjs/operators';
 import { UserInfoService } from './user-info.service';
-import { AuthService } from './auth.service';
-import { S3, AWSError } from 'aws-sdk';
-import { GetObjectRequest } from 'aws-sdk/clients/s3';
 import { CacheService } from './cache.service';
-import { environment } from '../../environments/environment';
+import { IconResponse, PicResponse } from '../interfaces';
+import { UiService } from './ui.service';
 
-interface PicInfo {
-  username : string;
-  hasProfilePic : boolean;
-}
-
-interface PicInfoResponse {
-  cacheable : boolean;
-  result : PicInfo
-}
+const imagePath = 'image';
 
 @Injectable({
   providedIn :  'root'
 })
-export class ImageService {
-  bucketName = environment.BUCKET_NAME;
-  pathProfilePicPrefix = environment.PATH_PROFILE_PICS_PREFIX;
-  pathIconPrefix = environment.PATH_ICONS_PREFIX;
+export class ImageService implements OnDestroy {
 
-  s3 = new S3();
+  subscriptions : Subscription[] = [];
 
   hasProfilePic : boolean;
   pic : SafeUrl;
-  profilePicNotifier : BehaviorSubject<string | undefined>;
-  profilePicNotifier$ : Observable<string | undefined>;
+  profilePicNotifier = new BehaviorSubject<string | undefined>(undefined);
+  profilePicNotifier$ = this.profilePicNotifier.asObservable();
   
-  constructor(private http : HttpClient, private userInfoService : UserInfoService, private authService : AuthService, private cache : CacheService, private sanitizer : DomSanitizer) { 
-    this.profilePicNotifier = new BehaviorSubject<string | undefined>(undefined);
-    this.profilePicNotifier$ = this.profilePicNotifier.asObservable();
+  constructor(private uiService : UiService, private http : HttpClient, private userInfoService : UserInfoService, private cache : CacheService, private sanitizer : DomSanitizer) { 
+  }
+
+  ngOnDestroy() {
+    this.uiService.unsubscribeFromSubscriptions(this.subscriptions);
   }
 
   getPic() {
+    const subscribe = observer => {
+      
+      const subscription = this.hasPic().subscribe(data => {
 
-    let subscribe = observer => {
-      this.authService.refreshTemporaryCred(err => {
-        if (err) return;
+        this.pic = undefined;
+        this.hasProfilePic = data.hasProfilePic;
 
-        this.hasPic().subscribe(data => {
-          this.pic = undefined;
-          this.hasProfilePic = data.hasProfilePic;
-
-          this.getUserPic(data.username, this.hasProfilePic, (err, data) => {
-            if (!err && data) {
-              this.pic = this.sanitize(data);
-              observer.next(this.pic);
-            }
-            this.getDefaultPic((err, data) => {
-              if (err) observer.error(err);
-              else {
-                data = this.sanitize(data);
-                if (this.pic === undefined) {
-                  this.pic = data;
-                  observer.next(this.pic);
-                }
+        this.getUserPic(this.hasProfilePic, (err, src) => {
+          if (!err && src) {
+            this.pic = this.sanitize(src);
+            observer.next(this.pic);
+          }
+          this.getDefaultPic((err, src) => {
+            if (err) observer.error(err);
+            else {
+              if (this.pic === undefined) {
+                this.pic = this.sanitize(src);;
+                observer.next(this.pic);
               }
-              observer.complete();
-            });
+            }
+            observer.complete();
           });
+        });
 
-        }, err => {
-          console.log(err);
-          observer.error(err);
-        });       
       });
+
+      this.subscriptions.push(subscription);
     }
-    return new Observable<SafeUrl | AWSError>(subscribe);
-  }
-
-  getDefaultPic(callback : Function) {
-    let cache = this.cache;
-
-    if (cache.hasImage('defaultpic')) {
-      callback(null, cache.getImage('defaultpic'));
-      return;
-    }
-    const params : GetObjectRequest = {
-      Bucket : this.bucketName,
-      Key : `${this.pathProfilePicPrefix}/default`
-    }
-
-    this.s3.getObject(params, (err, img) => {
-      if (err) {
-        callback(err, null);
-      } else {
-        let src = this.encodePic(img.Body, img.ContentType);
-        cache.putImage('defaultpic', src);
-        callback(null, src);
-      }
-    });
-  }
-
-  getUserPic(username : string, hasPic : boolean, callback : Function) {
-    let cache = this.cache;
     
-    if (!hasPic) {
-      callback(null, null);
-      return;
-    } else if (cache.hasImage('profilepic')) {
-      callback(null, cache.getImage('profilepic'));
-      return;
-    }
-
-    const params : GetObjectRequest = {
-      Bucket : this.bucketName,
-      Key : `${this.pathProfilePicPrefix}/${username}`
-    }
-    this.s3.getObject(params, (err, img) => {
-      if (err) {
-        console.log(err)
-        callback(err, null);
-      }
-      else {
-        const src = this.encodePic(img.Body, img.ContentType)
-        cache.putImage('profilepic', src);
-        callback(null, src)
-      }
-    });
+    return new Observable<SafeUrl | HttpErrorResponse>(subscribe);
   }
 
-  getIcons() {
-    let iconNames = environment.ICON_NAMES;
-    let n = iconNames.length, emitCount = 0;
-    
-    let subscribe = observer => {
+  getIcons() {    
+    const subscribe = observer => {
       if (this.cache.hasImage('icons')) {
         observer.next(this.cache.getImage('icons'));
         observer.complete();
         return;
       }
-      let iconLookup = {}
+      const iconLookup = {};
 
-      for (let i = 0; i < n; i++) { 
-        const params = {
-          Bucket : this.bucketName,
-          Key : `${this.pathIconPrefix}/${iconNames[i]}`
+      const subscription = this.http.get<IconResponse>(`${env.ROOT}${imagePath}/icons`).pipe(catchError(this.userInfoService.handleError))
+      .subscribe(data => {
+        const {byteArrBase64s, mimeType} = data;
+
+        for (const iconName in byteArrBase64s) {
+          iconLookup[iconName] = this.encodePic(byteArrBase64s[iconName], mimeType);
         }
-        this.s3.getObject(params, (err, img) => {
-          if (err) {
-            observer.error(err);
-            observer.complete();
-          } else {
-            const src = this.encodePic(img.Body, img.ContentType);
-            iconLookup[iconNames[i]] = src;
-            emitCount++;
+        
+        this.cache.putImage("icons", iconLookup);
+        observer.next(iconLookup);
+        observer.complete();
+      });
 
-            if (emitCount === n) {
-              observer.next(iconLookup);
-              this.cache.putImage('icons', iconLookup);
-              observer.complete();
-            }
-          }
-        });
-      } 
+      this.subscriptions.push(subscription);
     }
 
-    return new Observable<Object | AWSError>(subscribe);
+    return new Observable<Object | HttpErrorResponse>(subscribe);
+  }
+
+  getDefaultPic(doSomething : Function) {
+    if (this.cache.hasImage('defaultpic')) {
+      doSomething(null, this.cache.getImage('defaultpic'));
+      return;
+    }
+
+    const subscription = this.http.get<PicResponse>(`${env.ROOT}${imagePath}/defaultpic`).pipe(catchError(this.userInfoService.handleError))
+    .subscribe(data => {
+      const {byteArrBase64, mimeType} = data;
+      const src = this.encodePic(byteArrBase64, mimeType);
+      
+      this.cache.putImage('defaultpic', src);
+      doSomething(null, src);
+    }, 
+    err => doSomething(err, null));
+
+    this.subscriptions.push(subscription);
+  }
+
+  getUserPic(hasPic : boolean, doSomething : Function) {    
+    if (!hasPic) {
+      doSomething(null, null);
+      return;
+    } else if (this.cache.hasImage('profilepic')) {
+      doSomething(null, this.cache.getImage('profilepic'));
+      return;
+    }
+
+    const subscription = this.http.get<PicResponse>(`${env.ROOT}${imagePath}/profilepic`).pipe(catchError(this.userInfoService.handleError))
+    .subscribe(data => {
+      const {byteArrBase64, mimeType} = data;
+      const src = this.encodePic(byteArrBase64, mimeType);
+
+      this.cache.putImage('profilepic', src);
+      doSomething(null, src);
+    }, 
+    err => doSomething(err, null));
+
+    this.subscriptions.push(subscription);
   }
 
   hasPic() {
-    return this.http.get<PicInfoResponse>(`${root}hasprofilepic`).pipe(catchError(this.userInfoService.handleError), map(data => data.result));
+    return this.http.get<{hasProfilePic : boolean}>(`${env.ROOT}${imagePath}/hasprofilepic`).pipe(catchError(this.userInfoService.handleError), map(data => data));
   }
 
-  savePic(src : string, mimeType : string) {
-    const payload = {src, mimeType};
-    return this.http.post(`${root}profilepic`, payload).pipe(catchError(this.userInfoService.handleError), tap(event => {
+  savePic(arrayBuffer : ArrayBuffer, mimeType : string) {
+    const byteArrBase64 = this.getBase64String(arrayBuffer);
+    const payload = {byteArrBase64, mimeType};
+
+    return this.http.post(`${env.ROOT}${imagePath}/profilepic`, payload).pipe(catchError(this.userInfoService.handleError), tap(event => {
+      const src = this.encodePic(byteArrBase64, mimeType);
       this.cache.putImage('profilepic', src);
     }));
   } 
 
   deletePic() {
-    return this.http.delete(`${root}profilepic`).pipe(catchError(this.userInfoService.handleError), tap(event => {
+    return this.http.delete(`${env.ROOT}${imagePath}/profilepic`).pipe(catchError(this.userInfoService.handleError), tap(event => {
       this.cache.clearImageCache();
     }));
   }
 
-  encodePic(data, mimeType : string) {
-    mimeType = this.formatMime(mimeType);
-    var newString = data.reduce(function(a, b) { 
+  encodePic(base64 : string, mimeType : string) {
+    mimeType = this.formatMimeType(mimeType);
+    const arrayBuffer = this.getArrayBuffer(base64);
+
+    const newString = arrayBuffer.reduce((a, b) => { 
       return a + String.fromCharCode(b) 
     }
       , '');
@@ -198,12 +167,41 @@ export class ImageService {
     return this.sanitizer.bypassSecurityTrustUrl(src);
   }
 
-  formatMime(mimeType : string) {
-    let A = mimeType.split('/');
-    let n = A.length;
-    return A[n - 1] === 'jpeg' ? 'jpg' : A[n - 1]
+  /* image/jpeg || image/png */
+  private formatMimeType(mimeType : string) {
+    const A = mimeType.split('/');
+    const n = A.length;
+
+    if (n === 1) {
+      return mimeType;
+    }
+
+    return A[n - 1] === 'jpeg' ? 'jpg' : A[n - 1];
   }
 
+  private getArrayBuffer(base64 : string) {
+    const binaryString = window.atob(base64);
+    const n = binaryString.length;
+    const bytes = new Uint8Array(n);
 
+    for (let i = 0; i < n; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    } 
+
+    return new Uint8Array(bytes.buffer);
+  }
+
+  private getBase64String(arrayBuffer : ArrayBuffer) {
+    let binaryString = "";
+
+    const bytes = new Uint8Array(arrayBuffer);
+    const n = bytes.length;
+
+    for (let i = 0; i < n; i++) {
+      binaryString += String.fromCharCode(bytes[i]);
+    }
+
+    return window.btoa(binaryString);
+  }
 
 }

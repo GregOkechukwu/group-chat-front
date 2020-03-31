@@ -1,9 +1,7 @@
 import { Component,  OnInit,  EventEmitter,  Output, ViewChild } from '@angular/core';
 import { ImageService } from 'src/app/services/image.service';
-import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ModalContent } from '../modal/modal-content.component';
+import { UiService } from 'src/app/services/ui.service';
 
 @Component({
   selector :  'app-upload-pic', 
@@ -12,42 +10,46 @@ import { ModalContent } from '../modal/modal-content.component';
 })
 export class UploadPicComponent implements OnInit {
 
-  subscriptionOne : Subscription;
+  subscriptions : Subscription[] = [];
 
-  showDelete : boolean;
-  showUpload : boolean
+  showDeleteBtn : boolean;
+  showUploadBtn : boolean
   hasProfilePic : boolean;
   
   mimeType : string;  
   defaultPic : string;
   profilePic :  string;
+  profilePicBuffer : ArrayBuffer;
+
   
   @ViewChild('img') imageElement : HTMLInputElement;
-  @Output() updatedPic : EventEmitter<void> = new EventEmitter<void>();
-  @Output() goPrevious : EventEmitter<void> = new EventEmitter<void>();
+  @Output() goToUpdateDefault : EventEmitter<void> = new EventEmitter<void>();
 
-  constructor(private imageService : ImageService,  private activatedRoute : ActivatedRoute, private modalService : NgbModal) { }
+  constructor(
+    private uiService : UiService,
+    private imageService : ImageService
+  ) { }
 
   ngOnInit() {
     const picNotifier = this.imageService.profilePicNotifier;
     const picNotifier$ = this.imageService.profilePicNotifier$;
 
-    this.subscriptionOne = picNotifier$.subscribe((src : string) => {
+    const subscription = picNotifier$.subscribe((src : string) => {
       if (src) {
         this.updatePicInfo(src);
-
       }
-    }, err => console.log(err));
+    });
 
     picNotifier.next(<string>this.imageService.pic);
+    this.subscriptions.push(subscription);
   }
 
   ngOnDestroy() {
-    if (this.subscriptionOne  instanceof Subscription) this.subscriptionOne.unsubscribe()
+    this.uiService.unsubscribeFromSubscriptions(this.subscriptions);
   }
 
   updatePicInfo(src : string) {
-    this.showDelete = this.hasProfilePic = this.imageService.hasProfilePic;
+    this.showDeleteBtn = this.hasProfilePic = this.imageService.hasProfilePic;
     this.profilePic = this.hasProfilePic ? src : undefined;
     this.defaultPic = this.hasProfilePic ? undefined : src;
   }
@@ -58,74 +60,114 @@ export class UploadPicComponent implements OnInit {
       this.mimeType = file.type;
 
       const urlReader = new FileReader();
+      const bufferReader = new FileReader();
 
-      urlReader.onload = (event : any) => { 
+      urlReader.onload = (event : any) => {
         this.profilePic = <string>this.imageService.sanitize(urlReader.result as string);
-        this.showDelete = false;
-        this.showUpload = true;
+        this.showDeleteBtn = false;
+        this.showUploadBtn = true;
+      }
+
+      bufferReader.onload = (event : any) => {
+        this.profilePicBuffer = <ArrayBuffer>bufferReader.result;
       }
 
       urlReader.readAsDataURL(file);
+      bufferReader.readAsArrayBuffer(file);
     }
   }
 
-  uploadPic() {
-    const picNotifier = this.imageService.profilePicNotifier;
+  confirmUpload() {
+    const heightPx = "225px", widthPx = "500px";
 
-    if (this.profilePic) {
-      this.imageService.savePic(<string>this.profilePic, this.mimeType).subscribe(data => {
-        this.imageService.pic = this.profilePic;
-        this.imageService.hasProfilePic = true;
+    this.uiService.openDialog(
+      heightPx,
+      widthPx,
+      "Confirm Upload", 
+      "Are you sure you want to update your profile pic?",
+      choseToUpdatePic => {
+        if (!choseToUpdatePic) return;
 
-        picNotifier.next(this.profilePic); 
-        
-        this.updatedPic.emit();
-        this.showUpload = false;
+        this.uiService.startLoadingScreen();
 
-      }, err => console.log(err));
-    }
-  }
+        this.uploadPic(successfulUpload => {
+          if (!successfulUpload) return;
 
-  removePic() {
-    const picNotifier = this.imageService.profilePicNotifier;
-
-    if (this.hasProfilePic) {
-      this.imageService.deletePic().subscribe(data => {
-        this.imageElement.value = "";
-        this.imageService.hasProfilePic = false;
-        this.imageService.pic = undefined;
-
-        this.imageService.getDefaultPic((err, data) => {
-          if (err) {
-            console.log(err);
-          }
-          else {
-            this.imageService.pic = this.imageService.sanitize(data);
-            picNotifier.next(<string>this.imageService.pic);
-          }
+          this.uiService.stopLoadingScreen();
+          this.uiService.openSnackBar('Updated Updated Pic Successfully'); 
+          this.goToUpdateDefault.emit(); 
         });
-
-      }, err => console.log(err));
-    }
-  }
-
-  openModal(header : string, mssg : string) {
-    const modalRef = this.modalService.open(ModalContent, {centered : true});
-
-    modalRef.componentInstance.header = header;
-    modalRef.componentInstance.mssg = mssg;
-
-    modalRef.result.then(header => {
-      if (header === 'Confirm Update') { 
-        this.uploadPic();
-      } else {
-        this.removePic();
       }
-    }, dismiss => {});
+    );
   }
 
-  goBack() {
-    this.goPrevious.emit();
+  confirmDelete() {
+    const heightPx = "225px", widthPx = "500px";
+
+    this.uiService.openDialog(
+      heightPx,
+      widthPx,
+      "Confirm Delete", 
+      "Are you sure you want to delete your profile pic?",
+      choseToDeletePic => {
+        if (!choseToDeletePic) return;
+
+        this.uiService.startLoadingScreen();
+
+        this.deletePic(successfulDelete => {
+          if (!successfulDelete) return;
+
+          this.uiService.stopLoadingScreen();
+          this.uiService.openSnackBar('Updated Updated Pic Successfully');
+          this.goToUpdateDefault.emit(); 
+        });
+      }
+    );  
   }
 
+  uploadPic(doSomething : Function) {
+    if (this.profilePicBuffer === undefined) {
+      return;
+    }
+
+    const picNotifier = this.imageService.profilePicNotifier;
+    const subscription  = this.imageService.savePic(this.profilePicBuffer, this.mimeType).subscribe(() => {
+      this.imageService.pic = this.profilePic;
+      this.imageService.hasProfilePic = true;
+      this.showUploadBtn = false;
+
+      picNotifier.next(this.profilePic); 
+      doSomething(true);
+     
+    }, err => doSomething(false));
+
+    this.subscriptions.push(subscription);
+  }
+
+  deletePic(doSomething : Function) {
+    if (!this.hasProfilePic) {
+      return;
+    }
+
+    const picNotifier = this.imageService.profilePicNotifier;
+    const subscription = this.imageService.deletePic().subscribe(() => {
+      this.imageElement.value = "";
+      this.imageService.hasProfilePic = false;
+      this.imageService.pic = undefined;
+
+      this.imageService.getDefaultPic((err, data) => {
+        if (err) {
+          doSomething(false);
+        }
+        else {
+          this.imageService.pic = this.imageService.sanitize(data);
+          picNotifier.next(<string>this.imageService.pic);
+          doSomething(true);
+        }
+      });
+
+    }, err => doSomething(false));
+    
+    this.subscriptions.push(subscription);
+  }
 }

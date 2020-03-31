@@ -1,0 +1,50 @@
+:host {
+    height : 95%;
+    width : 100%;
+    display : inline-flex;
+    flex-flow : column nowrap;
+    align-items : center;
+    justify-content : center;
+}
+
+.d-flex {
+    overflow-y : auto;
+    display : inline-block;
+    height : 100%;
+    width : 99.6%;
+    /* border : 1px solid black; */
+}
+
+.button {
+    display : inline-block;
+    height : 2rem;
+    width : 6rem;
+    margin-left : 1rem;
+    border : 1px solid black;
+    background-color : white;
+}
+
+.button:enabled:hover {
+    border :  1px solid white;
+    background-color : black;
+    color : white;
+    cursor : pointer;
+}
+
+.button:disabled {
+    border : 1px solid #A9A9A9;
+}
+
+.button-wrapper {
+    display : inline-block;
+    margin-top : 1.5rem;
+    margin-bottom : 0.5rem;
+    height : 3rem;
+    width : 20rem;
+    text-align : center;
+}
+
+
+.focus-div:focus {
+    outline-width: 0;
+}
