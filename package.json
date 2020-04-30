@@ -35,7 +35,7 @@
     "core-js": "^2.5.4",
     "dotenv": "^8.2.0",
     "fs": "0.0.1-security",
-    "jquery": "^3.4.0",
+    "jquery": "^3.5.0",
     "ng2-img-max": "^2.1.18",
     "popper.js": "^1.15.0",
     "rxjs": "~6.3.3",
