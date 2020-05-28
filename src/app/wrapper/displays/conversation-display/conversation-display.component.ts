@@ -1,5 +1,6 @@
-import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, AfterViewInit, Output, EventEmitter, SimpleChanges } from '@angular/core';
 import { ImageService } from 'src/app/services/image.service';
+import { UiService } from 'src/app/services/ui.service';
 
 @Component({
   selector: 'app-conversation-display',
@@ -7,6 +8,8 @@ import { ImageService } from 'src/app/services/image.service';
   styleUrls: ['./conversation-display.component.css']
 })
 export class ConversationDisplayComponent implements OnInit, AfterViewInit {
+
+  @Output() goToChatRoom : EventEmitter<string> = new EventEmitter<string>();
 
   @Input() index : number;
   @Input() conversationId : string;
@@ -29,7 +32,10 @@ export class ConversationDisplayComponent implements OnInit, AfterViewInit {
 
   borderColorLookup : Map<number, string>;
 
-  constructor(private imageService : ImageService) { }
+  constructor(private imageService : ImageService, private uiService : UiService) { }
+
+  ngOnChanges(changes : SimpleChanges) {
+  }
 
   ngOnInit() {
     this.conversationName = this.conversationName.toUpperCase();
@@ -80,6 +86,11 @@ export class ConversationDisplayComponent implements OnInit, AfterViewInit {
     return {
       'border' : `1px solid ${this.borderColorLookup.get(idx)}`
     }
+  }
+
+  goToChat() {
+    this.uiService.toggleSidePanel.next(this.uiService.SMALL_PANEL_STATE);
+    this.goToChatRoom.emit(this.conversationId);
   }
 
 }

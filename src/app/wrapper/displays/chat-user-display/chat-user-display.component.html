@@ -1,0 +1,23 @@
+<div class = "pic-status-name-wrapper rounded" [style.margin-top.px] = "index == 0 ? '0' : '15'">
+
+  <div class = " user-pic rounded-circle">
+    <img [src] = "pic" height = '75' width = '75' class = "rounded-circle">
+  </div>
+
+  <div class = "user-status rounded-circle" [style.background-color] = "isOnline && isInChat ? '#2E8B57' : isOnline ? '#FFD300' : '#FF4500'"></div>
+
+  <div class = "name-wrapper">
+
+    <div class = "first-last-name rounded" style = "font-size : 18px;">
+      <span>{{ firstName }}</span>
+      <span style = "margin-left : 0.3rem">{{ lastName }}</span>
+    </div>
+
+    <div class = "user-name" style = "font-size : 0.8rem;">
+      <span>{{ username }}</span>
+      <span *ngIf = "isHost" style = "margin-left : 0.3rem;">(host)</span>
+    </div>
+
+  </div>
+
+</div>

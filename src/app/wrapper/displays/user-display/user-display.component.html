@@ -9,9 +9,9 @@
           <span>{{ firstName }}</span> 
           <span style = 'margin : 0 0 0 0.3rem'>{{ lastName }}</span>
       </div>
-      <div style = "padding : 0 0 0 8px;" class = 'user-content-wrapper-2 d-inline-flex flex-row flex-nowrap rounded'>
-          <span style = 'font-size : 0.8rem'>{{ username }}</span>
-          <span style = 'margin : 0 0 0 1.1rem; font-size : 0.8rem;'>
+      <div style = "padding : 0 0 0 8px; font-size : 0.8rem" class = 'user-content-wrapper-2 d-inline-flex flex-row flex-nowrap rounded'>
+          <span>{{ username }}</span>
+          <span style = 'margin : 0 0 0 1.1rem;'>
             <span [style.color] = "isOnline ? '#2E8B57' : '#FF4500'">&#9679;</span> 
             {{ isOnline ? 'online' : 'offline' }}
           </span>

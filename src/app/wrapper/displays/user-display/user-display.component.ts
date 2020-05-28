@@ -19,7 +19,8 @@ export class UserDisplayComponent implements OnInit {
   @Input() base64 : string;
   @Input() mimeType : string;
   @Input() canToggle : boolean;
-  @Output() select = new EventEmitter<number>();
+  
+  @Output() select : EventEmitter<number> = new EventEmitter<number>();
 
   pic : string;
   isSelected : boolean;
