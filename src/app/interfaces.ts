@@ -12,6 +12,19 @@ export interface RegisterUserInfo {
 
 /* UserInfo, Conversation, Invite, Friend interfaces  */
 
+export interface ChatUser {
+    userId : string,
+    username : string;
+    firstName : string;
+    lastName : string;
+    isOnline : boolean;
+    hasProfilePic : boolean;
+    byteArrBase64 : string;
+    mimeType : string;
+    inChat : boolean;
+    isHost : boolean;
+}
+
 export interface SearchedUser {
     userId : string,
     username : string;
@@ -103,7 +116,6 @@ export interface IconResponse {
 export interface SectionStatus {
     showProfile : boolean;
     showConversations : boolean;
-    showUsersInChat : boolean;
     showInvites : boolean;
     showFriends : boolean;
 }

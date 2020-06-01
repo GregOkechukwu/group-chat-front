@@ -103,11 +103,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    for (const subscription of this.subscriptions) {
-      if (subscription instanceof Subscription) {
-        subscription.unsubscribe();
-      }
-    }
+    this.uiService.unsubscribeFromSubscriptions(this.subscriptions);
   }
 
   getSectionName() {
@@ -162,7 +158,6 @@ export class LoginComponent implements OnInit {
 
       this.loginUser(isAuthenticated => {
         if (isAuthenticated) {
-          this.authService.hasLoggedIn = true;
           this.goToHomePage();
 
         } else {

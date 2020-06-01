@@ -1,6 +1,5 @@
 import { Component,  OnInit,  ViewChild,  TemplateRef,  OnDestroy } from '@angular/core';
 import { FormValidatorService } from 'src/app/services/form-validator.service';
-import { Observable,  Subscription,  timer } from 'rxjs';
 import { UserInfoService } from 'src/app/services/user-info.service';
 import { UiService } from 'src/app/services/ui.service';
 import { FormGroup, FormBuilder, AbstractControl } from '@angular/forms';
@@ -8,6 +7,7 @@ import { MatExpansionPanel } from '@angular/material';
 import { CurrentUser } from 'src/app/interfaces';
 import { UpdateUserDialogComponent } from 'src/app/dialogs/update-user-dialog/update-user-dialog.component';
 import { DataManipulationService } from 'src/app/services/data-manipulation.service';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 @Component({
   selector :  'app-profile', 
@@ -16,7 +16,6 @@ import { DataManipulationService } from 'src/app/services/data-manipulation.serv
 })
 export class ProfileComponent implements OnInit, OnDestroy {
 
-  delayTimer : Observable<number> = timer(800);
   subscriptions : Subscription[] = [];
   
   @ViewChild('updateDefault') updateDefault : TemplateRef<any>;
@@ -130,7 +129,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   async onSubmit() {
     const controls = this.form.profileForm.controls;
-    const isEmpty = str => str === undefined || str === null || str === "";
+
+    const isEmpty = str => {
+      return str === undefined || str === null || str === "";
+    }
 
     const trimAllFields = () => {
       const trim = this.dataManipulationService.trim;
@@ -173,7 +175,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
       }
     }
 
-    const passedFirstCheck = () => !hasAllEmptyFields() && !foundInvalidPanelsToExpand();
+    const passedFirstCheck = () => {
+      return !hasAllEmptyFields() && !foundInvalidPanelsToExpand();
+    }
 
     const passedSecondCheck =  async () => {
       const usernameTaken = await this.checkUsernameNotTaken();
@@ -186,6 +190,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
       return !foundInvalidPanelsToExpand();
     }
+    
 
     try {
       trimAllFields();

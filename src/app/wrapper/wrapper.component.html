@@ -1,18 +1,14 @@
-<app-top-panel (windowWidth) = 'updateWindowWidth($event)' (toggle) = 'togglePanel($event)'></app-top-panel>
-
+<app-top-panel (windowWidth) = 'updateWindowWidth($event)'></app-top-panel>
 <div #rootDiv class = "container-fluid d-flex flex-row flex-nowrap justify-content-start" [ngClass] = "getGrayOutCSSClass()">
     
-    <ng-container [ngSwitch] = "panelState">
-        <app-side-panel *ngSwitchCase = "bigPanelState"></app-side-panel>
-        <app-min-side-panel *ngSwitchCase = "smallPanelState"></app-min-side-panel>
+    <ng-container [ngSwitch] = "CURRENT_PANEL">
+        <app-side-panel *ngSwitchCase = "BIG_PANEL"></app-side-panel>
+        <app-min-side-panel *ngSwitchCase = "SMALL_PANEL"></app-min-side-panel>
     </ng-container>
     
     <app-profile *ngIf = 'section.showProfile'></app-profile>
     <app-conversation *ngIf = 'section.showConversations'></app-conversation>
-    <app-users-in-chat *ngIf = 'section.showUsersInChat'></app-users-in-chat>
     <app-invite *ngIf = 'section.showInvites'></app-invite>
     <app-friend *ngIf = 'section.showFriends'></app-friend>
-
-    <!-- <app-chat></app-chat> -->     
+    
 </div>
-

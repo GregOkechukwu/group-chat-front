@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient,  HttpErrorResponse } from '@angular/common/http';
 import { env } from '../../environments/environment';
 import { catchError, map } from 'rxjs/operators';
-import { throwError, BehaviorSubject } from 'rxjs'
-import { CurrentUser, SearchedUser, Availability } from '../interfaces';
+import { throwError, BehaviorSubject, Subscription } from 'rxjs'
+import { CurrentUser, SearchedUser, Availability, ChatUser } from '../interfaces';
+import { UiService } from './ui.service';
 
 const adminUserPath = 'admin/user';
 const userPath = 'user';
@@ -11,11 +12,17 @@ const userPath = 'user';
 @Injectable({
   providedIn :  'root'
 })
-export class UserInfoService {
+export class UserInfoService implements OnDestroy {
+  subscriptions : Subscription[] = [];
+
   profileUpdateNotifier = new BehaviorSubject<CurrentUser>(undefined);
   profileUpdateNotifier$ = this.profileUpdateNotifier.asObservable();
 
-  constructor(private http : HttpClient) { }
+  constructor(private http : HttpClient, private uiService : UiService) { }
+
+  ngOnDestroy() {
+    this.uiService.unsubscribeFromSubscriptions(this.subscriptions);
+  }
 
   handleError(err : HttpErrorResponse) {
     console.log(err);
@@ -55,6 +62,10 @@ export class UserInfoService {
     return this.http.delete(`${env.ROOT}${userPath}/friend?friendId=${friendId}`).pipe(catchError(this.handleError));
   }
 
+  getUsersInConversation(conversationId : string) {
+    return this.http.get<{conversationMembers : ChatUser[]}>(`${env.ROOT}${userPath}/conversation/${conversationId}`).pipe(catchError(this.handleError), map(data => data.conversationMembers));
+  }
+
   updateUser(username : string, firstName : string, lastName : string, email : string, password : string) {
     const isEmpty = str => str === undefined || str === null || str === "";
     const payload : {username? : string, firstName? : string, lastName? : string, email? : string, password : string} = { password };
@@ -70,6 +81,13 @@ export class UserInfoService {
   updateOnlineStatus(isOnline : boolean) {
     const payload = {isOnline};
     return this.http.put(`${env.ROOT}${userPath}/onlinestatus`, payload).pipe(catchError(this.handleError));
+  }
+
+  updateOnlineStatusAsPromise(isOnline : boolean) {
+    return new Promise<void>((resolve, reject) => {
+      const subscription = this.updateOnlineStatus(isOnline).subscribe(() => resolve(), () => reject());
+      this.subscriptions.push(subscription);
+    });
   }
 
   checkUsernameNotTaken(username : string) {

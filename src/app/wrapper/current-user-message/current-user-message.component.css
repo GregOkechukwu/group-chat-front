@@ -1,63 +1,58 @@
  :host {
     width : 100%
 }
- :host .container {
+:host .main-wrapper {
     margin : 0;
-    padding : 0;
     max-width : 100%;
 }
 
-.row, #message-container, #pic-name-container {
-    min-height :  5rem;
-    width : 100%;
-    margin : 0;
+.main-wrapper {
+    padding : 15px;
 }
 
 .row {
     background-color :  #fff;
-}
-.d-flex > div {
-    border :  1px solid gray;
+
 }
 
-#pic-name-container {
+.pic-name-container {
     width : 5rem;
 }
 
-#pic {
-    background-color :  lightsalmon;
-    height : 2.8rem;
-    width :  2.8rem;
-    margin :  0 0 0.4rem 0
+.pic {
+    height : 3.8rem;
+    width :  3.8rem;
 }
 
-#name {
-    background-color :  lightsalmon;
-    height : 1rem;
-    width :  5rem;
+.name {
+    height : 1.2rem;
+    width :  100%;
+    margin-top : 10px;
+    padding : 0 8px;
 }
 
-#message-container {
-    width : 25rem;
-    margin-left :  0.5rem;
+.message-container {
+    max-width : 35rem;
+    width : fit-content;
+    margin-left : 1rem;
+    height : fit-content;
+    overflow-wrap : break-word;
 }
 
-p {
-    text-align :  left;
-    font-size :  1rem;
-    color : black;
-    font-weight : 300;
-    font-family :  Arial, Helvetica, sans-serif;
-    margin : 0;
-    word-break :  break-all
-}
-
-#name>p {
+.name {
     font-size : 0.8rem;
 }
 
-#message-container >p {
-    color : black;
+.pic-name-container, .message-container {
+    padding : 8px;
+}
+
+.name, .pic, .message-container {
+    border : 1px solid black;
+}
+
+.name, .message-container {
+    vertical-align : top;
 }
 
 

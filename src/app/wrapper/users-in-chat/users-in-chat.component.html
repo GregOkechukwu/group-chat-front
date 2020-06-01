@@ -1,18 +1,19 @@
 <div class = "container rounded">
-  <div class = " align-items-center d-flex flex-row flex-nowrap col-12 rounded">
-      <div class = " userpic rounded-circle"></div>
-      <div  class = "username-status col-6 d-flex flex-column justify-content-center">
-        <div><p>Name</p></div>
-        <div><p>Status</p></div>
-      </div>
-  </div>
 
-  <div class = " align-items-center d-flex flex-row flex-nowrap col-12 rounded">
-    <div class = "userpic rounded-circle"></div>
-    <div class = "username-status col-6 d-flex flex-column justify-content-center">
-      <div><p>Name</p></div>
-      <div><p>Status</p></div>
-    </div>
-  </div>
+  <ng-container *ngFor = "let user of users; index as i">
+    <app-chat-user-display
+      [index] = "i"
+      [userId] = "user.id"
+      [username] = "user.username"
+      [firstName] = "user.firstName"
+      [lastName] = "user.lastName"
+      [isOnline] = "user.isOnline"
+      [hasProfilePic] = "user.hasProfilePic"
+      [base64] = "user.byteArrBase64"
+      [mimeType] = "user.mimeType"
+      [inChat] = "user.inChat"
+      [isHost] = "user.isHost">
+    </app-chat-user-display>
+  </ng-container>
 
 </div>

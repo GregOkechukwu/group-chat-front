@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, TemplateRef } from '@angular/core';
 import { Invite } from 'src/app/interfaces';
 import { UiService } from 'src/app/services/ui.service';
 import { Subscription } from 'rxjs';
@@ -11,8 +11,12 @@ import { InviteInfoService } from 'src/app/services/invite-info.service';
 })
 export class InviteComponent implements OnInit, AfterViewInit, OnDestroy {
   subscriptions : Subscription[] = [];
+  
+  @ViewChild('inviteDefault') inviteDefault : TemplateRef<any>;
+  @ViewChild('inviteReceived') inviteReceived : TemplateRef<any>;
+  @ViewChild('inviteSent') inviteSent : TemplateRef<any>;
+  
   section : number;
-
   inviteDefaultSection : number = 0;
   inviteReceivedSection : number = 1;
   inviteSentSection : number = 2;
@@ -73,29 +77,29 @@ export class InviteComponent implements OnInit, AfterViewInit, OnDestroy {
     if (choseToAccept) {
       this.uiService.startLoadingScreen();
 
-      const subscription = this.inviteInfoService.acceptInvite(inviteId, conversationId, new Date().toUTCString()).subscribe(() => {
+      const subscriptionOne = this.inviteInfoService.acceptInvite(inviteId, conversationId, new Date().toUTCString()).subscribe(() => {
         /* GO TO CONVERSATION */
-        this.getReceivedInvitesCount(() => {
+
+        const subscriptionTwo = this.getReceivedInvitesCount(() => {
           this.invites.splice(index, 1);
           this.uiService.openSnackBar(mssg);
         });
 
-      }, null, () => this.uiService.stopLoadingScreen());
-
-      this.subscriptions.push(subscription)
+        this.subscriptions.push(subscriptionOne, subscriptionTwo);
+      });
     }
     else {
       this.uiService.startLoadingScreen();
 
-      const subscription = this.inviteInfoService.declineInvite(inviteId).subscribe(() => {
-        this.getReceivedInvitesCount(() => {
+      const subscriptionOne = this.inviteInfoService.declineInvite(inviteId).subscribe(() => {
+
+        const subscriptionTwo = this.getReceivedInvitesCount(() => {
           this.invites.splice(index, 1);
           this.uiService.openSnackBar(mssg);
         });
 
-      }, null, () => this.uiService.stopLoadingScreen());
-
-      this.subscriptions.push(subscription);
+        this.subscriptions.push(subscriptionOne, subscriptionTwo);
+      });
     }
   }
 
@@ -105,24 +109,23 @@ export class InviteComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.uiService.startLoadingScreen();
 
-    const subscription = this.inviteInfoService.cancelInvite(inviteId).subscribe(() => {
-      this.getReceivedInvitesCount(() => {
+    const subscriptionOne = this.inviteInfoService.cancelInvite(inviteId).subscribe(() => {
+
+      const subscriptionTwo = this.getReceivedInvitesCount(() => {
         this.invites.splice(index, 1);
         this.uiService.openSnackBar(mssg);
       });
 
-    }, null, () => this.uiService.stopLoadingScreen());
+      this.subscriptions.push(subscriptionOne, subscriptionTwo);
+    });
 
-    this.subscriptions.push(subscription);
   }
 
   getReceivedInvitesCount(doSomething : Function) {
-    const subscription = this.inviteInfoService.getReceivedInvitesCount().subscribe((inviteCount : number) => {
+    return this.inviteInfoService.getReceivedInvitesCount().subscribe((inviteCount : number) => {
       this.inviteInfoService.inviteCountNotfier.next(inviteCount);
       doSomething();
-    });
-
-    this.subscriptions.push(subscription);
+    }, null, () => this.uiService.stopLoadingScreen());
   }
 
 }

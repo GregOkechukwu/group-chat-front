@@ -1,3 +1,5 @@
+<button *ngIf = "section === userConversationSection" (click) = "goBack()" class = "button rounded" style = "width : 5rem; margin-top : 10px; font-size: 13px" >BACK</button>
+
 <ng-container [ngSwitch] = 'section'>
 
     <ng-container *ngSwitchCase = 'createJoinConversationSection'>
@@ -10,6 +12,10 @@
 
     <ng-container *ngSwitchCase = 'userConversationSection'>
         <ng-container *ngTemplateOutlet = "userConversations"></ng-container>
+    </ng-container>
+
+    <ng-container *ngSwitchCase = 'chatRoomSection'>
+        <ng-container *ngTemplateOutlet = "chatRoom"></ng-container>
     </ng-container>
 
 </ng-container> 
@@ -32,12 +38,6 @@
     <div class = 'conversation-wrapper d-flex flex-nowrap flex-column align-items-center justify-content-center'>
         <h5 style = "margin : 2rem 0 1rem 0;">MY CONVERSATIONS</h5>
 
-        <div class = "button-wrapper">
-            <button (click) = "toSection(createJoinConversationSection)" class = "button rounded" style = "margin-left : 1rem; width : 6rem;">
-                BACK
-            </button> 
-        </div>  
-
         <div class = "d-flex flex-nowrap flex-column align-items-center">
             <p *ngIf = "conversations.length === 0" style = "margin-top : 10rem;" >YOU HAVE NO CONVERSATIONS</p>
 
@@ -57,7 +57,8 @@
                         [userA_hasProfilePic] = "conversation.prioritizedPics.prioritizedUserA.hasProfilePic"
                         [userB_Base64] = "conversation.prioritizedPics.prioritizedUserB.byteArrBase64"
                         [userB_MimeType] = "conversation.prioritizedPics.prioritizedUserB.mimeType"
-                        [userB_hasProfilePic] = "conversation.prioritizedPics.prioritizedUserB.hasProfilePic">
+                        [userB_hasProfilePic] = "conversation.prioritizedPics.prioritizedUserB.hasProfilePic"
+                        (goToChatRoom) = "toChatRoom($event)">
                     </app-conversation-display>
                 </ng-container>
             </div>      
@@ -65,6 +66,12 @@
     </div>
 </ng-template>
 
+<ng-template #chatRoom>
+    <div class = "chat-room-wrapper d-inline-flex flex-row flex-nowrap">
+        <app-users-in-chat [users] = "chatUsers"></app-users-in-chat>
+        <app-chat [conversationId] = "conversationId" (exit) = "goBack()"></app-chat>
+    </div>
+</ng-template>
 
 
 

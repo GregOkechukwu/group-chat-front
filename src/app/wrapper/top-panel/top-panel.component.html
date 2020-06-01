@@ -1,6 +1,6 @@
 <div #rootDiv class = "d-flex flex-nowrap align-items-end container-fluid" (window:resize) = "onResize($event)" [ngClass] = "getGrayOutCSSClass()">
   <div class = "col-sm-2 ">
-      <div class = 'menu-bar-wrapper' (click) = 'togglePanel(switchPanel)'>
+      <div class = "menu-bar-wrapper" (click) = "toggleSidePanel(uiService.SWITCH_PANEL_STATE)">
         <div style = 'margin-top : 0.1875rem; margin-bottom : 0.3125rem' class = 'menu-bar'></div> 
         <div class = 'menu-bar'></div> 
         <div style = 'margin-top : 0.3125rem; margin-bottom : 0.1875rem' class = 'menu-bar'></div> 

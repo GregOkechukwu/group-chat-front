@@ -5,6 +5,7 @@ import { MatSnackBar, MatDialog } from '@angular/material';
 import { MessageArchiveComponent } from '../message-archive/message-archive.component';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { MainDialogComponent } from '../dialogs/main-dialog/main-dialog.component';
+import { Subject } from 'rxjs/internal/Subject';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,6 @@ export class UiService implements OnDestroy {
   private _section : SectionStatus =  {
     showProfile : false,
     showConversations : true,
-    showUsersInChat : false,
     showInvites : false,
     showFriends : false
   }
@@ -23,11 +23,19 @@ export class UiService implements OnDestroy {
   private _showProgressBar : boolean = false;
   private _hasUsedResolver : boolean = false;
 
-  disableElementsNotifier = new BehaviorSubject<boolean>(undefined);
+  private _NO_PANEL_STATE : number = 0;
+  private _SMALL_PANEL_STATE : number = 1;
+  private _BIG_PANEL_STATE : number = 2;
+  private _SWITCH_PANEL : number = 3;
+
+  disableElementsNotifier = new Subject<boolean>();
   disableElementsNotifier$ = this.disableElementsNotifier.asObservable();
 
   whatToShow = new BehaviorSubject<SectionStatus>(this.section);
   whatToShow$ = this.whatToShow.asObservable();
+
+  toggleSidePanel = new Subject<number>();
+  toggleSidePanel$ = this.toggleSidePanel.asObservable();
 
   subscriptions : Subscription[] = [];
 
@@ -55,6 +63,22 @@ export class UiService implements OnDestroy {
 
   set section(section : SectionStatus) {
     this._section = section;
+  }
+
+  get NO_PANEL_STATE() {
+    return this._NO_PANEL_STATE;
+  }
+
+  get SMALL_PANEL_STATE() {
+    return this._SMALL_PANEL_STATE
+  }
+
+  get BIG_PANEL_STATE() {
+    return this._BIG_PANEL_STATE;
+  }
+
+  get SWITCH_PANEL_STATE() {
+    return this._SWITCH_PANEL;
   }
 
   ngOnDestroy() {
@@ -102,8 +126,8 @@ export class UiService implements OnDestroy {
   }
 
   stopLoadingScreen() {
-    const disableDOMTree = true;
-    this.disableElementsNotifier.next(!disableDOMTree);
+    const disableDOMTree = false;
+    this.disableElementsNotifier.next(disableDOMTree);
     this.showProgressBar = false;
   }
 

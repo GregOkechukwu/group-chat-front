@@ -3,6 +3,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { UserInfoService } from 'src/app/services/user-info.service';
 import { UiService } from 'src/app/services/ui.service';
+import { ConversationInfoService } from 'src/app/services/conversation-info.service';
 
 @Component({
   selector : 'app-top-panel',
@@ -14,19 +15,13 @@ export class TopPanelComponent implements OnInit {
   subscriptions : Subscription[] = [];
 
   @ViewChild('rootDiv') rootDiv : ElementRef<HTMLDivElement>;
-
-  @Output() toggle = new EventEmitter<number>();
-  @Output() windowWidth = new EventEmitter<number>();
-
-  noPanel : number = 0;
-  smallPanel : number = 1;
-  bigPanel : number = 2;
-  switchPanel : number = 3;
+  @Output() windowWidth : EventEmitter<number> = new EventEmitter<number>();
 
   constructor(
     private uiService : UiService,
     private userInfoService : UserInfoService,
-    private authService : AuthService
+    private authService : AuthService,
+    private conversationInfoService : ConversationInfoService
   ) { }
 
   ngOnInit() {
@@ -37,9 +32,13 @@ export class TopPanelComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    const subscription = this.uiService.disableElementsNotifier$.subscribe(disableDOMTree => {
-      if (disableDOMTree) this.uiService.disableAllElements(this.rootDiv.nativeElement);
-      else this.uiService.enableAllElements(this.rootDiv.nativeElement);
+    const subscription = this.uiService.disableElementsNotifier$.subscribe((disableDOMTree : boolean) => {
+      if (disableDOMTree) {
+        this.uiService.disableAllElements(this.rootDiv.nativeElement);
+      }
+      else {
+        this.uiService.enableAllElements(this.rootDiv.nativeElement);
+      }
     });
 
     this.subscriptions.push(subscription);
@@ -49,8 +48,8 @@ export class TopPanelComponent implements OnInit {
     this.uiService.unsubscribeFromSubscriptions(this.subscriptions);
   }
 
-  signOut() {
-    const heightPx = "225px", widthPx = "500px";
+ signOut() {
+    const heightPx = "225px", widthPx = "500px", isOnline = false, inChat = false;
 
     this.uiService.openDialog(
       heightPx,
@@ -58,38 +57,42 @@ export class TopPanelComponent implements OnInit {
       "Confirm Sign Out",
       "Are you sure you want to sign out?",
       choseToSignOut => {
-        if (!choseToSignOut) return;
-        const isOnline = false;
+
+        if (!choseToSignOut) {
+          return;
+        }
+
         this.uiService.startLoadingScreen();
-
-        const subscriptionOne = this.userInfoService.updateOnlineStatus(isOnline).subscribe(() => {
-          const subscriptionTwo = this.authService.signOut().subscribe(() => {
-            this.authService.kickout();
-            this.uiService.stopLoadingScreen();
-
-          });
-
-          this.subscriptions.push(subscriptionOne, subscriptionTwo);
+        console.log(this.conversationInfoService.conversationId);
+        this.conversationInfoService.updateInChatStatusAsPromise(this.conversationInfoService.conversationId, inChat)
+        .then(() => this.userInfoService.updateOnlineStatusAsPromise(isOnline))
+        .then(() => this.authService.signOutAsPromise())
+        .then(() => {
+          this.authService.kickout();
+          this.uiService.stopLoadingScreen();
         });
-      }
-    );
+      });
   }
 
-  togglePanel(type : number) {
-    this.toggle.emit(type);
+  toggleSidePanel(toggleState : number) {
+    this.uiService.toggleSidePanel.next(toggleState);
   }
 
   checkWindowWidth(width : number) {
     this.windowWidth.emit(width);
 
+    if (this.conversationInfoService.isInChat) {
+      return;
+    }
+
     if (width < 415) {
-      this.togglePanel(this.noPanel);
+      this.toggleSidePanel(this.uiService.NO_PANEL_STATE);
 
     } else if (width < 950) {
-      this.togglePanel(this.smallPanel);
+      this.toggleSidePanel(this.uiService.SMALL_PANEL_STATE);
 
-    } else if (width > 950) {
-      this.togglePanel(this.bigPanel);
+    } else if (width > 950 && !this.conversationInfoService.isInChat) {
+      this.toggleSidePanel(this.uiService.BIG_PANEL_STATE);
     }
   }
 

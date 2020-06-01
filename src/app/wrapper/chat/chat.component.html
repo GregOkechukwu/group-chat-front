@@ -1,11 +1,19 @@
-<div class="container rounded">
-    <div id="chat-top" class="col-12 rounded"> <p>Users in Conversation</p></div>
-    <div id="chat-mid" class= "col-12 rounded d-flex flex-column justify-content-start">
+<div class = "main-wrapper rounded">
+    <div class = "chat-top rounded">
+        <button (click) = "exitChat()" class = "send-exit-btn button rounded">EXIT</button>
+    </div>
+
+    <div class = "chat-mid rounded d-flex flex-column justify-content-start">
         <app-current-user-message></app-current-user-message>
         <app-other-user-message></app-other-user-message>
         <app-current-user-message></app-current-user-message>
         <app-other-user-message></app-other-user-message>
     </div>
-    <div id="chat-bottom" class= "col-12 rounded"></div>  
 
+    <div class = "chat-bottom rounded">
+        <textarea class = "rounded" placeholder = "Type message..."></textarea>
+        <span style = "padding : 8px 15px; writing-mode : vertical-lr;">
+            <button class = "send-exit-btn button rounded">SEND</button>
+        </span>
+    </div>
 </div>

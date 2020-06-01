@@ -88,11 +88,7 @@ export class RegisterComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    for (const subscription of this.subscriptions) {
-      if (subscription instanceof Subscription) {
-        subscription.unsubscribe();
-      }
-    }
+    this.uiService.unsubscribeFromSubscriptions(this.subscriptions);
   }
 
   goToLogin() {

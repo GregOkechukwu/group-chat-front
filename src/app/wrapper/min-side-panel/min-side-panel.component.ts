@@ -67,7 +67,7 @@ export class MinSidePanelComponent implements OnInit, OnDestroy {
         
         this.uiService.hasUsedResolver = true;
       }
-    
+     
     });
 
     const subscriptionTwo = profilePicNotifier$.subscribe((src : string) => {

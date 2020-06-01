@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, AfterViewInit, Output, EventEmitter, SimpleChanges } from '@angular/core';
 import { ImageService } from 'src/app/services/image.service';
-import { UiService } from 'src/app/services/ui.service';
 
 @Component({
   selector: 'app-conversation-display',
@@ -32,7 +31,7 @@ export class ConversationDisplayComponent implements OnInit, AfterViewInit {
 
   borderColorLookup : Map<number, string>;
 
-  constructor(private imageService : ImageService, private uiService : UiService) { }
+  constructor(private imageService : ImageService) { }
 
   ngOnChanges(changes : SimpleChanges) {
   }
@@ -89,7 +88,6 @@ export class ConversationDisplayComponent implements OnInit, AfterViewInit {
   }
 
   goToChat() {
-    this.uiService.toggleSidePanel.next(this.uiService.SMALL_PANEL_STATE);
     this.goToChatRoom.emit(this.conversationId);
   }
 

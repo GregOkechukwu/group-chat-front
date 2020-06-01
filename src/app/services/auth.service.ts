@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import * as  AmazonCognitoIdentity from "amazon-cognito-identity-js";
 import { HttpClient } from '@angular/common/http';
 import { UserInfoService } from './user-info.service';
@@ -8,6 +8,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { ImageService } from './image.service';
 import { CacheService } from './cache.service';
 import { UiService } from './ui.service';
+import { Subscription } from 'rxjs';
 
 export { AmazonCognitoIdentity };
 
@@ -18,7 +19,9 @@ const userPath = "user";
 @Injectable({ 
   providedIn : 'root'
 })
-export class AuthService {
+export class AuthService implements OnDestroy {
+  subscriptions : Subscription[] = [];
+
   private _hasLoggedIn : boolean = false;
 
   constructor(
@@ -37,6 +40,10 @@ export class AuthService {
     this._hasLoggedIn = loginStatus;
   }
 
+  ngOnDestroy() {
+    this.uiService.unsubscribeFromSubscriptions(this.subscriptions);
+  }
+
   firstLogin(username : string, newPassword : string, tempPassword : string) {
     const payload = {usernameOrEmail : username, newPassword, tempPassword};
     return this.http.post(`${env.ROOT}${adminLoginPath}/firstlogin`, payload).pipe(catchError(this.userInfo.handleError));
@@ -52,6 +59,13 @@ export class AuthService {
       this.hasLoggedIn = false;
       this.cache.clearCache();
     }));
+  }
+
+  signOutAsPromise() {
+    return new Promise<void>((resolve, reject) => {
+      const subscription = this.signOut().subscribe(() => resolve(), () => reject());
+      this.subscriptions.push(subscription);
+    });
   }
 
   sendVerificationCode(username : string) {

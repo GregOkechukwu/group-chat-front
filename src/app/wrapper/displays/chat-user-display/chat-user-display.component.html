@@ -1,10 +1,10 @@
 <div class = "pic-status-name-wrapper rounded" [style.margin-top.px] = "index == 0 ? '0' : '15'">
 
   <div class = " user-pic rounded-circle">
-    <img [src] = "pic" height = '75' width = '75' class = "rounded-circle">
+    <img [src] = "pic" height = '60' width = '60' class = "rounded-circle" [ngStyle] = "uiService.styleBorder(hasProfilePic)">
   </div>
 
-  <div class = "user-status rounded-circle" [style.background-color] = "isOnline && isInChat ? '#2E8B57' : isOnline ? '#FFD300' : '#FF4500'"></div>
+  <div class = "user-status rounded-circle" [style.background-color] = "isOnline && inChat ? '#2E8B57' : isOnline ? '#FFD300' : '#FF4500'"></div>
 
   <div class = "name-wrapper">
 

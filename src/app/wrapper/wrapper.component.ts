@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy } fr
 import { UiService } from '../services/ui.service';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { SectionStatus } from '../interfaces';
+import { AuthService } from '../services/auth.service';
+import { ConversationInfoService } from '../services/conversation-info.service';
 
 @Component({
   selector: 'app-wrapper',
@@ -15,51 +17,67 @@ export class WrapperComponent implements OnInit, AfterViewInit, OnDestroy  {
   subscriptions : Subscription[] = [];
   section : SectionStatus;
 
-  bigPanelState : boolean = true;
-  smallPanelState : boolean = false;
-  noPanelState : boolean = undefined;
+  BIG_PANEL : boolean = true;
+  SMALL_PANEL : boolean = false;
+  NO_PANEL : boolean = undefined;
 
-  panelState : boolean = this.bigPanelState;
+  CURRENT_PANEL : boolean = this.BIG_PANEL;
   innerWidth : number;
-  
-  noPanel : number = 0;
-  smallPanel : number = 1;
-  bigPanel : number = 2;
-  switchPanel : number = 3;
 
-  constructor(private uiService : UiService) { }
+  constructor(
+    private uiService : UiService, 
+    private authService : AuthService, 
+    private conversationInfoService : ConversationInfoService
+  ) { }
 
   ngOnInit() {
     this.uiService.stopLoadingScreen();
+    
+    this.authService.hasLoggedIn = true;
     this.section = this.uiService.section;
 
-    const subscription = this.uiService.whatToShow$.subscribe((section : SectionStatus) => {
+    const subscriptionOne = this.uiService.whatToShow$.subscribe((section : SectionStatus) => {
       this.section = section;
     });
+
+    const subscriptionTwo = this.uiService.toggleSidePanel$.subscribe((toggleState : number) => {
+      this.togglePanel(toggleState);
+    });
     
-    this.subscriptions.push(subscription);
+    this.subscriptions.push(subscriptionOne, subscriptionTwo);
   }
 
   ngAfterViewInit() {
-    const subscription = this.uiService.disableElementsNotifier$.subscribe(disableDOMTree => {
-      if (disableDOMTree) this.uiService.disableAllElements(this.rootDiv.nativeElement);
-      else this.uiService.enableAllElements(this.rootDiv.nativeElement);
+    const subscription = this.uiService.disableElementsNotifier$.subscribe((disableDOMTree : boolean) => {
+      if (disableDOMTree) {
+        this.uiService.disableAllElements(this.rootDiv.nativeElement);
+      }
+      else {
+        this.uiService.enableAllElements(this.rootDiv.nativeElement);
+      }
     });
 
     this.subscriptions.push(subscription);
   }
-
+ 
   ngOnDestroy() {
-    for (const subscription of this.subscriptions) {
-      if (subscription instanceof Subscription) subscription.unsubscribe();
-    }
+    this.uiService.unsubscribeFromSubscriptions(this.subscriptions);
   }
 
   togglePanel(event : number) {
-    if (this.innerWidth < 700 && event === this.switchPanel) {
-      this.panelState = this.panelState === this.noPanelState ? this.smallPanelState : this.noPanelState;
-    } else {
-      this.panelState = event === this.noPanel ? this.noPanelState : event === this.bigPanel ? this.bigPanelState : event === this.smallPanel ? this.smallPanelState : !this.panelState;
+    const NO_PANEL_STATE = this.uiService.NO_PANEL_STATE;
+    const SMALL_PANEL_STATE = this.uiService.SMALL_PANEL_STATE;
+    const BIG_PANEL_STATE = this.uiService.BIG_PANEL_STATE;
+    const SWITCH_PANEL_STATE = this.uiService.SWITCH_PANEL_STATE;
+    
+    if (this.innerWidth < 700 && event === SWITCH_PANEL_STATE || this.conversationInfoService.isInChat) {
+      this.CURRENT_PANEL = this.CURRENT_PANEL === this.NO_PANEL ? this.SMALL_PANEL : this.NO_PANEL;
+    } 
+    else {
+      this.CURRENT_PANEL = 
+      event === NO_PANEL_STATE ? this.NO_PANEL : 
+      event === BIG_PANEL_STATE ? this.BIG_PANEL : 
+      event === SMALL_PANEL_STATE ? this.SMALL_PANEL : !this.CURRENT_PANEL;
     }
   }
 

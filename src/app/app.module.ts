@@ -48,6 +48,7 @@ import { FirstSectionComponent } from './wrapper/displays/first-section/first-se
 import { ReceivedFriendRequestDisplayComponent } from './wrapper/displays/received-friend-request-display/received-friend-request-display.component';
 import { SentFriendRequestDisplayComponent } from './wrapper/displays/sent-friend-request-display/sent-friend-request-display.component';
 import { CurrentFriendDisplayComponent } from './wrapper/displays/current-friend-display/current-friend-display.component';
+import { ChatUserDisplayComponent } from './wrapper/displays/chat-user-display/chat-user-display.component';
 
 @NgModule({
   declarations: [
@@ -79,7 +80,8 @@ import { CurrentFriendDisplayComponent } from './wrapper/displays/current-friend
     FirstSectionComponent,
     ReceivedFriendRequestDisplayComponent,
     SentFriendRequestDisplayComponent,
-    CurrentFriendDisplayComponent
+    CurrentFriendDisplayComponent,
+    ChatUserDisplayComponent
   ],
   imports: [
     BrowserModule,

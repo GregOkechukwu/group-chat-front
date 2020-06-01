@@ -2,43 +2,12 @@
     height : 100%
 }
 .container {
-    overflow-y : auto;
     display : inline-block;
+    overflow-y : auto;
     vertical-align :  top;
     height : 100%;
-    width :  20rem;
+    width :  21rem;
     margin : 0.2rem;
-    border : 1px solid black
-    /* Note that padding-left/right is included here thus our actual content area is substracted */
-}
-
-.col-12 {
+    padding : 15px;
     border : 1px solid black;
-    margin : 1rem 0 0 0;
-    height : 5rem;
-}
-
-/*needed to be explicit here when aligning userpic with username thus needed positioning attributes*/
-.userpic {  
-    height : 4rem;
-    width : 4rem;
-    margin :  0.2em;
-    position : relative; 
-    left : 1.2rem;
-}
-
-.username-status {
-    height : 4rem;
-    position : relative;
-    left : 1.8rem;
-}
-
-.username-status, .userpic, .username-status > div {
-    border : 1px solid black;
-}
-
-p {
-    display :  inline;
-    font-weight : 300;
-    font-family :  Arial, Helvetica, sans-serif;
 }

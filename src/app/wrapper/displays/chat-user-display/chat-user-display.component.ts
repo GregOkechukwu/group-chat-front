@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { DataManipulationService } from 'src/app/services/data-manipulation.service';
 import { ImageService } from 'src/app/services/image.service';
+import { UiService } from 'src/app/services/ui.service';
 
 @Component({
   selector: 'app-chat-user-display',
@@ -15,14 +16,19 @@ export class ChatUserDisplayComponent implements OnInit {
   @Input() firstName : string;
   @Input() lastName : string;
   @Input() isOnline : boolean;
+  @Input() hasProfilePic : boolean;
   @Input() base64 : string;
   @Input() mimeType : string;
-  @Input() isInChat : boolean;
+  @Input() inChat : boolean;
   @Input() isHost : boolean;
 
   pic : string;
   
-  constructor(private dataManipulationService : DataManipulationService, private imageService : ImageService) { }
+  constructor(
+    private dataManipulationService : DataManipulationService, 
+    private imageService : ImageService,
+    private uiService : UiService
+  ) { }
 
   ngOnInit() {
     this.formatNames();
