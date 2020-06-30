@@ -62,14 +62,14 @@ export class ConversationInfoService implements OnDestroy {
     }));
   }
 
-  updateInChatStatusAsPromise(conversationId : string, inChatStatus : boolean) {
+  updateInChatStatusAsPromise(conversationId : string, inChat : boolean) {
     return new Promise<void>((resolve, reject) => {
-      if (conversationId.length == 0) {
+      if (conversationId.length === 0) {
         resolve();
         return;
       }
       
-     const subscription = this.updateInChatStatus(conversationId, inChatStatus).subscribe(() => resolve(), () => reject());
+     const subscription = this.updateInChatStatus(conversationId, inChat).subscribe(() => resolve(), (err : any) => reject(err));
      this.subscriptions.push(subscription);
     });
   }

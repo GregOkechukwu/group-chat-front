@@ -5,19 +5,16 @@ import { tap } from 'rxjs/internal/operators/tap';
 import { Observable } from 'rxjs/internal/Observable';
 import { UserInfoService } from '../services/user-info.service';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { UiService } from '../services/ui.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor, OnDestroy {
     subscriptions : Subscription[];
 
-    constructor(private authService : AuthService, private userInfoService : UserInfoService) {}
+    constructor(private authService : AuthService, private userInfoService : UserInfoService, private uiService : UiService) {}
 
     ngOnDestroy() {
-        for (const subscription of this.subscriptions) {
-            if (subscription instanceof Subscription) {
-                subscription.unsubscribe();
-            }
-        }
+        this.uiService.unsubscribeFromSubscriptions(this.subscriptions);
     }
 
     intercept(request : HttpRequest<any>, next : HttpHandler) : Observable<HttpEvent<any>> {

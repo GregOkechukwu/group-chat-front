@@ -114,7 +114,7 @@ export class UploadPicComponent implements OnInit {
 
         this.uiService.startLoadingScreen();
 
-        this.deletePic(successfulDelete => {
+        this.deletePic((successfulDelete : boolean) => {
           if (!successfulDelete) return;
 
           this.uiService.stopLoadingScreen();

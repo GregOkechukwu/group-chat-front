@@ -68,8 +68,18 @@
 
 <ng-template #chatRoom>
     <div class = "chat-room-wrapper d-inline-flex flex-row flex-nowrap">
-        <app-users-in-chat [users] = "chatUsers"></app-users-in-chat>
-        <app-chat [conversationId] = "conversationId" (exit) = "goBack()"></app-chat>
+        <app-users-in-chat *ngIf = "showUserPanel" [users] = "chatUsers"></app-users-in-chat>
+        <app-chat 
+            [userId] = "userId" 
+            [username] = "username"
+            [firstName] = "firstName"
+            [lastName] = "lastName"
+            [conversationId] = "conversationId" 
+            [userPanelIsShown] = "showUserPanel"
+            [userMessages] = "userMessages"
+            (exit) = "goBack()" 
+            (toggleUserPanel) = "onToggleUserPanel($event)">
+        </app-chat>
     </div>
 </ng-template>
 

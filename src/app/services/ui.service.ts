@@ -39,7 +39,10 @@ export class UiService implements OnDestroy {
 
   subscriptions : Subscription[] = [];
 
-  constructor(private snackbar : MatSnackBar, private matDialog : MatDialog) { }
+  constructor(
+    private snackbar : MatSnackBar, 
+    private matDialog : MatDialog
+  ) { }
 
   get showProgressBar() {
     return this._showProgressBar;
@@ -132,7 +135,7 @@ export class UiService implements OnDestroy {
   }
 
   openSnackBar(mssg : string) {
-    this.snackbar.openFromComponent(MessageArchiveComponent, {data : mssg});
+    this.snackbar.openFromComponent(MessageArchiveComponent, { data : mssg });
   }
 
   openDialog(heightPx : string, widthPx : string, dialogTitle : string, dialogContent : string, checkResponse : Function, component : any = MainDialogComponent) {

@@ -66,6 +66,13 @@ export class UserInfoService implements OnDestroy {
     return this.http.get<{conversationMembers : ChatUser[]}>(`${env.ROOT}${userPath}/conversation/${conversationId}`).pipe(catchError(this.handleError), map(data => data.conversationMembers));
   }
 
+  getUsersInConversationAsPromise(conversationId : string) {
+    return new Promise<ChatUser[]>((resolve, reject) => {
+      const subscription = this.getUsersInConversation(conversationId).subscribe((conversationMembers : ChatUser[]) => resolve(conversationMembers), (err : any) => reject(err));
+      this.subscriptions.push(subscription);
+    });
+  }
+
   updateUser(username : string, firstName : string, lastName : string, email : string, password : string) {
     const isEmpty = str => str === undefined || str === null || str === "";
     const payload : {username? : string, firstName? : string, lastName? : string, email? : string, password : string} = { password };
@@ -79,13 +86,13 @@ export class UserInfoService implements OnDestroy {
   }
 
   updateOnlineStatus(isOnline : boolean) {
-    const payload = {isOnline};
+    const payload = { isOnline };
     return this.http.put(`${env.ROOT}${userPath}/onlinestatus`, payload).pipe(catchError(this.handleError));
   }
 
   updateOnlineStatusAsPromise(isOnline : boolean) {
     return new Promise<void>((resolve, reject) => {
-      const subscription = this.updateOnlineStatus(isOnline).subscribe(() => resolve(), () => reject());
+      const subscription = this.updateOnlineStatus(isOnline).subscribe(() => resolve(), (err : any) => reject(err));
       this.subscriptions.push(subscription);
     });
   }

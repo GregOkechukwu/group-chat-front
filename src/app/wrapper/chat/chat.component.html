@@ -1,19 +1,26 @@
-<div class = "main-wrapper rounded">
+<div class = "main-wrapper">
     <div class = "chat-top rounded">
-        <button (click) = "exitChat()" class = "send-exit-btn button rounded">EXIT</button>
+
+        <div style = "display : inline-block; text-align : left; height : 100%; width : 50%">
+            <button (click) = "onToggleUserPanel()" class = "send-exit-btn button rounded">{{ userPanelIsShown ? "HIDE" : "SHOW"}}</button>
+        </div>
+
+        <div style = "display : inline-block; text-align : right; height : 100%; width : 50%">
+            <button (click) = "exitChat()" class = "send-exit-btn button rounded">EXIT</button>
+        </div>
+
     </div>
 
-    <div class = "chat-mid rounded d-flex flex-column justify-content-start">
-        <app-current-user-message></app-current-user-message>
-        <app-other-user-message></app-other-user-message>
-        <app-current-user-message></app-current-user-message>
-        <app-other-user-message></app-other-user-message>
+    <div class = "chat-mid rounded d-flex flex-column justify-content-start"> 
+        <ng-template #chatContainer></ng-template>
     </div>
 
     <div class = "chat-bottom rounded">
-        <textarea class = "rounded" placeholder = "Type message..."></textarea>
-        <span style = "padding : 8px 15px; writing-mode : vertical-lr;">
-            <button class = "send-exit-btn button rounded">SEND</button>
-        </span>
+        <div style = "display : inline-block; text-align : left; height : 100%; width : 80%">
+            <textarea [(ngModel)] = "chatMessage" class = "rounded" placeholder = "Type message..."></textarea>
+        </div>
+        <div style = "vertical-align : top; display : inline-block; text-align : right; height : 100%; width : 20%">
+            <button class = "send-exit-btn button rounded" (click) = "sendChatMessage()">SEND</button>
+        </div>
     </div>
 </div>

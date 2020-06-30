@@ -41,7 +41,6 @@ export class RegisterComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private uiService : UiService,
-    private matDialog : MatDialog, 
     private router : Router, 
     private formBuilder : FormBuilder, 
     private registerService : RegisterService, 

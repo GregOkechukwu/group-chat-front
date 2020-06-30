@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs/internal/Subscription';
 import { SectionStatus } from '../interfaces';
 import { AuthService } from '../services/auth.service';
 import { ConversationInfoService } from '../services/conversation-info.service';
+import { WebSocketService } from '../services/websocket.service';
 
 @Component({
   selector: 'app-wrapper',
@@ -27,7 +28,8 @@ export class WrapperComponent implements OnInit, AfterViewInit, OnDestroy  {
   constructor(
     private uiService : UiService, 
     private authService : AuthService, 
-    private conversationInfoService : ConversationInfoService
+    private conversationInfoService : ConversationInfoService,
+    private webSocketService : WebSocketService
   ) { }
 
   ngOnInit() {

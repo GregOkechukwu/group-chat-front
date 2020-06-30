@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ImageService } from 'src/app/services/image.service';
 import { UserInfoService } from 'src/app/services/user-info.service';
 import { UiService } from 'src/app/services/ui.service';
-import { CurrentUser, SectionStatus } from 'src/app/interfaces';
+import { CurrentUser, SectionStatus, ResolverMetaData } from 'src/app/interfaces';
 import { InviteInfoService } from 'src/app/services/invite-info.service';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { DataManipulationService } from 'src/app/services/data-manipulation.service';
@@ -52,8 +52,8 @@ export class MinSidePanelComponent implements OnInit, OnDestroy {
     const inviteCountNotifier = this.inviteInfoService.inviteCountNotfier, inviteCountNotifier$ = this.inviteInfoService.inviteCountNotfier$;
     const whatToShow$ = this.uiService.whatToShow$;
 
-    const subscriptionOne = resolvedData.subscribe((data : {user : CurrentUser, inviteCount : number, images : any[]}) => {
-      const {user, inviteCount, images} = data;
+    const subscriptionOne = resolvedData.subscribe((data : ResolverMetaData) => {
+      const { user, inviteCount, images } = data;
 
       const picSrc = <string>images[0];
       const iconLookup = images[1];
@@ -67,7 +67,6 @@ export class MinSidePanelComponent implements OnInit, OnDestroy {
         
         this.uiService.hasUsedResolver = true;
       }
-     
     });
 
     const subscriptionTwo = profilePicNotifier$.subscribe((src : string) => {
@@ -76,7 +75,15 @@ export class MinSidePanelComponent implements OnInit, OnDestroy {
 
     /* IMPLEMENT A CACHE TO IMPROVE PERFORMANCE */
     const subscriptionThree = profileUpdateNotifier$.subscribe((user : CurrentUser) => {
-      if (user) this.updateUserInfo(user);
+      if (!user) {
+        return;
+      }
+
+      resolvedData.subscribe((data : ResolverMetaData) => {
+        data.user = user;
+        this.updateUserInfo(user);
+      });
+
     });
 
     /* IMPLEMENT A CACHE TO IMPROVE PERFORMANCE */

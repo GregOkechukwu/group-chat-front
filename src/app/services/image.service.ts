@@ -18,12 +18,47 @@ export class ImageService implements OnDestroy {
 
   subscriptions : Subscription[] = [];
 
-  hasProfilePic : boolean;
-  pic : SafeUrl;
+  private _hasProfilePic : boolean;
+  private  _pic : SafeUrl;
+  private _base64 : string;
+  private _mimeType : string;
+
   profilePicNotifier = new BehaviorSubject<string | undefined>(undefined);
   profilePicNotifier$ = this.profilePicNotifier.asObservable();
   
   constructor(private uiService : UiService, private http : HttpClient, private userInfoService : UserInfoService, private cache : CacheService, private sanitizer : DomSanitizer) { 
+  }
+
+  get hasProfilePic() {
+    return this._hasProfilePic;
+  }
+
+  set hasProfilePic(hasProfilePic : boolean) {
+    this._hasProfilePic = hasProfilePic;
+  }
+
+  get pic() {
+    return this._pic;
+  }
+
+  set pic(src : SafeUrl) {
+    this._pic = src;
+  }
+
+  get base64() {
+    return this._base64;
+  }
+
+  set base64(base64 : string) {
+    this._base64 = base64;
+  }
+
+  get mimeType() {
+    return this._mimeType;
+  }
+
+  set mimeType(mimeType : string) {
+    this._mimeType = mimeType;
   }
 
   ngOnDestroy() {
@@ -35,24 +70,28 @@ export class ImageService implements OnDestroy {
       
       const subscription = this.hasPic().subscribe(data => {
 
-        this.pic = undefined;
         this.hasProfilePic = data.hasProfilePic;
 
-        this.getUserPic(this.hasProfilePic, (err, src) => {
+        this.getUserPic(this.hasProfilePic, (err, src : string) => {
           if (!err && src) {
             this.pic = this.sanitize(src);
             observer.next(this.pic);
-          }
-          this.getDefaultPic((err, src) => {
-            if (err) observer.error(err);
-            else {
-              if (this.pic === undefined) {
-                this.pic = this.sanitize(src);;
-                observer.next(this.pic);
-              }
-            }
             observer.complete();
-          });
+          }
+          else {
+            this.getDefaultPic((err, src : string) => {
+              if (err) {
+                observer.error(err);
+                observer.complete();
+
+                return;
+              }
+              
+              this.pic = this.sanitize(src);
+              observer.next(this.pic);
+              observer.complete();
+            });
+          }
         });
 
       });
@@ -74,7 +113,7 @@ export class ImageService implements OnDestroy {
 
       const subscription = this.http.get<IconResponse>(`${env.ROOT}${imagePath}/icons`).pipe(catchError(this.userInfoService.handleError))
       .subscribe(data => {
-        const {byteArrBase64s, mimeType} = data;
+        const { byteArrBase64s, mimeType } = data;
 
         for (const iconName in byteArrBase64s) {
           iconLookup[iconName] = this.encodePic(byteArrBase64s[iconName], mimeType);
@@ -99,9 +138,12 @@ export class ImageService implements OnDestroy {
 
     const subscription = this.http.get<PicResponse>(`${env.ROOT}${imagePath}/defaultpic`).pipe(catchError(this.userInfoService.handleError))
     .subscribe(data => {
-      const {byteArrBase64, mimeType} = data;
+      const { byteArrBase64, mimeType } = data;
       const src = this.encodePic(byteArrBase64, mimeType);
       
+      this.base64 = byteArrBase64;
+      this.mimeType = mimeType;
+
       this.cache.putImage('defaultpic', src);
       doSomething(null, src);
     }, 
@@ -114,15 +156,20 @@ export class ImageService implements OnDestroy {
     if (!hasPic) {
       doSomething(null, null);
       return;
-    } else if (this.cache.hasImage('profilepic')) {
+    }
+    
+    if (this.cache.hasImage('profilepic')) {
       doSomething(null, this.cache.getImage('profilepic'));
       return;
     }
 
     const subscription = this.http.get<PicResponse>(`${env.ROOT}${imagePath}/profilepic`).pipe(catchError(this.userInfoService.handleError))
     .subscribe(data => {
-      const {byteArrBase64, mimeType} = data;
+      const { byteArrBase64, mimeType } = data;
       const src = this.encodePic(byteArrBase64, mimeType);
+
+      this.base64 = byteArrBase64;
+      this.mimeType = mimeType;
 
       this.cache.putImage('profilepic', src);
       doSomething(null, src);
@@ -138,7 +185,7 @@ export class ImageService implements OnDestroy {
 
   savePic(arrayBuffer : ArrayBuffer, mimeType : string) {
     const byteArrBase64 = this.getBase64String(arrayBuffer);
-    const payload = {byteArrBase64, mimeType};
+    const payload = { byteArrBase64, mimeType };
 
     return this.http.post(`${env.ROOT}${imagePath}/profilepic`, payload).pipe(catchError(this.userInfoService.handleError), tap(event => {
       const src = this.encodePic(byteArrBase64, mimeType);
@@ -160,6 +207,7 @@ export class ImageService implements OnDestroy {
       return a + String.fromCharCode(b) 
     }
       , '');
+      
     return `data:image/${mimeType};base64,` + btoa(newString).replace(/.{76}(?=.)/g,'$&\n');
   }
 

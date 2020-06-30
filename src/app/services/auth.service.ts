@@ -63,7 +63,7 @@ export class AuthService implements OnDestroy {
 
   signOutAsPromise() {
     return new Promise<void>((resolve, reject) => {
-      const subscription = this.signOut().subscribe(() => resolve(), () => reject());
+      const subscription = this.signOut().subscribe(() => resolve(), (err : any) => reject(err));
       this.subscriptions.push(subscription);
     });
   }

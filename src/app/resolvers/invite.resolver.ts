@@ -9,12 +9,7 @@ export class InviteResolver implements  Resolve<Object> {
 
   constructor(private inviteInfoService : InviteInfoService) { }
 
-  resolve(route : ActivatedRouteSnapshot,  state : RouterStateSnapshot) : Observable<CurrentUser> {
-    const subscribe = observer => {
-        this.inviteInfoService.getReceivedInvitesCount()  
-        .subscribe((inviteCount : number) => observer.next(inviteCount), err => observer.error(err), () => observer.complete());
-    }
-
-    return new Observable<CurrentUser>(subscribe);
+  resolve(route : ActivatedRouteSnapshot,  state : RouterStateSnapshot) : Observable<number> {
+    return this.inviteInfoService.getReceivedInvitesCount();
   }
 }

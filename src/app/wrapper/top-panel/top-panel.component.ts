@@ -27,8 +27,6 @@ export class TopPanelComponent implements OnInit {
   ngOnInit() {
     this.uiService.showProgressBar = false;
     this.checkWindowWidth(window.innerWidth);
-
-    this.uiService.stopLoadingScreen();
   }
 
   ngAfterViewInit() {
@@ -63,11 +61,11 @@ export class TopPanelComponent implements OnInit {
         }
 
         this.uiService.startLoadingScreen();
-        console.log(this.conversationInfoService.conversationId);
+
         this.conversationInfoService.updateInChatStatusAsPromise(this.conversationInfoService.conversationId, inChat)
         .then(() => this.userInfoService.updateOnlineStatusAsPromise(isOnline))
         .then(() => this.authService.signOutAsPromise())
-        .then(() => {
+        .finally(() => {
           this.authService.kickout();
           this.uiService.stopLoadingScreen();
         });

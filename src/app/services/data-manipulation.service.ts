@@ -13,13 +13,13 @@ export class DataManipulationService {
   }
 
   formatFullname(first : string, last : string, username : string) {    
-    const newFirst = this.formatFirstOrLast(first);
-    const newLast = this.formatFirstOrLast(last);
+    const newFirst = this.formatName(first);
+    const newLast = this.formatName(last);
     const newUsername = this.formatUsername(username);
     return [newFirst, newLast, newUsername];
   }
 
-  formatFirstOrLast(name : string) {
+  formatName(name : string) {
     return name[0].toUpperCase() + name.slice(1).toLowerCase();
   }
 

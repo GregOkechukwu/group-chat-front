@@ -3,8 +3,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { UserInfoService } from 'src/app/services/user-info.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Observable, timer, Subscription } from 'rxjs';
 import { DialogData } from 'src/app/interfaces';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 
 @Component({
@@ -14,7 +14,6 @@ import { DialogData } from 'src/app/interfaces';
 })
 export class UpdateUserDialogComponent implements OnInit {
 
-  delayTimer : Observable<number> = timer(800);
   subscriptions : Subscription[] = [];
   
   form : {

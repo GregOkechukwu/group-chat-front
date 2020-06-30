@@ -47,7 +47,7 @@
     padding : 8px;
 }
 
-.name, .pic, .message-container {
+.message-container {
     border : 1px solid black;
 }
 

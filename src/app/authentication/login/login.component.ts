@@ -246,12 +246,8 @@ export class LoginComponent implements OnInit {
     this.disableForms();
 
     const subscriptionOne = this.authService.login(this.usernameOrEmail, this.password).subscribe(() => {
-      const isOnline = true;
-      const subscriptionTwo = this.userInfoService.updateOnlineStatus(isOnline).subscribe(() => {
-        doSomething(true);
-      });
-
-      this.subscriptions.push(subscriptionOne, subscriptionTwo);
+      doSomething(true);
+      this.subscriptions.push(subscriptionOne);
 
     }, (err : HttpErrorResponse) => {
       this.enableForms();

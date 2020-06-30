@@ -6,8 +6,11 @@
     overflow-y : auto;
     vertical-align :  top;
     height : 100%;
+    min-height : 775px;
     width :  21rem;
-    margin : 0.2rem;
+    margin : 0 0 0.2rem 0;
     padding : 15px;
-    border : 1px solid black;
+    border-width : 1px 0 1px 1px;
+    border-style : solid;
+    border-color : black;
 }

@@ -1,0 +1,19 @@
+:host {
+    width : 100%
+}
+
+:host .main-wrapper {
+    margin : 0;
+    max-width : 100%;
+}
+
+.main-wrapper {
+    padding : 15px 15px 15px 27px;
+    font-size : 14px;
+    color : dimgray;
+}
+
+.row {
+    background-color :  #fff;
+}
+

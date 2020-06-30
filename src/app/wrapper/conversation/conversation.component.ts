@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
 import { ConversationInfoService } from 'src/app/services/conversation-info.service';
 import { UiService } from 'src/app/services/ui.service';
-import { Conversation, ChatUser } from 'src/app/interfaces';
+import { Conversation, ChatUser, CurrentUser, UserMessage } from 'src/app/interfaces';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { UserInfoService } from 'src/app/services/user-info.service';
+import { ActivatedRoute } from '@angular/router';
+import { MessageService } from 'src/app/services/message.service';
 
 @Component({
   selector :  'app-conversation',
@@ -25,18 +27,37 @@ export class ConversationComponent implements OnInit, OnDestroy {
   userConversationSection : number = 2;
   chatRoomSection : number = 3;
 
+  userId : string;
+  username : string;
+  firstName : string;
+  lastName : string;
   conversationId : string;
+  showUserPanel : boolean = false;
+  
   conversations : Conversation[];
   chatUsers : ChatUser[];
+  userMessages : UserMessage[];
 
   constructor(
     private uiService : UiService, 
     private conversationInfoService : ConversationInfoService,
-    private userInfoService : UserInfoService
+    private userInfoService : UserInfoService,
+    private messageService : MessageService,
+    private activatedRoute : ActivatedRoute
   ) { }
 
   ngOnInit() {
+    const resolvedData = this.activatedRoute.data;
     this.toSection(this.createJoinConversationSection);
+    
+    const subscription = resolvedData.subscribe((data : { user : CurrentUser, inviteCount : number, images : any[] }) => {
+      this.userId = data.user.userId;
+      this.username = data.user.username;
+      this.firstName = data.user.firstName;
+      this.lastName = data.user.lastName;
+    });
+
+    this.subscriptions.push(subscription);
   }
 
   ngOnDestroy() {
@@ -70,16 +91,23 @@ export class ConversationComponent implements OnInit, OnDestroy {
 
   toChatRoom(conversationId : string) {
     this.uiService.startLoadingScreen();
-    
-    const subscription = this.userInfoService.getUsersInConversation(conversationId).subscribe((chatUsers : ChatUser[]) => {
+
+    this.userInfoService.getUsersInConversationAsPromise(conversationId)
+    .then((chatUsers : ChatUser[]) => {
       this.chatUsers = chatUsers;
       this.conversationId = conversationId;
-      
+
+      return this.messageService.getUserMessagesAsPromise(conversationId);
+    })
+    .then((userMessages : UserMessage[]) => {
+      this.userMessages = userMessages;
       this.uiService.toggleSidePanel.next(this.uiService.NO_PANEL_STATE);
       this.toSection(this.chatRoomSection);
-    }, null, () => this.uiService.stopLoadingScreen());
-
-    this.subscriptions.push(subscription);
+    })
+    .finally(() => this.uiService.stopLoadingScreen());
   }
 
+  onToggleUserPanel(show : boolean) {
+    this.showUserPanel = show;
+  }
 }

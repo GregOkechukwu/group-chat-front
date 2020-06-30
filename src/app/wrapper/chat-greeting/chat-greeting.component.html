@@ -1,0 +1,17 @@
+<div class = "main-wrapper">
+    <ng-container [ngSwitch] = "isCurrentUser">
+
+        <ng-container *ngSwitchCase = "true">
+            <div class = "d-flex flex-row flex-nowrap">
+                {{ greeting }}
+            </div>
+        </ng-container>
+
+        <ng-container *ngSwitchCase = "false">
+            <div class = "d-flex flex-row-reverse flex-nowrap">
+                {{ greeting }}
+            </div>
+        </ng-container>
+        
+    </ng-container>
+</div>

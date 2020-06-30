@@ -6,16 +6,19 @@
 .main-wrapper {
     display : inline-block;
     vertical-align : top;
-    margin : 0.2rem;
+    margin : 0 0 0.2rem 0;
     height : 100%;
-    width : 99.5%;
+    width : 100%;
     padding : 15px;
+    /* min-width : 500px; */
+    min-height : 775px;
+    background-color : #F8F8F8;
 }
 
 .chat-top {
     height : 6%;
-    text-align : right;
     padding : 8px 15px;
+    min-height : 45px;
 }
 
 .chat-mid {
@@ -25,17 +28,23 @@
 }
 
 .chat-bottom {
+    padding : 8px 15px;
     height : 6%;
     margin-top: 1rem;
+    min-height : 45px;
 }
 
 .main-wrapper, .chat-top, .chat-mid, .chat-bottom {
     border : 1px solid black;
 }
 
+.chat-top, .chat-mid, .chat-bottom {
+    background-color : white;
+}
+
 .send-exit-btn {
     width : 55px;
-    height:  25px;
+    height : 25px;
     font-size : 11px;
 }
 
@@ -55,10 +64,10 @@
 textarea {
     display : inline-block;
     height : 100%;
-    width : 90%;
-    padding : 8px 15px;
+    width : 100%;
     border : none;
     resize : none;
+    font-size : 14px;
 }
 
 textarea:focus {

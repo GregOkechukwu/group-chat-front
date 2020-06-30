@@ -1,5 +1,11 @@
 import { HttpResponse } from '@angular/common/http';
 
+export interface ResolverMetaData {
+    user : CurrentUser;
+    inviteCount : number;
+    images : Array<string | Object>;
+}
+
 /* Register, Login interfaces */
 
 export interface RegisterUserInfo {  
@@ -10,10 +16,15 @@ export interface RegisterUserInfo {
     dateCreated : string;
 }
 
-/* UserInfo, Conversation, Invite, Friend interfaces  */
+/* UserInfo, Conversation, Message, Invite, Friend interfaces  */
+
+export interface UserMessage {
+    user : ChatUser;
+    message : Message;
+}
 
 export interface ChatUser {
-    userId : string,
+    userId : string;
     username : string;
     firstName : string;
     lastName : string;
@@ -21,8 +32,8 @@ export interface ChatUser {
     hasProfilePic : boolean;
     byteArrBase64 : string;
     mimeType : string;
-    inChat : boolean;
-    isHost : boolean;
+    inChat? : boolean;
+    isHost? : boolean;
 }
 
 export interface SearchedUser {
@@ -37,6 +48,7 @@ export interface SearchedUser {
 }
 
 export interface CurrentUser {
+    userId : string;
     username : string;
     firstName : string;
     lastName : string;
@@ -125,9 +137,32 @@ export interface DialogData {
     content : string;
 }
 
+/*  Websocket Interfaces */
 
+export interface TopicSubscription {
+    topicSuffix : string;
+    doSomething : Function;
+}
 
+export interface Message {
+    userId? : string;
+    username? : string;
+    firstName? : string;
+    lastName? : string;
+    isOnline? : boolean;
+    hasProfilePic? : boolean;
+    base64? : string;
+    mimeType? : string;
+    messageId : string;
+    messageContent : string;
+    dateSent : string;
+}
 
-
-
+export interface Greeting {
+    userId : string;
+    firstName : string;
+    lastName : string;
+    greetingContent : string;
+}
   
+
