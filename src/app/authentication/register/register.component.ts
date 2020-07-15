@@ -5,7 +5,6 @@ import { UserInfoService } from 'src/app/services/user-info.service';
 import { AbstractControl, FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
 import { Subscription, Observable, timer } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';

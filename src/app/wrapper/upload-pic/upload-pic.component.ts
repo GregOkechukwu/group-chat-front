@@ -94,7 +94,7 @@ export class UploadPicComponent implements OnInit {
           if (!successfulUpload) return;
 
           this.uiService.stopLoadingScreen();
-          this.uiService.openSnackBar('Updated Updated Pic Successfully'); 
+          this.uiService.openSnackBar('Updated Pic Successfully'); 
           this.goToUpdateDefault.emit(); 
         });
       }
@@ -118,7 +118,7 @@ export class UploadPicComponent implements OnInit {
           if (!successfulDelete) return;
 
           this.uiService.stopLoadingScreen();
-          this.uiService.openSnackBar('Updated Updated Pic Successfully');
+          this.uiService.openSnackBar('Updated Pic Successfully');
           this.goToUpdateDefault.emit(); 
         });
       }

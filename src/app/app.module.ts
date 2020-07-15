@@ -50,6 +50,7 @@ import { SentFriendRequestDisplayComponent } from './wrapper/displays/sent-frien
 import { CurrentFriendDisplayComponent } from './wrapper/displays/current-friend-display/current-friend-display.component';
 import { ChatUserDisplayComponent } from './wrapper/displays/chat-user-display/chat-user-display.component';
 import { ChatGreetingComponent } from './wrapper/chat-greeting/chat-greeting.component';
+import { UpdateHostDialogComponent } from './dialogs/update-host-dialog/update-host-dialog.component';
 
 @NgModule({
   declarations: [
@@ -83,7 +84,8 @@ import { ChatGreetingComponent } from './wrapper/chat-greeting/chat-greeting.com
     SentFriendRequestDisplayComponent,
     CurrentFriendDisplayComponent,
     ChatUserDisplayComponent,
-    ChatGreetingComponent
+    ChatGreetingComponent,
+    UpdateHostDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -121,7 +123,9 @@ import { ChatGreetingComponent } from './wrapper/chat-greeting/chat-greeting.com
     UpdateUserDialogComponent,
     ChatGreetingComponent,
     CurrentUserMessageComponent,
-    OtherUserMessageComponent
+    OtherUserMessageComponent,
+    ConversationDisplayComponent,
+    UpdateHostDialogComponent
   ]
 })
 export class AppModule { }

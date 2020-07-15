@@ -138,7 +138,15 @@ export class UiService implements OnDestroy {
     this.snackbar.openFromComponent(MessageArchiveComponent, { data : mssg });
   }
 
-  openDialog(heightPx : string, widthPx : string, dialogTitle : string, dialogContent : string, checkResponse : Function, component : any = MainDialogComponent) {
+  showSection(sectionName : string) {
+    for (const key in this.section) {
+      this.section[key] = key === sectionName ? true : false;
+    }
+
+    this.whatToShow.next(this.section);
+  }
+
+  openDialog(heightPx : string, widthPx : string, dialogTitle : string, dialogContent : any, checkResponse : Function, component : any = MainDialogComponent) {
     const height = heightPx;
     const width = widthPx;
     const title = dialogTitle;

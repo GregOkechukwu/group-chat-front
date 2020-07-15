@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output, Input, OnDestroy, ViewChild, ViewContainerRef, ComponentFactoryResolver, ComponentRef, ComponentFactory } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, Input, OnDestroy, ViewChild, ViewContainerRef, ComponentFactoryResolver, ComponentRef, ComponentFactory, ElementRef } from '@angular/core';
 import { ConversationInfoService } from 'src/app/services/conversation-info.service';
 import { UiService } from 'src/app/services/ui.service';
 import { Subscription } from 'rxjs/internal/Subscription';
@@ -21,6 +21,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   subscriptions : Subscription[] = [];
   topicSubscriptions : any[] = [];
 
+  @ViewChild("chatMid") chatMid : ElementRef<HTMLDivElement>;
   @ViewChild("chatContainer", { read : ViewContainerRef }) chatContainer : ViewContainerRef;
 
   @Input() userId : string;
@@ -75,7 +76,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
       this.uiService.unsubscribeFromSubscriptions(this.subscriptions);
       this.webSocketService.unsubscribeFromTopicSubscriptions(this.topicSubscriptions);
-    });
+    }); 
 
     this.subscriptions.push(subscription);
   }
@@ -86,8 +87,15 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   exitChat() {
-    this.uiService.toggleSidePanel.next(this.uiService.SWITCH_PANEL_STATE);
-    this.exit.emit();
+    this.conversationInfoService.confirmBeforeExitingChat(() => {
+      this.uiService.toggleSidePanel.next(this.uiService.SWITCH_PANEL_STATE);
+      this.exit.emit();
+    }); 
+  }
+
+  scrollLastMessageIntoView() {
+    const n = this.chatMid.nativeElement.children.length;
+    this.chatMid.nativeElement.children.item(n - 1).scrollIntoView();
   }
 
   sendChatMessage() {
@@ -141,6 +149,8 @@ export class ChatComponent implements OnInit, OnDestroy {
       else {
         _this.renderGreeting(greeting.userId === _this.userId, greeting.greetingContent);
       }
+
+      _this.scrollLastMessageIntoView();
     }
 
     function messageSubscriptionHandler(payload) {
@@ -160,6 +170,8 @@ export class ChatComponent implements OnInit, OnDestroy {
         message.messageContent,
         message.dateSent
       );
+
+      _this.scrollLastMessageIntoView();
     }
     
     return [

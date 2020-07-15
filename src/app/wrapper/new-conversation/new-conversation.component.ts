@@ -192,9 +192,6 @@ export class NewConversationComponent implements OnInit, OnDestroy {
 
           this.resetForms();
           this.goToCreateJoinConversation.emit(hasCreatedAConversation);
-
-        }, null, () => {
-          this.uiService.stopLoadingScreen();
         });
       }
     );

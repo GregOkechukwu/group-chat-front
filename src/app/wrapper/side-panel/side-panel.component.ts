@@ -7,6 +7,7 @@ import { CurrentUser, SectionStatus, ResolverMetaData } from 'src/app/interfaces
 import { InviteInfoService } from 'src/app/services/invite-info.service';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { DataManipulationService } from 'src/app/services/data-manipulation.service';
+import { ConversationInfoService } from 'src/app/services/conversation-info.service';
 
 @Component({
   selector :  'app-side-panel', 
@@ -39,6 +40,7 @@ export class SidePanelComponent implements OnInit, OnDestroy {
     private imageService : ImageService,  
     private userInfoService : UserInfoService,
     private inviteInfoService : InviteInfoService,
+    private conversationInfoService : ConversationInfoService
   ) { }
 
   ngOnInit() {
@@ -126,13 +128,16 @@ export class SidePanelComponent implements OnInit, OnDestroy {
   }
 
   show(sectionName : string) {
-    const section = this.uiService.section;
-
-    for (const key in section) {
-      section[key] = key === sectionName ? true : false;
+    if (!this.conversationInfoService.isInChat) {
+      this.uiService.showSection(sectionName);
+      return;
     }
-
-    this.uiService.whatToShow.next(section);
+    
+    this.conversationInfoService.confirmBeforeExitingChat(() => {
+      this.uiService.startLoadingScreen();
+      this.uiService.showSection(sectionName);
+      this.uiService.stopLoadingScreen();
+    });
   }
 
 }

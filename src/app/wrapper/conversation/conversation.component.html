@@ -26,12 +26,12 @@
         [buttonAText] = "'CREATE'"
         [buttonBText] = "'JOIN'"
         (clickA) = "toSection(newConversationSection)"
-        (clickB) = "getConversations()">
+        (clickB) = "toSection(userConversationSection)">
     </app-first-section>
 </ng-template>
 
 <ng-template #newConversation>
-    <app-new-conversation (goToCreateJoinConversation) = 'toSection(createJoinConversationSection, $event)'></app-new-conversation>
+    <app-new-conversation (goToCreateJoinConversation) = 'toSection(userConversationSection, $event)'></app-new-conversation>
 </ng-template>
 
 <ng-template #userConversations>
@@ -39,28 +39,10 @@
         <h5 style = "margin : 2rem 0 1rem 0;">MY CONVERSATIONS</h5>
 
         <div class = "d-flex flex-nowrap flex-column align-items-center">
-            <p *ngIf = "conversations.length === 0" style = "margin-top : 10rem;" >YOU HAVE NO CONVERSATIONS</p>
+            <p *ngIf = "conversations && conversations.length === 0" style = "margin-top : 10rem;">YOU HAVE NO CONVERSATIONS</p>
 
-            <div *ngIf = "conversations.length > 0" class = "d-flex flex-wrap flex-row justify-content-center align-content-start">
-                <ng-container *ngFor = "let conversation of conversations; index as i;">
-                    <app-conversation-display
-                        [index] = "i"
-                        [conversationId] = "conversation.conversationId"
-                        [conversationName] = "conversation.conversationName"
-                        [conversationHost] = "conversation.conversationHost"
-                        [userCount] = "conversation.userCount"
-                        [hostUser_Base64] = "conversation.prioritizedPics.hostUser.byteArrBase64"
-                        [hostUser_MimeType] = "conversation.prioritizedPics.hostUser.mimeType"
-                        [hostUser_hasProfilePic] = "conversation.prioritizedPics.hostUser.hasProfilePic"
-                        [userA_Base64] = "conversation.prioritizedPics.prioritizedUserA.byteArrBase64"
-                        [userA_MimeType] = "conversation.prioritizedPics.prioritizedUserA.mimeType"
-                        [userA_hasProfilePic] = "conversation.prioritizedPics.prioritizedUserA.hasProfilePic"
-                        [userB_Base64] = "conversation.prioritizedPics.prioritizedUserB.byteArrBase64"
-                        [userB_MimeType] = "conversation.prioritizedPics.prioritizedUserB.mimeType"
-                        [userB_hasProfilePic] = "conversation.prioritizedPics.prioritizedUserB.hasProfilePic"
-                        (goToChatRoom) = "toChatRoom($event)">
-                    </app-conversation-display>
-                </ng-container>
+            <div *ngIf = "conversations && conversations.length > 0" class = "d-flex flex-wrap flex-row justify-content-center align-content-start">
+                <ng-template #conversationContainer></ng-template>
             </div>      
         </div>
     </div>

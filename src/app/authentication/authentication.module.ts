@@ -4,7 +4,7 @@ import { LoginComponent } from './login/login.component';
 import { AuthenticationRoutes } from './authentication.routing.module';
 import { RegisterComponent } from './register/register.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatBadgeModule, MatDialogModule, MatInputModule, MatFormFieldModule, ErrorStateMatcher, ShowOnDirtyErrorStateMatcher, MatButtonModule, MatProgressBarModule, MatSnackBarModule } from '@angular/material';
+import { MatBadgeModule, MatDialogModule, MatInputModule, MatFormFieldModule, ErrorStateMatcher, ShowOnDirtyErrorStateMatcher, MatButtonModule, MatProgressBarModule, MatSnackBarModule, MatListModule } from '@angular/material';
 import { ProgressBarColorDirective } from '../directives/progress-bar-color.directive';
 
 @NgModule({
@@ -33,6 +33,7 @@ import { ProgressBarColorDirective } from '../directives/progress-bar-color.dire
     CommonModule,
     FormsModule,
     MatInputModule,
+    MatListModule,
     MatFormFieldModule,
     MatButtonModule,
     MatDialogModule,

@@ -11,13 +11,13 @@
 
     </div>
 
-    <div class = "chat-mid rounded d-flex flex-column justify-content-start"> 
+    <div #chatMid class = "chat-mid rounded d-flex flex-column justify-content-start"> 
         <ng-template #chatContainer></ng-template>
     </div>
 
     <div class = "chat-bottom rounded">
         <div style = "display : inline-block; text-align : left; height : 100%; width : 80%">
-            <textarea [(ngModel)] = "chatMessage" class = "rounded" placeholder = "Type message..."></textarea>
+            <textarea [(ngModel)] = "chatMessage" class = "rounded" placeholder = "Type message..." (keydown.enter) = "sendChatMessage()"></textarea>
         </div>
         <div style = "vertical-align : top; display : inline-block; text-align : right; height : 100%; width : 20%">
             <button class = "send-exit-btn button rounded" (click) = "sendChatMessage()">SEND</button>

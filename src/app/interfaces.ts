@@ -88,7 +88,8 @@ export interface FriendRequest {
 export interface Conversation {
     conversationId : string;
     conversationName : string;
-    conversationHost : string;
+    conversationHostId : string;
+    conversationHostUsername : string;
     userCount : string;
     prioritizedPics : {
         hostUser : PicResponse;
@@ -134,7 +135,7 @@ export interface SectionStatus {
 
 export interface DialogData {
     title : string;
-    content : string;
+    content : any;
 }
 
 /*  Websocket Interfaces */

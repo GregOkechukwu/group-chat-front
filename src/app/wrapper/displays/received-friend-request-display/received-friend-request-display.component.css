@@ -38,7 +38,7 @@
   .accept-decline-btn {
     height : 100%;
     width : 6rem;
-    border-bottom : 2px solid #b4c7e4;
+    /* border-bottom : 2px solid #b4c7e4; */
   }
   
   .time-elapsed {
@@ -50,7 +50,7 @@
   }
   
   .accept-decline-btn:hover {
-    border-bottom : 3px solid #b4c7e4;
+    /* border-bottom : 3px solid #b4c7e4; */
     font-size : 1.1rem;
     cursor : pointer;
   }

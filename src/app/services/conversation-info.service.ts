@@ -53,6 +53,19 @@ export class ConversationInfoService implements OnDestroy {
     return this.http.get<{conversations : Conversation[]}>(`${env.ROOT}${conversationPath}`).pipe(catchError(this.userInfoService.handleError), map(data => data.conversations));
   }
 
+  deleteConversation(conversationId : string) {
+    return this.http.delete(`${env.ROOT}${conversationPath}?conversationId=${conversationId}`).pipe(catchError(this.userInfoService.handleError));
+  }
+
+  leaveConversation(conversationId : string) {
+    return this.http.delete(`${env.ROOT}${conversationPath}/leave?conversationId=${conversationId}`).pipe(catchError(this.userInfoService.handleError));
+  }
+
+  updateConversationHost(conversationId : string, newHostId : string) {
+    const payload = { conversationId, newHostId };
+    return this.http.put(`${env.ROOT}${conversationPath}/host`, payload).pipe(catchError(this.userInfoService.handleError));
+  }
+
   updateInChatStatus(conversationId : string, inChat : boolean) {
     const payload = { conversationId, inChatStatus : inChat };
     
@@ -72,6 +85,24 @@ export class ConversationInfoService implements OnDestroy {
      const subscription = this.updateInChatStatus(conversationId, inChat).subscribe(() => resolve(), (err : any) => reject(err));
      this.subscriptions.push(subscription);
     });
+  }
+
+  confirmBeforeExitingChat(exitChatHandler : Function) {
+    const heightPx = "225px", widthPx = "500px";
+
+    this.uiService.openDialog(
+      heightPx, 
+      widthPx,
+      "Confirm Exit",
+      "Are you sure you want to exit the chatroom?",
+      choseToExit => {
+        if (!choseToExit) {
+          return;
+        }
+
+        exitChatHandler();
+      }
+    );
   }
 
 }

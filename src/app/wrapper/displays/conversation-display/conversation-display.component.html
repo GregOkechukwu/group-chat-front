@@ -1,4 +1,4 @@
-<div class = "conversation-wrapper rounded">
+<div class = "conversation-wrapper rounded" [style.border] = "isCurrentHost() ? '1.5px solid black' : '1px solid black'">
 
   <div class = 'pic-name-wrapper d-flex flex-row flex-nowrap'>
     <div class = "pic-wrapper">
@@ -35,15 +35,14 @@
       
     <div class = 'name-wrapper'>
       <span style = "font-size : 1.1rem"><b>{{ conversationName }}</b></span><br>
-      <div style = "font-size : 0.8rem">{{ conversationHost }}</div>
+      <div style = "font-size : 0.8rem">{{ conversationHostUsername }}</div>
       <div class = "member-count" style = "font-size : 0.8rem;">{{ getMemberCount() }}</div>
     </div>
-
   </div>
 
   <div class = "accept-decline-wrapper">
     <div class = "accept-decline-btn" style = "margin-right : 1rem;" (click) = "goToChat()">Join</div>
-    <div class = "accept-decline-btn" style = "margin-left : 1rem;">Leave</div>
+    <div class = "accept-decline-btn" style = "margin-left : 1rem;" (click) = "onLeave()">Leave</div>
   </div>
 
 </div>

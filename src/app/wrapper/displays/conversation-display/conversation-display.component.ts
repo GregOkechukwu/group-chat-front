@@ -1,5 +1,8 @@
 import { Component, OnInit, Input, AfterViewInit, Output, EventEmitter, SimpleChanges } from '@angular/core';
 import { ImageService } from 'src/app/services/image.service';
+import { ActivatedRoute } from '@angular/router';
+import { ResolverMetaData } from 'src/app/interfaces';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 @Component({
   selector: 'app-conversation-display',
@@ -9,11 +12,13 @@ import { ImageService } from 'src/app/services/image.service';
 export class ConversationDisplayComponent implements OnInit, AfterViewInit {
 
   @Output() goToChatRoom : EventEmitter<string> = new EventEmitter<string>();
+  @Output() leave : EventEmitter<{conversationId : string, hostId : string}> = new EventEmitter<{conversationId : string, hostId : string}>();
 
   @Input() index : number;
   @Input() conversationId : string;
   @Input() conversationName : string;
-  @Input() conversationHost : string;
+  @Input() conversationHostId : string;
+  @Input() conversationHostUsername : string;
   @Input() userCount : number;
   @Input() hostUser_Base64 : string;
   @Input() hostUser_MimeType : string;
@@ -25,13 +30,15 @@ export class ConversationDisplayComponent implements OnInit, AfterViewInit {
   @Input() userB_MimeType : string | undefined;
   @Input() userB_hasProfilePic : boolean | undefined;
 
+  userId : string;
   hostPic : string;
   userAPic : string | null;
   userBPic : string | null;
 
+  subscriptions : Subscription[] = [];
   borderColorLookup : Map<number, string>;
 
-  constructor(private imageService : ImageService) { }
+  constructor(private imageService : ImageService, private activatedRoute : ActivatedRoute) { }
 
   ngOnChanges(changes : SimpleChanges) {
   }
@@ -43,6 +50,12 @@ export class ConversationDisplayComponent implements OnInit, AfterViewInit {
     this.userBPic  = this.userCount > 2 ? this.getEncodedPic(this.userB_Base64, this.userA_MimeType) : this.userBPic;
 
     this.borderColorLookup = this.getBorderColorLookup();
+
+    const subscription = this.activatedRoute.data.subscribe((data : ResolverMetaData) => {
+      this.userId = data.user.userId;
+    });
+
+    this.subscriptions.push(subscription);
   }
 
   ngAfterViewInit() {
@@ -91,4 +104,11 @@ export class ConversationDisplayComponent implements OnInit, AfterViewInit {
     this.goToChatRoom.emit(this.conversationId);
   }
 
+  onLeave() {
+    this.leave.emit({ conversationId : this.conversationId, hostId : this.conversationHostId });
+  }
+
+  isCurrentHost() {
+    return this.userId === this.conversationHostId;
+  }
 }

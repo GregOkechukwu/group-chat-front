@@ -1,0 +1,21 @@
+div, form {
+    text-align : center;
+}
+
+.dialog-content {
+    margin-top : 2rem;
+}
+
+.mat-dialog-actions {
+    justify-content : center;
+    align-items : center;
+}
+
+.mat-pseudo-checkbox::after {
+    color : black;
+}
+
+.mat-pseudo-checkbox {
+    background : white;
+    border : 1px solid black;
+}
