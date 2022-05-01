@@ -29,7 +29,7 @@
     "@types/jsonwebtoken": "^8.3.2",
     "@types/moment": "^2.13.0",
     "amazon-cognito-identity-js": "^3.0.11",
-    "auth0-js": "^9.10.2",
+    "auth0-js": "^9.13.2",
     "aws-sdk": "^2.441.0",
     "blueimp-canvas-to-blob": "^3.14.0",
     "bootstrap": "^4.3.1",
