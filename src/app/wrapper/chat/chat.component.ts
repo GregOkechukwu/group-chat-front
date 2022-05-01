@@ -4,7 +4,7 @@ import { UiService } from 'src/app/services/ui.service';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { AuthService } from 'src/app/services/auth.service';
 import { MessageService } from 'src/app/services/message.service';
-import { UserMessage, TopicSubscription, Message, Greeting } from 'src/app/interfaces';
+import { UserMessage, TopicSubscription, Message, Greeting, TypingUserResponse } from 'src/app/interfaces';
 import { DataManipulationService } from 'src/app/services/data-manipulation.service';
 import { WebSocketService } from 'src/app/services/websocket.service';
 import { CurrentUserMessageComponent } from '../current-user-message/current-user-message.component';
@@ -30,12 +30,13 @@ export class ChatComponent implements OnInit, OnDestroy {
   @Input() lastName : string;
   @Input() conversationId : string;
   @Input() userPanelIsShown : boolean;
-  @Input() userMessages: UserMessage[];
+  @Input() userMessages : UserMessage[];
   
   @Output() exit : EventEmitter<void> = new EventEmitter<void>();
   @Output() toggleUserPanel : EventEmitter<boolean> = new EventEmitter<boolean>();
 
   chatMessage : string = "";
+  typingMessage : string = "";
 
   constructor(
     private imageService : ImageService,
@@ -60,9 +61,10 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     const isInChat = false;
+    const formatName = this.dataManipulationService.formatName; 
 
     if (!this.authService.hasLoggedIn) {
-      this.publishGreeting(`${this.dataManipulationService.formatName(this.firstName)} ${this.dataManipulationService.formatName(this.lastName)} has left the chat room...`);
+      this.publishGreeting(`${formatName(this.firstName)} ${formatName(this.lastName)} has left the chat room...`);
       this.uiService.unsubscribeFromSubscriptions(this.subscriptions);
       this.webSocketService.unsubscribeFromTopicSubscriptions(this.topicSubscriptions);
       
@@ -72,10 +74,12 @@ export class ChatComponent implements OnInit, OnDestroy {
     const subscription = this.conversationInfoService.updateInChatStatus(this.conversationId, isInChat).subscribe(() => {
       this.conversationInfoService.isInChat = isInChat;
       this.conversationInfoService.conversationId = "";
-      this.publishGreeting(`${this.dataManipulationService.formatName(this.firstName)} ${this.dataManipulationService.formatName(this.lastName)} has left the chat room...`);
+      this.publishGreeting(`${formatName(this.firstName)} ${formatName(this.lastName)} has left the chat room...`);
 
       this.uiService.unsubscribeFromSubscriptions(this.subscriptions);
       this.webSocketService.unsubscribeFromTopicSubscriptions(this.topicSubscriptions);
+
+      this.uiService.toggleSidePanel.next(this.uiService.SWITCH_PANEL_STATE);
     }); 
 
     this.subscriptions.push(subscription);
@@ -88,7 +92,6 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   exitChat() {
     this.conversationInfoService.confirmBeforeExitingChat(() => {
-      this.uiService.toggleSidePanel.next(this.uiService.SWITCH_PANEL_STATE);
       this.exit.emit();
     }); 
   }
@@ -112,6 +115,10 @@ export class ChatComponent implements OnInit, OnDestroy {
     });
 
     this.subscriptions.push(subscription);
+  }
+
+  publishTypingUserMessage(removeUser : boolean) {
+    this.webSocketService.publishMessage('chat/typing-user-pub', { userId : this.userId, firstName : this.firstName, lastName : this.lastName, removeUser });
   }
 
   publishGreeting(greetingContent : string) {
@@ -139,7 +146,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   getTopicSubscriptions() : TopicSubscription[] {
     const _this = this;
 
-    function greetingSubscriptionHandler(payload) {
+    function greetingSubscriptionHandler(payload : any) {
       const greeting : Greeting = JSON.parse(payload.body);
 
       if (greeting.userId === _this.userId) {
@@ -153,7 +160,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       _this.scrollLastMessageIntoView();
     }
 
-    function messageSubscriptionHandler(payload) {
+    function messageSubscriptionHandler(payload : any) {
       const message : Message = JSON.parse(payload.body);
 
       _this.renderChatMessage(
@@ -173,6 +180,22 @@ export class ChatComponent implements OnInit, OnDestroy {
 
       _this.scrollLastMessageIntoView();
     }
+
+    function typingUserSubscriptionHandler(payload : any) {
+      const typingUsers : TypingUserResponse = JSON.parse(payload.body);
+      const typingUserIds = typingUsers.typingUserIds, typingNames = typingUsers.typingNames;
+      const m = typingUserIds.length, n = typingUserIds.length;
+
+      _this.typingMessage = "";
+
+      if (m != n) {
+        return;
+      }
+
+      for (let i = 0; i < m; i++) {
+        _this.typingMessage += typingUserIds[i] === _this.userId ? "" : i == m - 1 ? typingNames[i] + " is typing..." : typingNames[i] + ", ";
+      }
+    }
     
     return [
       {
@@ -180,8 +203,12 @@ export class ChatComponent implements OnInit, OnDestroy {
         doSomething : greetingSubscriptionHandler
       },
       {
-        topicSuffix : `chat/message-sub`,
+        topicSuffix : 'chat/message-sub',
         doSomething : messageSubscriptionHandler
+      },
+      {
+        topicSuffix : 'chat/typing-user-sub',
+        doSomething : typingUserSubscriptionHandler
       }
     ];
   }
@@ -248,5 +275,15 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     component.instance.isCurrentUser = isCurrentUser;
     component.instance.greeting = greeting;
+  }
+
+  onTextAreaFocusIn() {
+    const removeTypingUser = false;
+    this.publishTypingUserMessage(removeTypingUser);
+  }
+
+  onTextAreaFocusOut() {
+    const removeTypingUser = true;
+    this.publishTypingUserMessage(removeTypingUser);
   }
 }

@@ -2,9 +2,9 @@
   <h2 mat-dialog-title>{{ data.title }}</h2>
 </div>
 
-<mat-selection-list #selectionList [multiple] = "false">
+<mat-selection-list #selectionList (selectionChange) = "onSelectionChange($event)">
   <ng-container *ngFor = "let user of chatUsers">
-    <mat-list-option>{{ user.username }}</mat-list-option>
+    <mat-list-option *ngIf = "user.username != currentUsername" [value] = "user.username">{{ user.username }}</mat-list-option>
   </ng-container>
 </mat-selection-list>
 

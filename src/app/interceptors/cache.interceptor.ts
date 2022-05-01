@@ -12,8 +12,7 @@ export class CacheInterceptor implements HttpInterceptor {
         const response = this.cache.getResponse(req);
         req.clone({ setParams: { observe: 'response' }});
 
-        const result =  response ? of(response) : this.sendRequest(req, next);
-        return result;
+        return response ? of(response) : this.sendRequest(req, next);
     }   
 
     sendRequest(req : HttpRequest<any>, next : HttpHandler) {

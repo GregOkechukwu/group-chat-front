@@ -1,7 +1,8 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DialogData, ChatUser } from 'src/app/interfaces';
-import { MatSelectionList } from '@angular/material';
+import { MatSelectionList, MatListOption, MatSelectionListChange } from '@angular/material';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-update-host-dialog',
@@ -11,7 +12,10 @@ import { MatSelectionList } from '@angular/material';
 export class UpdateHostDialogComponent implements OnInit {
 
   @ViewChild('selectionList') selectionList : MatSelectionList;
+
   chatUsers : ChatUser[];
+  currentSelectedUser : string;
+  currentUsername : string;
 
   constructor(
     private dialogRef : MatDialogRef<UpdateHostDialogComponent>,
@@ -19,15 +23,21 @@ export class UpdateHostDialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.chatUsers = this.data.content;
+    const multiple = false;
+    this.selectionList.selectedOptions = new SelectionModel<MatListOption>(multiple);
+    this.chatUsers = this.data.content.chatUsers;
+    this.currentUsername = this.data.content.currentUsername;
   }
 
   confirm() {
-    console.log(this.selectionList.selectedOptions);
-    // this.dialogRef.close({
-    //   choseToUpdate : true,
-    //   newHostId : this.selectionList.selectedOptions.selected[0]
-    // });
+    this.dialogRef.close({
+      choseToUpdate : true,
+      newHostId : this.currentSelectedUser
+    });
+  }
+
+  onSelectionChange(selectionListChange : MatSelectionListChange) {
+    this.currentSelectedUser = selectionListChange.option.value;
   }
 
   close() {

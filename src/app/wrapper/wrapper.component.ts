@@ -72,7 +72,7 @@ export class WrapperComponent implements OnInit, AfterViewInit, OnDestroy  {
     const BIG_PANEL_STATE = this.uiService.BIG_PANEL_STATE;
     const SWITCH_PANEL_STATE = this.uiService.SWITCH_PANEL_STATE;
     
-    if (this.innerWidth < 700 && event === SWITCH_PANEL_STATE || this.conversationInfoService.isInChat) {
+    if (this.innerWidth < 1000 && event === SWITCH_PANEL_STATE || this.conversationInfoService.isInChat) {
       this.CURRENT_PANEL = this.CURRENT_PANEL === this.NO_PANEL ? this.SMALL_PANEL : this.NO_PANEL;
     } 
     else {

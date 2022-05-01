@@ -1,25 +1,36 @@
 <div class = "main-wrapper">
     <div class = "chat-top rounded">
 
-        <div style = "display : inline-block; text-align : left; height : 100%; width : 50%">
+        <div style = "display : inline-block; text-align : left; height : 100%; width : 50%; margin-top : 3px;">
             <button (click) = "onToggleUserPanel()" class = "send-exit-btn button rounded">{{ userPanelIsShown ? "HIDE" : "SHOW"}}</button>
         </div>
 
-        <div style = "display : inline-block; text-align : right; height : 100%; width : 50%">
+        <div style = "display : inline-block; text-align : right; height : 100%; width : 50%; margin-top : 3px;">
             <button (click) = "exitChat()" class = "send-exit-btn button rounded">EXIT</button>
         </div>
 
     </div>
 
-    <div #chatMid class = "chat-mid rounded d-flex flex-column justify-content-start"> 
+    <div #chatMid class = "chat-mid d-flex flex-column justify-content-start"> 
         <ng-template #chatContainer></ng-template>
+    </div>
+    
+    <div class = "typing-wrapper chat-mid d-flex flex-column justify-content-start">
+        {{ typingMessage }}
     </div>
 
     <div class = "chat-bottom rounded">
-        <div style = "display : inline-block; text-align : left; height : 100%; width : 80%">
-            <textarea [(ngModel)] = "chatMessage" class = "rounded" placeholder = "Type message..." (keydown.enter) = "sendChatMessage()"></textarea>
+        <div style = "display : inline-block; text-align : left; height : 100%; width : 95%">
+            <textarea 
+                [(ngModel)] = "chatMessage"  
+                placeholder = "Type message..." 
+                (keydown.enter) = "sendChatMessage()" 
+                (focusin) = "onTextAreaFocusIn()"
+                (focusout) = "onTextAreaFocusOut()">
+            </textarea>
         </div>
-        <div style = "vertical-align : top; display : inline-block; text-align : right; height : 100%; width : 20%">
+
+        <div style = "vertical-align : top; display : inline-block; text-align : right; height : 100%; width : 5%; margin-top : 4px;">
             <button class = "send-exit-btn button rounded" (click) = "sendChatMessage()">SEND</button>
         </div>
     </div>

@@ -8,8 +8,7 @@ export class DataManipulationService {
   constructor() { }
 
   trim(str : string) {
-    if (str === undefined || str === null) return "";
-    return str.trim();
+    return str === undefined || str === null ? "" : str.trim();
   }
 
   formatFullname(first : string, last : string, username : string) {    

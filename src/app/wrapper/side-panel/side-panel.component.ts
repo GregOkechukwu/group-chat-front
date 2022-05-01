@@ -53,7 +53,7 @@ export class SidePanelComponent implements OnInit, OnDestroy {
     const whatToShow$ = this.uiService.whatToShow$;
 
     const subscriptionOne = resolvedData.subscribe((data : {user : CurrentUser, inviteCount : number, images : any[]}) => {
-      const {user, inviteCount, images} = data;
+      const { user, inviteCount, images } = data;
       const picSrc = <string>images[0];
       const iconLookup = images[1];
 

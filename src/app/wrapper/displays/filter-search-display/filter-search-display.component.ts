@@ -83,7 +83,8 @@ export class FilterSearchDisplayComponent implements OnInit, OnDestroy {
     const usernameValidators = this.formValidator.getUsernameValidators(isRequired, withLengthRequirements);
 
     const goToNextFilter = () => {
-      this.currFilterIdx += this.currFilterIdx === n - 1 ? -(n - 1) : 1; 
+      this.currFilterIdx += 1;
+      this.currFilterIdx %= n;
     }
     
     const enableOrDisableControl = () => {
@@ -117,10 +118,7 @@ export class FilterSearchDisplayComponent implements OnInit, OnDestroy {
   }
 
   getErrorMessage(control : AbstractControl) {
-    let errMssg = "";
-    if (control.hasError("required"))   errMssg = "Required";
-
-    return errMssg;
+    return control.hasError("required") ? "Required" : "";
   }
 
   get currentFilter() {

@@ -94,7 +94,7 @@ export class TopPanelComponent implements OnInit {
     }
   }
 
-  onResize(event) {
+  onResize(event : any) {
     this.checkWindowWidth(event.target.innerWidth);
   }
 

@@ -140,7 +140,7 @@ export class UiService implements OnDestroy {
 
   showSection(sectionName : string) {
     for (const key in this.section) {
-      this.section[key] = key === sectionName ? true : false;
+      this.section[key] = key === sectionName;
     }
 
     this.whatToShow.next(this.section);
@@ -161,7 +161,7 @@ export class UiService implements OnDestroy {
       }
     });
 
-    const subscription = dialogRef.afterClosed().subscribe(choseYesOrNo => checkResponse(choseYesOrNo));
+    const subscription = dialogRef.afterClosed().subscribe((choseYesOrNo : boolean) => checkResponse(choseYesOrNo));
     this.subscriptions.push(subscription);
   }
 

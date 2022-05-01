@@ -115,16 +115,23 @@ export class ProfileComponent implements OnInit, OnDestroy {
   
   getErrorMessage(control : AbstractControl) {
     const getPatternErrorMessage = () => this.patternErrLookup.get(control);
-    let errMssg = "";
 
-    if (control.hasError("minlength"))        errMssg = "Too Short";
-    if (control.hasError("maxlength"))        errMssg = "Too Long";
-    if (control.hasError("emailTaken"))       errMssg = "Email is not available";
-    if (control.hasError("usernameTaken"))    errMssg = "Username is not available";
-    if (control.hasError("pattern"))          errMssg = getPatternErrorMessage();
-    if (control.hasError("emptyFields"))      errMssg = "";
+    const errMssgLookup = {
+      ["minlength"] : "Too Short",
+      ["maxlength"] : "Too Long",
+      ["emailTaken"] : "Email is not available",
+      ["usernameTaken"] : "Username is not available",
+      ["pattern"] : getPatternErrorMessage(),
+      ["emptyFields"] : ""
+    };
 
-    return errMssg;
+    for (const errMssg in errMssgLookup) {
+      if (control.hasError(errMssg)) {
+        return errMssgLookup[errMssg];
+      }
+    }
+
+    return "";
   }
 
   async onSubmit() {
@@ -142,6 +149,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         control.setValue(trim(control.value));
       }
     }
+
     const hasAllEmptyFields = () => {
       let emptyCount = 0;
       const n = Object.keys(controls).length;
@@ -180,8 +188,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
 
     const passedSecondCheck =  async () => {
-      const usernameTaken = await this.checkUsernameNotTaken();
-      const emailTaken = await this.checkEmailNotTaken();
+      const usernameTaken = await this.userInfoService.checkUsernameNotTakenAsPromise(this.username);
+      const emailTaken = await this.userInfoService.checkEmailNotTakenAsPromise(this.email);
 
       if (usernameTaken || emailTaken) {
         usernameTaken ? this.usernameControl.setErrors({usernameTaken : true}) : null;
@@ -191,7 +199,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
       return !foundInvalidPanelsToExpand();
     }
     
-
     try {
       trimAllFields();
       closePanels();
@@ -230,27 +237,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
       foundInvalidPanelsToExpand();
     }
 
-  }
-
-  checkUsernameNotTaken() {
-    return new Promise<boolean>((resolve, reject) => {
-      if (this.username == "") {
-        resolve(false);
-      } 
-      const subscription = this.userInfoService.checkUsernameNotTaken(this.username).subscribe(isTaken => resolve(isTaken), err => reject());
-      this.subscriptions.push(subscription);
-    });
-  }
-
-  checkEmailNotTaken() {
-    return new Promise<boolean>((resolve, reject) => {
-      if (this.email == "") {
-        resolve(false);
-      } 
-
-      const subscription = this.userInfoService.checkEmailNotTaken(this.email).subscribe(isTaken => resolve(isTaken), err => reject());
-      this.subscriptions.push(subscription);
-    });
   }
 
   updateUser(password : string, doSomething : Function) {

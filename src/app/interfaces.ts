@@ -165,5 +165,15 @@ export interface Greeting {
     lastName : string;
     greetingContent : string;
 }
-  
 
+export interface TypingUser {
+    userId : string;
+    firstName : string;
+    lastName : string;
+    removeUser : boolean; 
+}
+
+export interface TypingUserResponse {
+    typingUserIds : string[];
+    typingNames : string[];
+}

@@ -74,9 +74,9 @@ export class ConversationComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
-      this.section === this.userConversationSection ? this.toSection(this.createJoinConversationSection) :
-      this.section === this.chatRoomSection ? this.toSection(this.userConversationSection) :
-      this.toSection(this.section - 1);
+    this.section === this.userConversationSection ? this.toSection(this.createJoinConversationSection) :
+    this.section === this.chatRoomSection ? this.toSection(this.userConversationSection) :
+    this.toSection(this.section - 1);
   }
 
   onToggleUserPanel(show : boolean) {
@@ -84,7 +84,7 @@ export class ConversationComponent implements OnInit, OnDestroy {
   }
 
   toSection(section : number, hasCreatedAConversation : boolean = false) {
-    if (section == this.userConversationSection) {
+    if (section === this.userConversationSection) {
 
       this.getConversation((conversations : Conversation[]) => {
         this.section = section;
@@ -161,7 +161,7 @@ export class ConversationComponent implements OnInit, OnDestroy {
     for (let i = 0; i < n; i++) {
       this.renderConversation(
         i, 
-        conversations[i].conversationId,
+        conversations[i].conversationId, 
         conversations[i].conversationName,
         conversations[i].conversationHostId,
         conversations[i].conversationHostUsername,
@@ -198,9 +198,10 @@ export class ConversationComponent implements OnInit, OnDestroy {
   }
 
   leaveConversation(idx : number, conversationId : string, conversationHostId : string) {
-    const _this = this, heightPx = "225px", widthPx = "500px", n = parseInt(this.conversations[idx].userCount);
+    const _this = this;
+    const heightPx = "225px", widthPx = "500px", userCount = parseInt(this.conversations[idx].userCount);
 
-    if (n == 1) {
+    if (userCount == 1) {
       this.deleteConversation(idx, conversationId);
       return;
     }
@@ -241,13 +242,14 @@ export class ConversationComponent implements OnInit, OnDestroy {
           heightPx,
           widthPx,
           "Choose Conversation Host",
-          chatUsers,
+          {
+            chatUsers,
+            currentUsername : _this.username
+          },
           (result : { choseToUpdate : boolean, newHostId : string }) => {
             if (!result.choseToUpdate) {
               return;
             }
-
-            console.log(result.newHostId);
 
             _this.uiService.startLoadingScreen();
 

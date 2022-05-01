@@ -77,10 +77,21 @@ export class UserInfoService implements OnDestroy {
     const isEmpty = str => str === undefined || str === null || str === "";
     const payload : {username? : string, firstName? : string, lastName? : string, email? : string, password : string} = { password };
 
-    if (!isEmpty(username)) payload.username = username;
-    if (!isEmpty(firstName)) payload.firstName = firstName;
-    if (!isEmpty(lastName)) payload.lastName = lastName;
-    if (!isEmpty(email)) payload.email = email;
+    if (!isEmpty(username)) {
+      payload.username = username;
+    }
+
+    if (!isEmpty(firstName)) {
+      payload.firstName = firstName;
+    }
+
+    if (!isEmpty(lastName)) {
+      payload.lastName = lastName;
+    }
+
+    if (!isEmpty(email)) {
+      payload.email = email;
+    }
 
     return this.http.put(`${env.ROOT}${userPath}`, payload).pipe(catchError(this.handleError));
   }
@@ -90,15 +101,8 @@ export class UserInfoService implements OnDestroy {
     return this.http.put(`${env.ROOT}${userPath}/onlinestatus`, payload).pipe(catchError(this.handleError));
   }
 
-  updateOnlineStatusAsPromise(isOnline : boolean) {
-    return new Promise<void>((resolve, reject) => {
-      const subscription = this.updateOnlineStatus(isOnline).subscribe(() => resolve(), (err : any) => reject(err));
-      this.subscriptions.push(subscription);
-    });
-  }
-
   checkUsernameNotTaken(username : string) {
-    return this.http.get<{usernameTaken : boolean}>(`${env.ROOT}${adminUserPath}/check?username=${username}`).pipe(catchError(this.handleError), map(data => data.usernameTaken));
+    return this.http.get<Availability>(`${env.ROOT}${adminUserPath}/check?username=${username}`).pipe(catchError(this.handleError), map(data => data.usernameTaken));
   }
 
   checkEmailNotTaken(email : string) {
@@ -109,4 +113,24 @@ export class UserInfoService implements OnDestroy {
     return this.http.get<Availability>(`${env.ROOT}${adminUserPath}/check?username=${username}&email=${email}`).pipe(catchError(this.handleError), map(data => data));
   }
 
+  updateOnlineStatusAsPromise(isOnline : boolean) {
+    return new Promise<void>((resolve, reject) => {
+      const subscription = this.updateOnlineStatus(isOnline).subscribe(() => resolve(), (err : any) => reject(err));
+      this.subscriptions.push(subscription);
+    });
+  }
+
+  checkUsernameNotTakenAsPromise(username : string) {
+    return new Promise<boolean>((resolve, reject) => {
+      const subscription = this.checkUsernameNotTaken(username).subscribe((isTaken : boolean) => resolve(isTaken), (err : any) => reject(err));
+      this.subscriptions.push(subscription);
+    });
+  }
+
+  checkEmailNotTakenAsPromise(email : string) {
+    return new Promise<boolean>((resolve, reject) => {
+      const subscription = this.checkEmailNotTaken(email).subscribe((isTaken : boolean) => resolve(isTaken), (err : any) => reject(err));
+      this.subscriptions.push(subscription);
+    });
+  }
 }

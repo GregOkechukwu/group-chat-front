@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 * {
-    box-sizing: border-box;
+    box-sizing : border-box;
 }
 
 html, body {
@@ -15,9 +15,9 @@ html, body {
 }
 
 .gray-out  {
-    opacity: 0.6; /* Real browsers */    
+    opacity : 0.6; /* Real browsers */    
 }
 
 .mat-snack-bar-container {
-    max-width: 100% !important;
+    max-width : 100% !important;
 }

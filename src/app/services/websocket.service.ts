@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { env } from '../../environments/environment';
 import * as Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
-import { Greeting, Message } from '../interfaces';
+import { Greeting, Message, TypingUser } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +28,7 @@ export class WebSocketService implements OnDestroy {
     this.stompClient.disconnect();
   }
 
-  publishMessage(destinationSuffix : string, body : Message | Greeting, headers : Object = {}) {
+  publishMessage(destinationSuffix : string, body : Message | Greeting | TypingUser, headers : Object = {}) {
     this.stompClient.send(`/app/${destinationSuffix}`, headers, JSON.stringify(body));
   }
 

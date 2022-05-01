@@ -21,7 +21,6 @@ export class UploadPicComponent implements OnInit {
   profilePic :  string;
   profilePicBuffer : ArrayBuffer;
 
-  
   @ViewChild('img') imageElement : HTMLInputElement;
   @Output() goToUpdateDefault : EventEmitter<void> = new EventEmitter<void>();
 
@@ -86,12 +85,16 @@ export class UploadPicComponent implements OnInit {
       "Confirm Upload", 
       "Are you sure you want to update your profile pic?",
       choseToUpdatePic => {
-        if (!choseToUpdatePic) return;
+        if (!choseToUpdatePic) {
+          return;
+        }
 
         this.uiService.startLoadingScreen();
 
-        this.uploadPic(successfulUpload => {
-          if (!successfulUpload) return;
+        this.uploadPic((successfulUpload : boolean) => {
+          if (!successfulUpload) {
+            return;
+          }
 
           this.uiService.stopLoadingScreen();
           this.uiService.openSnackBar('Updated Pic Successfully'); 
@@ -110,7 +113,9 @@ export class UploadPicComponent implements OnInit {
       "Confirm Delete", 
       "Are you sure you want to delete your profile pic?",
       choseToDeletePic => {
-        if (!choseToDeletePic) return;
+        if (!choseToDeletePic) {
+          return;
+        }
 
         this.uiService.startLoadingScreen();
 
